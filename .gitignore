@@ -1,0 +1,12 @@
+# Ignore Everything
+/*
+
+# Except
+
+!/src/
+/src/minecraft_server/mcp
+/src/minecraft_server/net
+!.gitignore
+
+# Subdirs
+# !*/
