@@ -124,7 +124,7 @@ public class Property
 	
 	public String getOwners(String delimiter)
 	{
-		return String.join(delimiter, this.owners.parallelStream().filter(owner -> !owner.isCreator()).map(owner -> owner.getName()).collect(Collectors.toList()));
+		return String.join(delimiter, this.owners.parallelStream().filter(owner -> !owner.isCreator()).map(PropertyOwner::getName).collect(Collectors.toList()));
 	}
 	
 	public String getCreators(String delimiter)

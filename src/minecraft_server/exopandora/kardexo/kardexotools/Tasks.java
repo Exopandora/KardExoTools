@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Tasks
 {	
-	public static final Runnable SAVE = () -> KardExo.saveWorld(true);
+	public static final Runnable SAVE = KardExo::saveWorld;
 	public static final Runnable BACKUP = new RunnableBackup();
 	
 	private static final ScheduledTask SCHEDULED_SAVE = new ScheduledTask("save", Config.OFFSET_SAVE, Config.INTERVAL_SAVE, false, SAVE, "Saving in %d seconds", Config.WARNING_DELAY_SAVE, TimeUnit.SECONDS);

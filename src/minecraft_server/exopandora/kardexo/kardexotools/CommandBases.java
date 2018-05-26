@@ -59,15 +59,11 @@ public class CommandBases extends CommandProperty
 						this.add(args, new PropertyOwner(args[7], true, true, null, null), 1, 2, 3, 4, 5, 6, 8);
 						sender.addChatMessage(new TextComponentString("Added base with id " + args[1]));
 					}
-					catch(InvalidDimensionException e)
+					catch(InvalidDimensionException | NumberInvalidException e)
 					{
 						throw e;
 					}
-					catch(NumberInvalidException e)
-					{
-						throw e;
-					}
-					catch(CommandException e)
+					catch(IllegalStateException e)
 					{
 						throw new CommandException("Base with id " + args[1] + " already exists");
 					}

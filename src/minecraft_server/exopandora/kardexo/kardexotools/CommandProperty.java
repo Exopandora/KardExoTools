@@ -53,7 +53,7 @@ public abstract class CommandProperty extends CommandBase
 		}
 	}
 	
-	public void add(String[] args, PropertyOwner owner, int nameIndex, int dimIndex, int x1Index, int z1Index, int x2Index, int z2Index, int titleIndex) throws InvalidDimensionException, NumberInvalidException, CommandException
+	public void add(String[] args, PropertyOwner owner, int nameIndex, int dimIndex, int x1Index, int z1Index, int x2Index, int z2Index, int titleIndex) throws InvalidDimensionException, NumberInvalidException, IllegalStateException
 	{
 		if(!this.file.getData().containsKey(args[nameIndex]))
 		{
@@ -77,7 +77,7 @@ public abstract class CommandProperty extends CommandBase
 		}
 		else
 		{
-			throw new CommandException(null, new Object[0]);
+			throw new IllegalStateException();
 		}
 	}
 	

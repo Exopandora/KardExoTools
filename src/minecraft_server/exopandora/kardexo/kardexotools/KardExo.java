@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.IProgressUpdate;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.WorldServer;
@@ -59,6 +60,11 @@ public class KardExo
 		}
 	}
 	
+	public static synchronized void saveWorld()
+	{
+		KardExo.saveWorld(true);
+	}
+	
 	public static synchronized void saveWorld(boolean displayMessages)
 	{
 		if(displayMessages)
@@ -109,4 +115,32 @@ public class KardExo
 	{
 		return KardExo.SERVER;
 	}
+	
+	/**
+    	int[] delta = {-1, 0, 1};
+    	
+    	System.out.println("----");
+    	
+    	for(int dx : delta)
+    	{
+        	for(int dy : delta)
+        	{
+            	for(int dz : delta)
+            	{
+            		if(dx != 0 || dy != 0 || dz != 0)
+            		{
+            			BlockPos next = pos.add(dx, dy, dz);
+//            			System.out.println(next + " " + this.theWorld.getBlockState(next));
+            			
+            			if(this.theWorld.getBlockState(next).getBlock().equals(this.theWorld.getBlockState(pos).getBlock()))
+            			{
+            				System.out.println(dx + " " + dy + " " + dz);
+
+            				this.tryHarvestBlock(next);
+            			}
+            		}
+            	}
+        	}
+    	}
+	 */
 }

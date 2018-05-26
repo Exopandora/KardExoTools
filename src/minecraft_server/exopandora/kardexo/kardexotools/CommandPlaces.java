@@ -30,7 +30,7 @@ public class CommandPlaces extends CommandProperty
 	@Override
 	public String getCommandUsage(ICommandSender sender)
 	{
-		return "/places <add|remove|list> ...";
+		return "/places <add|remove|list|reload> ...";
 	}
 	
 	@Override
@@ -44,18 +44,14 @@ public class CommandPlaces extends CommandProperty
 				{
 					try
 					{
-						this.add(args, new PropertyOwner(args[7], true, false, null, null), 1, 2, 3, 4, 5, 6, 7);
+						this.add(args, new PropertyOwner(sender.getName(), true, false, null, null), 1, 2, 3, 4, 5, 6, 7);
 						sender.addChatMessage(new TextComponentString("Added place with id " + args[1]));
 					}
-					catch(InvalidDimensionException e)
+					catch(InvalidDimensionException | NumberInvalidException e)
 					{
 						throw e;
 					}
-					catch(NumberInvalidException e)
-					{
-						throw e;
-					}
-					catch(CommandException e)
+					catch(IllegalStateException e)
 					{
 						throw new CommandException("Place with id " + args[1] + " already exists");
 					}
@@ -98,6 +94,11 @@ public class CommandPlaces extends CommandProperty
 				{
 					throw new CommandException("There are no places", new Object[0]);
 				}
+			}
+			else if(args[0].equals("reload"))
+			{
+				this.reload(sender, server);
+				sender.addChatMessage(new TextComponentString("Places have been reloaded"));
 			}
 		}
 		else
