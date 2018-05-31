@@ -6,6 +6,7 @@
 !/src/
 /src/minecraft_server/mcp
 /src/minecraft_server/net
+!/patches/
 !.gitignore
 
 # Subdirs
