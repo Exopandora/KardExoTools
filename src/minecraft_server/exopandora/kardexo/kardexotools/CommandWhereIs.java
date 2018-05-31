@@ -28,13 +28,13 @@ import net.minecraft.world.chunk.Chunk;
 public class CommandWhereIs extends CommandBase
 {
 	@Override
-	public String getCommandName()
+	public String getName()
 	{
 		return "whereis";
 	}
 	
 	@Override
-	public String getCommandUsage(ICommandSender sender)
+	public String getUsage(ICommandSender sender)
 	{
 		return "/whereis <player>";
 	}
@@ -44,7 +44,7 @@ public class CommandWhereIs extends CommandBase
 	{
 		if(args.length > 0)
 		{
-			for(EntityPlayerMP player : server.getPlayerList().getPlayerList())
+			for(EntityPlayerMP player : server.getPlayerList().getPlayers())
 			{
 				if(player != null)
 				{
@@ -103,7 +103,7 @@ public class CommandWhereIs extends CommandBase
 						
 						String result = "%s: d: " + dimension + " x: " + pos.getX() + " y: " + pos.getY() + " z: " + pos.getZ() + (textComponent != null ? " (%s)" : "");
 						server.logInfo("Query: " + String.format(result, player.getName(), String.join(", ", bases.parallelStream().map(base -> base.getName()).collect(Collectors.toList()))));
-						sender.addChatMessage(new TextComponentTranslation(result, player.getDisplayName(), textComponent));
+						sender.sendMessage(new TextComponentTranslation(result, player.getDisplayName(), textComponent));
 						return;
 					}
 				}
@@ -113,19 +113,19 @@ public class CommandWhereIs extends CommandBase
 		}
 		else
 		{
-			throw new WrongUsageException(this.getCommandUsage(sender));
+			throw new WrongUsageException(this.getUsage(sender));
 		}
 	}
 	
 	@Override
-    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
-    {
-        return args.length == 1 ? this.getListOfStringsMatchingLastWord(args, server.getAllUsernames()) : Collections.<String>emptyList();
-    }
-    
+	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
+	{
+		return args.length == 1 ? this.getListOfStringsMatchingLastWord(args, server.getOnlinePlayerNames()) : Collections.<String>emptyList();
+	}
+	
 	@Override
 	public boolean checkPermission(MinecraftServer server, ICommandSender sender)
-    {
+	{
 		return true;
-    }
+	}
 }

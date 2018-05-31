@@ -3,33 +3,35 @@ package exopandora.kardexo.kardexotools;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
 
-public class CommandMoonPhase extends CommandBase
+public class CommandSpawn extends CommandBase
 {
 	@Override
 	public String getName()
 	{
-		return "moonphase";
+		return "spawn";
 	}
 	
 	@Override
 	public String getUsage(ICommandSender sender)
 	{
-		return "/moonphase";
+		return "/spawn";
 	}
 	
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
 	{
-		String[] phases = new String[]{"Full Moon", "Waning Gibbous", "Last Quarter", "Waning Crescent", "New Moon", "Waxing Crescent", "First Quarter", "Waxing Gibbous"};
-		sender.sendMessage(new TextComponentString(phases[server.worlds[0].provider.getMoonPhase(server.worlds[0].getWorldTime())]));
+		if(sender.getCommandSenderEntity() instanceof EntityPlayer && server.getEntityWorld() != null)
+		{
+			CommandHome.doTeleport(sender.getCommandSenderEntity(), server.getEntityWorld().getTopSolidOrLiquidBlock(server.worlds[0].getSpawnPoint()), 0);
+		}
 	}
 	
 	@Override
 	public boolean checkPermission(MinecraftServer server, ICommandSender sender)
-    {
+	{
 		return true;
-    }
+	}
 }

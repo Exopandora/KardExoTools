@@ -102,16 +102,4 @@ public class DataFile<T, K>
 		
 		return GSON.<T>fromJson(new FileReader(file), klass);
 	}
-	
-	public static void saveAllFiles()
-	{
-		Config.BASES.save();
-		Config.PLACES.save();
-	}
-	
-	public static void readAllFiles()
-	{
-		Config.BASES.read();
-		Config.PLACES.read();
-	}
 }

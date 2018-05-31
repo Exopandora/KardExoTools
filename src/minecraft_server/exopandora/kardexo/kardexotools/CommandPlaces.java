@@ -22,13 +22,13 @@ public class CommandPlaces extends CommandProperty
 	}
 	
 	@Override
-	public String getCommandName()
+	public String getName()
 	{
 		return "places";
 	}
 	
 	@Override
-	public String getCommandUsage(ICommandSender sender)
+	public String getUsage(ICommandSender sender)
 	{
 		return "/places <add|remove|list|reload> ...";
 	}
@@ -45,7 +45,7 @@ public class CommandPlaces extends CommandProperty
 					try
 					{
 						this.add(args, new PropertyOwner(sender.getName(), true, false, null, null), 1, 2, 3, 4, 5, 6, 7);
-						sender.addChatMessage(new TextComponentString("Added place with id " + args[1]));
+						sender.sendMessage(new TextComponentString("Added place with id " + args[1]));
 					}
 					catch(InvalidDimensionException | NumberInvalidException e)
 					{
@@ -68,7 +68,7 @@ public class CommandPlaces extends CommandProperty
 					try
 					{
 						this.remove(args[1], sender, server);
-						sender.addChatMessage(new TextComponentString("Removed place with id " + args[1]));
+						sender.sendMessage(new TextComponentString("Removed place with id " + args[1]));
 					}
 					catch(PermissionException e)
 					{
@@ -98,17 +98,17 @@ public class CommandPlaces extends CommandProperty
 			else if(args[0].equals("reload"))
 			{
 				this.reload(sender, server);
-				sender.addChatMessage(new TextComponentString("Places have been reloaded"));
+				sender.sendMessage(new TextComponentString("Places have been reloaded"));
 			}
 		}
 		else
 		{
-			throw new WrongUsageException(this.getCommandUsage(sender));
+			throw new WrongUsageException(this.getUsage(sender));
 		}
 	}
 	
 	@Override
-    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
     {
 		if(args.length == 1)
 		{
@@ -132,7 +132,7 @@ public class CommandPlaces extends CommandProperty
 				}
 				else if(args.length == 8)
 				{
-					return this.getListOfStringsMatchingLastWord(args, server.getAllUsernames());
+					return this.getListOfStringsMatchingLastWord(args, server.getOnlinePlayerNames());
 				}
 			}
 			else if(args[0].equals("remove"))

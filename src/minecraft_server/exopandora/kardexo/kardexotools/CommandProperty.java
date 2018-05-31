@@ -33,23 +33,23 @@ public abstract class CommandProperty extends CommandBase
 		
 		for(Property property : this.file.getData().values())
 		{
-			sender.addChatMessage(new TextComponentTranslation("Name: %s", new Object[]{property.getDisplayName()}));
+			sender.sendMessage(new TextComponentTranslation("Name: %s", new Object[]{property.getDisplayName()}));
 			
 			String creators = property.getCreators(", ");
 			
 			if(!creators.isEmpty())
 			{
-				sender.addChatMessage(new TextComponentString(" Creators: " + creators));
+				sender.sendMessage(new TextComponentString(" Creators: " + creators));
 			}
 			
 			String owners = property.getOwners(", ");
 			
 			if(!owners.isEmpty())
 			{
-				sender.addChatMessage(new TextComponentString(" Owners: " + owners));
+				sender.sendMessage(new TextComponentString(" Owners: " + owners));
 			}
 			
-			sender.addChatMessage(new TextComponentString(" Position: " + property.getXMin() + " " + property.getZMin() + " " + property.getXMax() + " " + property.getZMax()));
+			sender.sendMessage(new TextComponentString(" Position: " + property.getXMin() + " " + property.getZMin() + " " + property.getXMax() + " " + property.getZMax()));
 		}
 	}
 	
@@ -115,7 +115,7 @@ public abstract class CommandProperty extends CommandBase
     
 	protected void forOwnerOfBase(String base, String name, Consumer<PropertyOwner> consumer)
 	{
-		for(PropertyOwner owner : this.file.getData().get(base).getOwners())
+		for(PropertyOwner owner : this.file.getData().get(base).getAllOwners())
 		{
 			if(owner.getName().equals(name))
 			{

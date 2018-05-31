@@ -11,13 +11,13 @@ public class CommandWorldTime extends CommandBase
 {
 
 	@Override
-	public String getCommandName()
+	public String getName()
 	{
 		return "worldtime";
 	}
 
 	@Override
-	public String getCommandUsage(ICommandSender sender)
+	public String getUsage(ICommandSender sender)
 	{
 		return "/worldtime";
 	}
@@ -25,7 +25,7 @@ public class CommandWorldTime extends CommandBase
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
 	{
-		sender.addChatMessage(new TextComponentString("World time: " + this.getWorldTime(server.getEntityWorld().getWorldTime())));
+		sender.sendMessage(new TextComponentString("World time: " + this.getWorldTime(server.getEntityWorld().getWorldTime())));
 	}
 	
 	@Override

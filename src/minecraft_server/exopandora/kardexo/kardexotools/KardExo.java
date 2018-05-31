@@ -22,11 +22,11 @@ public class KardExo
 		
 		SERVER = server;
 		
-		for(int i = 0; i < server.worldServers.length; i++)
+		for(int i = 0; i < server.worlds.length; i++)
 	    {
-	        if(server.worldServers[i] != null)
+	        if(server.worlds[i] != null)
 	        {
-	            WorldServer worldserver = server.worldServers[i];
+	            WorldServer worldserver = server.worlds[i];
 	            
 	            if(!worldserver.disableLevelSaving)
 	            {
@@ -37,7 +37,7 @@ public class KardExo
 		
 		KardExo.LOGGER.info("Loading files");
 		
-		DataFile.readAllFiles();
+		Config.readAllFiles();
 		
 		KardExo.LOGGER.info("Adding hooks");
 		
@@ -56,7 +56,7 @@ public class KardExo
 	{
 		if(server.getServer().getPlayerList() != null)
 		{
-			server.getServer().getPlayerList().sendChatMsg(message);
+			server.getServer().getPlayerList().sendMessage(message);
 		}
 	}
 	
@@ -79,15 +79,15 @@ public class KardExo
 		
 		try
 		{
-			for(int dimension = 0; dimension < KardExo.getServer().worldServers.length; dimension++)
+			for(int dimension = 0; dimension < KardExo.getServer().worlds.length; dimension++)
 			{
-				if(KardExo.getServer().worldServers[dimension] != null)
+				if(KardExo.getServer().worlds[dimension] != null)
 				{
-					WorldServer worldserver = KardExo.getServer().worldServers[dimension];
+					WorldServer worldserver = KardExo.getServer().worlds[dimension];
 					boolean flag = worldserver.disableLevelSaving;
 					worldserver.disableLevelSaving = false;
                     worldserver.saveAllChunks(true, (IProgressUpdate)null);
-					worldserver.saveChunkData();
+					worldserver.flushToDisk();
 					worldserver.flush();
 					worldserver.disableLevelSaving = flag;
 				}

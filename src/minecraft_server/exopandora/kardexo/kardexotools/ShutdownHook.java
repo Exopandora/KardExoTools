@@ -11,6 +11,6 @@ public class ShutdownHook extends Thread
 	public void run()
 	{
 		Tasks.stop();
-		DataFile.saveAllFiles();
+		Config.saveAllFiles();
 	}
 }

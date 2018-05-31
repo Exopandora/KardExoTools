@@ -22,13 +22,13 @@ public class TickableDeathListener implements ITickable
 	@Override
 	public void update()
 	{
-		for(EntityPlayerMP player : this.server.getPlayerList().getPlayerList())
+		for(EntityPlayerMP player : this.server.getPlayerList().getPlayers())
 		{
 			if(player.getHealth() == 0)
 			{
 				if(!this.cache.contains(player.getName()))
 				{
-					player.addChatMessage(new TextComponentString("You died at " + MathHelper.floor(player.posX) + " " + MathHelper.floor(player.posY) + " " + MathHelper.floor(player.posZ)));
+					player.sendMessage(new TextComponentString("You died at " + MathHelper.floor(player.posX) + " " + MathHelper.floor(player.posY) + " " + MathHelper.floor(player.posZ)));
 					this.cache.add(player.getName());
 				}
 			}

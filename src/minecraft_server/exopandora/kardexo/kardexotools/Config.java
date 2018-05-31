@@ -4,7 +4,7 @@ import java.io.File;
 
 public class Config
 {	
-	public static final String VERSION = "1.12.2-2.19";
+	public static final String VERSION = "1.12.2-2.24";
 	
 	/** Time in minutes between saves **/
 	public static final int INTERVAL_SAVE = 20;
@@ -27,11 +27,22 @@ public class Config
 	/** Number of backup files **/
 	public static final int BACKUP_FILES = 5;
 	
+	/** Number of blocks vein miner can harvest at once **/
+	public static final int BLOCK_LIMIT = 128;
+	
+	/** Number of history entries for the undo command **/
+	public static final int HISTORY_SIZE = 5;
+	
 	/** Backup Directory **/
 	public static final File BACKUP_DIRECTORY = new File("backup");
 	
-	public static final DataFile<Property, String> BASES = new DataFile<Property, String>("bases.json", Property[].class, Property::getName);
-	public static final DataFile<Property, String> PLACES = new DataFile<Property, String>("places.json", Property[].class, Property::getName);
+	/** Configuration Directory **/
+	public static final File CONFIG_DIRECTORY = new File("config");
+	
+	public static final DataFile<Property, String> BASES = new DataFile<Property, String>(new File(CONFIG_DIRECTORY, "bases.json"), Property[].class, Property::getName);
+	public static final DataFile<Property, String> PLACES = new DataFile<Property, String>(new File(CONFIG_DIRECTORY, "places.json"), Property[].class, Property::getName);
+	public static final DataFile<Home, String> HOME = new DataFile<Home, String>(new File(CONFIG_DIRECTORY, "home.json"), Home[].class, Home::getPlayer);
+	public static final DataFile<VeinminerOption, String> VEINMINER = new DataFile<VeinminerOption, String>(new File(CONFIG_DIRECTORY, "veinminer.json"), VeinminerOption[].class, VeinminerOption::getPlayer);
 	
 	static
 	{
@@ -39,5 +50,26 @@ public class Config
 		{
 			BACKUP_DIRECTORY.mkdirs();
 		}
+		
+		if(!CONFIG_DIRECTORY.exists())
+		{
+			CONFIG_DIRECTORY.mkdirs();
+		}
+	}
+	
+	public static void saveAllFiles()
+	{
+		BASES.save();
+		PLACES.save();
+		HOME.save();
+		VEINMINER.save();
+	}
+	
+	public static void readAllFiles()
+	{
+		BASES.read();
+		PLACES.read();
+		HOME.read();
+		VEINMINER.read();
 	}
 }

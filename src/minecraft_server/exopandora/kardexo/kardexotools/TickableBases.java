@@ -31,7 +31,7 @@ public class TickableBases implements ITickable
 		{
 			List<PropertyOwner> notifyList = new ArrayList<PropertyOwner>();
 			
-			for(PropertyOwner owner : base.getOwners())
+			for(PropertyOwner owner : base.getAllOwners())
 			{
 				if(owner.doNotify())
 				{
@@ -39,7 +39,7 @@ public class TickableBases implements ITickable
 				}
 			}
 			
-			for(EntityPlayerMP player : this.server.getPlayerList().getPlayerList())
+			for(EntityPlayerMP player : this.server.getPlayerList().getPlayers())
 			{
 				boolean inside = base.isInside(player);
 				
@@ -92,7 +92,7 @@ public class TickableBases implements ITickable
 				
 				if(playerOwner != null)
 				{
-					playerOwner.addChatMessage(this.getFormattedMessage(player, base, owner, access));
+					playerOwner.sendMessage(this.getFormattedMessage(player, base, owner, access));
 				}
 			}
 		}

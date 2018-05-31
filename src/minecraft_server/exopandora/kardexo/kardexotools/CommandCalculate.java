@@ -72,13 +72,13 @@ public class CommandCalculate extends CommandBase
 	}
 	
 	@Override
-	public String getCommandName()
+	public String getName()
 	{
 		return "calc";
 	}
 	
 	@Override
-	public String getCommandUsage(ICommandSender sender)
+	public String getUsage(ICommandSender sender)
 	{
 		return "/calc <expression>";
 	}
@@ -117,7 +117,7 @@ public class CommandCalculate extends CommandBase
 			try
 			{
 				String solution = SCRIPT_ENGINE.eval(script).toString();
-				sender.addChatMessage(new TextComponentString(input + " = " + solution));
+				sender.sendMessage(new TextComponentString(input + " = " + solution));
 				
 				HISTORY.put(sender.getName(), solution);
 			}
@@ -128,7 +128,7 @@ public class CommandCalculate extends CommandBase
 		}
 		else
 		{
-			throw new WrongUsageException(this.getCommandUsage(sender));
+			throw new WrongUsageException(this.getUsage(sender));
 		}
 	}
 	

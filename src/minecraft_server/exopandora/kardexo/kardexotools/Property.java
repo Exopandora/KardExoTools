@@ -107,9 +107,14 @@ public class Property
 		return MathHelper.floor(player.posX) >= this.xMin && MathHelper.floor(player.posX) <= this.xMax && MathHelper.floor(player.posZ) >= this.zMin && MathHelper.floor(player.posZ) <= this.zMax && player.dimension == this.dimension;
 	}
 	
-	public List<PropertyOwner> getOwners()
+	public List<PropertyOwner> getAllOwners()
 	{
 		return this.owners;
+	}
+	
+	public List<PropertyOwner> getOwners()
+	{
+		return this.owners.parallelStream().filter(owner -> !owner.isCreator()).collect(Collectors.toList());
 	}
 	
 	public boolean isOwner(String username)
@@ -132,10 +137,15 @@ public class Property
 		return String.join(delimiter, this.getCreators().parallelStream().map(PropertyOwner::getName).collect(Collectors.toList()));
 	}
 	
+	public double getSize()
+	{
+		return (this.getXMax() - this.getXMin()) * (this.getZMax() - this.getZMin());
+	}
+	
 	public ITextComponent getDisplayName()
 	{
         ITextComponent basetextcomponent = new TextComponentString(this.getTitle());
-        basetextcomponent.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(this.getTitle() + (this.title != null ? "\nName: " + this.name : "") + "\nCreators: " + this.getCreators(", ") + "\nOwners: " + this.getOwners(", ") + "\nDimension: " + Util.getDimension(this.dimension) + "\nX: [" + this.xMin + ", " + this.xMax + "]\nZ: [" + this.zMin + ", " + this.zMax + "]")));
+        basetextcomponent.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(this.getTitle() + (this.title != null ? "\nName: " + this.name : "") + "\nCreators: " + this.getCreators(", ") + "\n" + (!this.getOwners().isEmpty() ? ("Owners: " + this.getOwners(", ") + "\n") : "") + "Dimension: " + Util.getDimension(this.dimension) + "\nX: [" + this.xMin + ", " + this.xMax + "]\nZ: [" + this.zMin + ", " + this.zMax + "]\nSize: " + this.getSize())));
         basetextcomponent.getStyle().setInsertion(this.name);
         return basetextcomponent;
 	}

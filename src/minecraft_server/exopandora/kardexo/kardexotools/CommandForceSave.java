@@ -8,13 +8,13 @@ import net.minecraft.server.MinecraftServer;
 public class CommandForceSave extends CommandBase
 {
 	@Override
-	public String getCommandName()
+	public String getName()
 	{
 		return "forcesave";
 	}
 	
 	@Override
-	public String getCommandUsage(ICommandSender sender)
+	public String getUsage(ICommandSender sender)
 	{
 		return "/forcesave";
 	}

@@ -23,13 +23,13 @@ public class CommandBases extends CommandProperty
 	}
 	
 	@Override
-	public String getCommandName()
+	public String getName()
 	{
 		return "bases";
 	}
 	
 	@Override
-	public String getCommandUsage(ICommandSender sender)
+	public String getUsage(ICommandSender sender)
 	{
 		return "/bases <add|remove|messages|owner|list|reload> ...";
 	}
@@ -57,7 +57,7 @@ public class CommandBases extends CommandProperty
 					try
 					{
 						this.add(args, new PropertyOwner(args[7], true, true, null, null), 1, 2, 3, 4, 5, 6, 8);
-						sender.addChatMessage(new TextComponentString("Added base with id " + args[1]));
+						sender.sendMessage(new TextComponentString("Added base with id " + args[1]));
 					}
 					catch(InvalidDimensionException | NumberInvalidException e)
 					{
@@ -80,7 +80,7 @@ public class CommandBases extends CommandProperty
 					try
 					{
 						this.remove(args[1], sender, server);
-						sender.addChatMessage(new TextComponentString("Removed base with id " + args[1]));
+						sender.sendMessage(new TextComponentString("Removed base with id " + args[1]));
 					}
 					catch(PermissionException e)
 					{
@@ -130,7 +130,7 @@ public class CommandBases extends CommandProperty
 											owner.setEnterMessage(message);
 										});
 										
-										sender.addChatMessage(new TextComponentString("Message upon entrance has been set to \"" + message + "\""));
+										sender.sendMessage(new TextComponentString("Message upon entrance has been set to \"" + message + "\""));
 										
 										this.file.save();
 									}
@@ -141,7 +141,7 @@ public class CommandBases extends CommandProperty
 											owner.setExitMessage(message);
 										});
 										
-										sender.addChatMessage(new TextComponentString("Message upon exit has been set to \"" + message + "\""));
+										sender.sendMessage(new TextComponentString("Message upon exit has been set to \"" + message + "\""));
 										
 										this.file.save();
 									}
@@ -153,7 +153,7 @@ public class CommandBases extends CommandProperty
 											owner.setExitMessage(message);
 										});
 										
-										sender.addChatMessage(new TextComponentString("Both messages have been set to \"" + message + "\""));
+										sender.sendMessage(new TextComponentString("Both messages have been set to \"" + message + "\""));
 										
 										this.file.save();
 									}
@@ -186,7 +186,7 @@ public class CommandBases extends CommandProperty
 										owner.setEnterMessage(null);
 									});
 									
-									sender.addChatMessage(new TextComponentString("Message upon entrance has been reset"));
+									sender.sendMessage(new TextComponentString("Message upon entrance has been reset"));
 									
 									this.file.save();
 								}
@@ -197,7 +197,7 @@ public class CommandBases extends CommandProperty
 										owner.setExitMessage(null);
 									});
 									
-									sender.addChatMessage(new TextComponentString("Message upon exit has been reset"));
+									sender.sendMessage(new TextComponentString("Message upon exit has been reset"));
 									
 									this.file.save();
 								}
@@ -209,7 +209,7 @@ public class CommandBases extends CommandProperty
 										owner.setExitMessage(null);
 									});
 									
-									sender.addChatMessage(new TextComponentString("Both messages have been reset"));
+									sender.sendMessage(new TextComponentString("Both messages have been reset"));
 									
 									this.file.save();
 								}
@@ -228,7 +228,7 @@ public class CommandBases extends CommandProperty
 					{
 						if(this.verifyOwner(args[1], args[3], server) && (this.verifyOwner(args[1], sender.getName(), server) || this.checkPermission(args[1], sender.getName(), server)))
 						{
-							for(PropertyOwner owner : this.file.getData().get(args[1]).getOwners())
+							for(PropertyOwner owner : this.file.getData().get(args[1]).getAllOwners())
 							{
 								if(owner.getName().equals(args[3]))
 								{
@@ -238,11 +238,11 @@ public class CommandBases extends CommandProperty
 									
 									if(notify)
 									{
-										sender.addChatMessage(new TextComponentString(owner.getName() + " will now be notified"));
+										sender.sendMessage(new TextComponentString(owner.getName() + " will now be notified"));
 									}
 									else
 									{
-										sender.addChatMessage(new TextComponentString(owner.getName() + " will no longer be notified"));
+										sender.sendMessage(new TextComponentString(owner.getName() + " will no longer be notified"));
 									}
 									
 									this.file.save();
@@ -297,22 +297,22 @@ public class CommandBases extends CommandProperty
 							{
 								if(!this.verifyOwnerSilently(args[1], args[3], server))
 								{
-									this.file.getData().get(args[1]).getOwners().add(new PropertyOwner(args[3], flag, true, null, null));
+									this.file.getData().get(args[1]).getAllOwners().add(new PropertyOwner(args[3], flag, true, null, null));
 									
 									if(flag)
 									{
-										sender.addChatMessage(new TextComponentString("Added " + args[3] +  " as a creator to base with id " + args[1]));
+										sender.sendMessage(new TextComponentString("Added " + args[3] +  " as a creator to base with id " + args[1]));
 									}
 									else
 									{
-										sender.addChatMessage(new TextComponentString("Added " + args[3] +  " as an owner to base with id " + args[1]));
+										sender.sendMessage(new TextComponentString("Added " + args[3] +  " as an owner to base with id " + args[1]));
 									}
 									
 									this.file.save();
 								}
 								else
 								{
-									sender.addChatMessage(new TextComponentString(args[3] + " already is an owner of the base with id " + args[1]));
+									sender.sendMessage(new TextComponentString(args[3] + " already is an owner of the base with id " + args[1]));
 								}
 							}
 						}
@@ -332,21 +332,21 @@ public class CommandBases extends CommandProperty
 									PropertyOwner owner = new PropertyOwner(args[3]);
 									Property base = this.file.getData().get(args[1]);
 									
-									if(base.getOwners().contains(owner))
+									if(base.getAllOwners().contains(owner))
 									{
-										base.getOwners().remove(owner);
-										sender.addChatMessage(new TextComponentString("Removed " + owner.getName() +  " as an owner of the base with id " + base.getName()));
+										base.getAllOwners().remove(owner);
+										sender.sendMessage(new TextComponentString("Removed " + owner.getName() +  " as an owner of the base with id " + base.getName()));
 										
 										this.file.save();
 									}
 									else
 									{
-										sender.addChatMessage(new TextComponentString(owner.getName() + " already does not own base with id " + base.getName()));
+										sender.sendMessage(new TextComponentString(owner.getName() + " already does not own base with id " + base.getName()));
 									}
 								}
 								else
 								{
-									sender.addChatMessage(new TextComponentString(args[3] + " is the only creator of base with id " + args[1] + " and therefor cannot be removed"));
+									sender.sendMessage(new TextComponentString(args[3] + " is the only creator of base with id " + args[1] + " and therefor cannot be removed"));
 								}
 							}
 						}
@@ -382,35 +382,35 @@ public class CommandBases extends CommandProperty
 										
 										if(!flag && this.file.getData().get(args[1]).getCreators().size() == 1)
 										{
-											sender.addChatMessage(new TextComponentString(args[3] + " is the only creator of base with id " + args[1] + " and therefor cannot be removed"));
+											sender.sendMessage(new TextComponentString(args[3] + " is the only creator of base with id " + args[1] + " and therefor cannot be removed"));
 										}
 										else
 										{
-											for(PropertyOwner owner : this.file.getData().get(args[1]).getOwners())
+											for(PropertyOwner owner : this.file.getData().get(args[1]).getAllOwners())
 											{
 												if(owner.getName().equals(args[3]))
 												{
 													if(owner.isCreator() && flag)
 													{
-														sender.addChatMessage(new TextComponentString(owner.getName() + " is already a creator of base with id " + args[1]));
+														sender.sendMessage(new TextComponentString(owner.getName() + " is already a creator of base with id " + args[1]));
 													}
 													else if(!owner.isCreator() && flag)
 													{
 														owner.setCreator(true);
-														sender.addChatMessage(new TextComponentString(owner.getName() + " is now a creator of base with id " + args[1]));
+														sender.sendMessage(new TextComponentString(owner.getName() + " is now a creator of base with id " + args[1]));
 														
 														this.file.save();
 													}
 													else if(owner.isCreator() && !flag)
 													{
 														owner.setCreator(false);
-														sender.addChatMessage(new TextComponentString(owner.getName() + " is now an owner of base with id " + args[1]));
+														sender.sendMessage(new TextComponentString(owner.getName() + " is now an owner of base with id " + args[1]));
 														
 														this.file.save();
 													}
 													else if(!owner.isCreator() && !flag)
 													{
-														sender.addChatMessage(new TextComponentString(owner.getName() + " is already an owner of base with id " + args[1]));
+														sender.sendMessage(new TextComponentString(owner.getName() + " is already an owner of base with id " + args[1]));
 													}
 													
 													break;
@@ -425,7 +425,7 @@ public class CommandBases extends CommandProperty
 								}
 								else
 								{
-									sender.addChatMessage(new TextComponentString(args[3] + " must be an owner of base with id " + args[1]));
+									sender.sendMessage(new TextComponentString(args[3] + " must be an owner of base with id " + args[1]));
 								}
 							}
 						}
@@ -447,21 +447,21 @@ public class CommandBases extends CommandProperty
 			else if(args[0].equals("reload"))
 			{
 				this.reload(sender, server);
-				sender.addChatMessage(new TextComponentString("Bases have been reloaded"));
+				sender.sendMessage(new TextComponentString("Bases have been reloaded"));
 			}
 			else
 			{
-				throw new WrongUsageException(this.getCommandUsage(sender));
+				throw new WrongUsageException(this.getUsage(sender));
 			}
 		}
 		else
 		{
-			throw new WrongUsageException(this.getCommandUsage(sender));
+			throw new WrongUsageException(this.getUsage(sender));
 		}
 	}
 	
 	@Override
-    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
     {
 		if(args.length == 1)
 		{
@@ -485,7 +485,7 @@ public class CommandBases extends CommandProperty
 				}
 				else if(args.length == 8)
 				{
-					return this.getListOfStringsMatchingLastWord(args, server.getAllUsernames());
+					return this.getListOfStringsMatchingLastWord(args, server.getOnlinePlayerNames());
 				}
 			}
 			else if(args[0].equals("remove"))
@@ -507,7 +507,7 @@ public class CommandBases extends CommandProperty
 				}
 				else if(args.length == 4)
 				{
-					return this.getListOfStringsMatchingLastWord(args, server.getAllUsernames());
+					return this.getListOfStringsMatchingLastWord(args, server.getOnlinePlayerNames());
 				}
 				else if(args.length == 5)
 				{
@@ -533,7 +533,7 @@ public class CommandBases extends CommandProperty
 				}
 				else if(args.length == 4)
 				{
-					return this.getListOfStringsMatchingLastWord(args, server.getAllUsernames());
+					return this.getListOfStringsMatchingLastWord(args, server.getOnlinePlayerNames());
 				}
 				else if(args.length == 5)
 				{

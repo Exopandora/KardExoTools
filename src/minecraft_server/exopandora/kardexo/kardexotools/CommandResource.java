@@ -22,13 +22,13 @@ public class CommandResource extends CommandBase
 {
 
 	@Override
-	public String getCommandName()
+	public String getName()
 	{
 		return "resource";
 	}
 
 	@Override
-	public String getCommandUsage(ICommandSender sender)
+	public String getUsage(ICommandSender sender)
 	{
 		return "resource <x1> <y1> <z1> <x2> <y2> <z2>";
 	}
@@ -61,11 +61,11 @@ public class CommandResource extends CommandBase
 				
 				if(sender.getCommandSenderEntity() != null)
 				{
-					world = server.worldServerForDimension(sender.getCommandSenderEntity().dimension);
+					world = server.getWorld(sender.getCommandSenderEntity().dimension);
 				}
 				else
 				{
-					world = server.worldServerForDimension(0);
+					world = server.getWorld(0);
 				}
 				
 				for(int x = xMin; x <= xMax; x++)
@@ -93,7 +93,7 @@ public class CommandResource extends CommandBase
 				
 				for(Entry<String, Integer> entry : map.entrySet())
 				{
-					sender.addChatMessage(new TextComponentString("x" + entry.getValue() + " " + entry.getKey()));
+					sender.sendMessage(new TextComponentString("x" + entry.getValue() + " " + entry.getKey()));
 				}
 			}
 			catch(Exception e)
@@ -103,12 +103,12 @@ public class CommandResource extends CommandBase
 		}
 		else
 		{
-            throw new WrongUsageException(this.getCommandUsage(sender));
+            throw new WrongUsageException(this.getUsage(sender));
 		}
 	}
 	
 	@Override
-    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
     {
 		if(args.length == 1 || args.length == 4)
 		{

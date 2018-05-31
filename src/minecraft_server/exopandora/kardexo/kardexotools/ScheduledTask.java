@@ -39,7 +39,7 @@ public class ScheduledTask extends Thread
 			{
 				long millis = System.currentTimeMillis();
 				
-				if(this.requiresPlayers && KardExo.getServer().getPlayerList().getPlayerList().isEmpty())
+				if(this.requiresPlayers && KardExo.getServer().getPlayerList().getPlayers().isEmpty())
 				{
 					KardExo.getServer().logInfo("Skipping task " + this.name + " as there are no players on the server");
 				}
