@@ -108,8 +108,8 @@ public class CommandPlaces extends CommandProperty
 	}
 	
 	@Override
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
-    {
+	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
+	{
 		if(args.length == 1)
 		{
 			return this.getListOfStringsMatchingLastWord(args, new String[]{"add", "remove", "list"});
@@ -145,5 +145,5 @@ public class CommandPlaces extends CommandProperty
 		}
 		
 		return Collections.<String>emptyList();
-    }
+	}
 }

@@ -62,13 +62,13 @@ public class CommandHome extends CommandBase
 			spawn = spawn.up();
 		}
 		
-        return spawn;
+		return spawn;
 	}
 	
 	private static boolean hasRoomForPlayer(World world, BlockPos pos)
-    {
-        return world.getBlockState(pos.down()).isOpaqueCube() && !world.getBlockState(pos).getMaterial().isSolid() && !world.getBlockState(pos.up()).getMaterial().isSolid();
-    }
+	{
+		return world.getBlockState(pos.down()).isOpaqueCube() && !world.getBlockState(pos).getMaterial().isSolid() && !world.getBlockState(pos.up()).getMaterial().isSolid();
+	}
 	
 	public static void doTeleport(Entity entity, BlockPos pos, int dimension)
 	{ 

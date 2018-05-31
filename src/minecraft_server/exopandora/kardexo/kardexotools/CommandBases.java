@@ -461,8 +461,8 @@ public class CommandBases extends CommandProperty
 	}
 	
 	@Override
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
-    {
+	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
+	{
 		if(args.length == 1)
 		{
 			return this.getListOfStringsMatchingLastWord(args, new String[]{"add", "remove", "messages", "owner", "list", "reload"});
@@ -546,13 +546,13 @@ public class CommandBases extends CommandProperty
 		}
 		
 		return Collections.<String>emptyList();
-    }
+	}
 	
 	@Override
 	public boolean checkPermission(MinecraftServer server, ICommandSender sender)
-    {
+	{
 		return true;
-    }
+	}
 	
 	private  boolean verifyBase(String base) throws CommandException
 	{

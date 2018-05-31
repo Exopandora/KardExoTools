@@ -144,9 +144,9 @@ public class Property
 	
 	public ITextComponent getDisplayName()
 	{
-        ITextComponent basetextcomponent = new TextComponentString(this.getTitle());
-        basetextcomponent.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(this.getTitle() + (this.title != null ? "\nName: " + this.name : "") + "\nCreators: " + this.getCreators(", ") + "\n" + (!this.getOwners().isEmpty() ? ("Owners: " + this.getOwners(", ") + "\n") : "") + "Dimension: " + Util.getDimension(this.dimension) + "\nX: [" + this.xMin + ", " + this.xMax + "]\nZ: [" + this.zMin + ", " + this.zMax + "]\nSize: " + this.getSize())));
-        basetextcomponent.getStyle().setInsertion(this.name);
-        return basetextcomponent;
+		ITextComponent basetextcomponent = new TextComponentString(this.getTitle());
+		basetextcomponent.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(this.getTitle() + (this.title != null ? "\nName: " + this.name : "") + "\nCreators: " + this.getCreators(", ") + "\n" + (!this.getOwners().isEmpty() ? ("Owners: " + this.getOwners(", ") + "\n") : "") + "Dimension: " + Util.getDimension(this.dimension) + "\nX: [" + this.xMin + ", " + this.xMax + "]\nZ: [" + this.zMin + ", " + this.zMax + "]\nSize: " + this.getSize())));
+		basetextcomponent.getStyle().setInsertion(this.name);
+		return basetextcomponent;
 	}
 }

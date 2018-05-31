@@ -23,17 +23,17 @@ public class KardExo
 		SERVER = server;
 		
 		for(int i = 0; i < server.worlds.length; i++)
-	    {
-	        if(server.worlds[i] != null)
-	        {
-	            WorldServer worldserver = server.worlds[i];
-	            
-	            if(!worldserver.disableLevelSaving)
-	            {
-	                worldserver.disableLevelSaving = true;
-	            }
-	        }
-	    }
+		{
+			if(server.worlds[i] != null)
+			{
+				WorldServer worldserver = server.worlds[i];
+				
+				if(!worldserver.disableLevelSaving)
+				{
+					worldserver.disableLevelSaving = true;
+				}
+			}
+		}
 		
 		KardExo.LOGGER.info("Loading files");
 		
@@ -86,7 +86,7 @@ public class KardExo
 					WorldServer worldserver = KardExo.getServer().worlds[dimension];
 					boolean flag = worldserver.disableLevelSaving;
 					worldserver.disableLevelSaving = false;
-                    worldserver.saveAllChunks(true, (IProgressUpdate)null);
+					worldserver.saveAllChunks(true, (IProgressUpdate)null);
 					worldserver.flushToDisk();
 					worldserver.flush();
 					worldserver.disableLevelSaving = flag;
@@ -115,32 +115,4 @@ public class KardExo
 	{
 		return KardExo.SERVER;
 	}
-	
-	/**
-    	int[] delta = {-1, 0, 1};
-    	
-    	System.out.println("----");
-    	
-    	for(int dx : delta)
-    	{
-        	for(int dy : delta)
-        	{
-            	for(int dz : delta)
-            	{
-            		if(dx != 0 || dy != 0 || dz != 0)
-            		{
-            			BlockPos next = pos.add(dx, dy, dz);
-//            			System.out.println(next + " " + this.theWorld.getBlockState(next));
-            			
-            			if(this.theWorld.getBlockState(next).getBlock().equals(this.theWorld.getBlockState(pos).getBlock()))
-            			{
-            				System.out.println(dx + " " + dy + " " + dz);
-
-            				this.tryHarvestBlock(next);
-            			}
-            		}
-            	}
-        	}
-    	}
-	 */
 }

@@ -281,7 +281,7 @@ public class Veinminer
 		int count = 0;
 		
 		for(List<ItemStack> list : inventories)
-        {
+		{
 			for(ItemStack stack : list)
 			{
 				if(stack.getItem().equals(item) && stack.getMetadata() == metadata)
@@ -289,7 +289,7 @@ public class Veinminer
 					count += stack.getCount();
 				}
 			}
-        }
+		}
 		
 		return count >= amount;
 	}

@@ -30,9 +30,9 @@ public class CommandWorldTime extends CommandBase
 	
 	@Override
 	public boolean checkPermission(MinecraftServer server, ICommandSender sender)
-    {
+	{
 		return true;
-    }
+	}
 	
 	public int getHour(long tick)
 	{

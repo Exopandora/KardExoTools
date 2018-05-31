@@ -31,7 +31,7 @@ public class CommandSetHome extends CommandBase
 	
 	@Override
 	public boolean checkPermission(MinecraftServer server, ICommandSender sender)
-    {
+	{
 		return true;
-    }
+	}
 }

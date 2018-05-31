@@ -112,7 +112,7 @@ public abstract class CommandProperty extends CommandBase
 			throw new CommandException("commands.generic.permission", new Object[0]);
 		}
 	}
-    
+	
 	protected void forOwnerOfBase(String base, String name, Consumer<PropertyOwner> consumer)
 	{
 		for(PropertyOwner owner : this.file.getData().get(base).getAllOwners())
