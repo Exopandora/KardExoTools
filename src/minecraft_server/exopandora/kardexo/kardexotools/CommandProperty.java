@@ -134,6 +134,7 @@ public abstract class CommandProperty extends CommandBase
 	{
 		if(this.checkOp(sender.getName(), server))
 		{
+			TickableBases.BASE_VISITORS.clear();
 			this.file.read();
 		}
 		else

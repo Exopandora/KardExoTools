@@ -136,6 +136,16 @@ public class Property
 		return Collections.emptyList();
 	}
 	
+	public List<String> getChildrenTitles()
+	{
+		if(this.children != null)
+		{
+			return this.children.parallelStream().map(Property::getTitle).collect(Collectors.toList());
+		}
+		
+		return Collections.emptyList();
+	}
+	
 	public List<Property> getChildren()
 	{
 		return this.children;
@@ -218,7 +228,7 @@ public class Property
 	
 	public String getChildren(String delimiter)
 	{
-		return String.join(delimiter, this.getChildrenNames());
+		return String.join(delimiter, this.getChildrenTitles());
 	}
 	
 	public double getSize()

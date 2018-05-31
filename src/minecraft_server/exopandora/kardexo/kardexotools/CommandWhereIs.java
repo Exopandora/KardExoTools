@@ -102,7 +102,7 @@ public class CommandWhereIs extends CommandBase
 						}
 						
 						String result = "%s: d: " + dimension + " x: " + pos.getX() + " y: " + pos.getY() + " z: " + pos.getZ() + (textComponent != null ? " (%s)" : "");
-						server.logInfo("Query: " + String.format(result, player.getName(), String.join(", ", bases.parallelStream().map(base -> base.getName()).collect(Collectors.toList()))));
+						server.logInfo("Query: " + String.format(result, player.getName(), String.join(", ", bases.parallelStream().map(Property::getName).collect(Collectors.toList()))));
 						sender.sendMessage(new TextComponentTranslation(result, player.getDisplayName(), textComponent));
 						return;
 					}
