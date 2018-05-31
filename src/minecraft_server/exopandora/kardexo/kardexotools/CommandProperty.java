@@ -1,6 +1,8 @@
 package exopandora.kardexo.kardexotools;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
@@ -31,25 +33,36 @@ public abstract class CommandProperty extends CommandBase
 			throw new NoSuchElementException();
 		}
 		
-		for(Property property : this.file.getData().values())
+		this.list(sender, this.file.getData().values(), "");
+	}
+	
+	private void list(ICommandSender sender, Collection<Property> list, String indentation) throws CommandException, NoSuchElementException
+	{
+		for(Property property : list)
 		{
-			sender.sendMessage(new TextComponentTranslation("Name: %s", new Object[]{property.getDisplayName()}));
+			sender.sendMessage(new TextComponentTranslation(indentation + (indentation.isEmpty() ? "Name" : "Child") + ": %s", new Object[]{property.getDisplayName()}));
 			
 			String creators = property.getCreators(", ");
 			
 			if(!creators.isEmpty())
 			{
-				sender.sendMessage(new TextComponentString(" Creators: " + creators));
+				sender.sendMessage(new TextComponentString(indentation + " Creators: " + creators));
 			}
 			
 			String owners = property.getOwners(", ");
 			
 			if(!owners.isEmpty())
 			{
-				sender.sendMessage(new TextComponentString(" Owners: " + owners));
+				sender.sendMessage(new TextComponentString(indentation + " Owners: " + owners));
 			}
 			
-			sender.sendMessage(new TextComponentString(" Position: " + property.getXMin() + " " + property.getZMin() + " " + property.getXMax() + " " + property.getZMax()));
+			sender.sendMessage(new TextComponentString(indentation + " X: [" + property.getXMin() + ", " + property.getXMax() + "]"));
+			sender.sendMessage(new TextComponentString(indentation + " Z: [" + property.getZMin() + ", " + property.getZMax() + "]"));
+			
+			if(property.getChildren() != null)
+			{
+				this.list(sender, property.getChildren(), " " + indentation);
+			}
 		}
 	}
 	
@@ -57,28 +70,44 @@ public abstract class CommandProperty extends CommandBase
 	{
 		if(!this.file.getData().containsKey(args[nameIndex]))
 		{
-			List<PropertyOwner> owners = Lists.newArrayList(owner);
-			
-			int dimension = Util.getDimension(args[dimIndex]);
-			double x1 = super.parseDouble(args[x1Index]);
-			double z1 = super.parseDouble(args[z1Index]);
-			double x2 = super.parseDouble(args[x2Index]);
-			double z2 = super.parseDouble(args[z2Index]);
-			
-			String title = null;
-			
-			if(args.length > titleIndex)
-			{
-				title = String.join(" ", Arrays.copyOfRange(args, titleIndex, args.length));
-			}
-			
-			this.file.getData().put(args[nameIndex], new Property(args[nameIndex], title, owners, dimension, Math.min(x1, x2), Math.min(z1, z2), Math.max(x1, x2), Math.max(z1, z2)));
+			this.file.getData().put(args[nameIndex], this.createProperty(args, Lists.newArrayList(owner), nameIndex, dimIndex, x1Index, z1Index, x2Index, z2Index, titleIndex));
 			this.file.save();
 		}
 		else
 		{
 			throw new IllegalStateException();
 		}
+	}
+	
+	public void addChild(Property parent, String[] args, int nameIndex, int dimIndex, int x1Index, int z1Index, int x2Index, int z2Index, int titleIndex) throws InvalidDimensionException, NumberInvalidException, IllegalStateException
+	{
+		if(parent.getChild(args[nameIndex]) == null)
+		{
+			parent.addChild(this.createProperty(args, Collections.emptyList(), nameIndex, dimIndex, x1Index, z1Index, x2Index, z2Index, titleIndex));
+			this.file.save();
+		}
+		else
+		{
+			throw new IllegalStateException();
+		}
+	}
+	
+	private Property createProperty(String[] args, List<PropertyOwner> owners, int nameIndex, int dimIndex, int x1Index, int z1Index, int x2Index, int z2Index, int titleIndex) throws InvalidDimensionException, NumberInvalidException, IllegalStateException
+	{
+		int dimension = Util.getDimension(args[dimIndex]);
+		double x1 = super.parseDouble(args[x1Index]);
+		double z1 = super.parseDouble(args[z1Index]);
+		double x2 = super.parseDouble(args[x2Index]);
+		double z2 = super.parseDouble(args[z2Index]);
+		
+		String title = null;
+		
+		if(args.length > titleIndex)
+		{
+			title = String.join(" ", Arrays.copyOfRange(args, titleIndex, args.length));
+		}
+		
+		return new Property(args[nameIndex], title, owners, dimension, Math.min(x1, x2), Math.min(z1, z2), Math.max(x1, x2), Math.max(z1, z2));
 	}
 	
 	public void remove(String property, ICommandSender sender, MinecraftServer server) throws PermissionException, NoSuchElementException

@@ -1,7 +1,12 @@
 package exopandora.kardexo.kardexotools;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.MathHelper;
@@ -12,6 +17,7 @@ import net.minecraft.util.text.event.HoverEvent;
 public class Property
 {
 	private final List<PropertyOwner> owners;
+	private List<Property> children;
 	private String name;
 	private String title;
 	private int dimension;
@@ -102,9 +108,82 @@ public class Property
 		this.title = title;
 	}
 	
+	public void addChild(Property child)
+	{
+		if(this.children == null)
+		{
+			this.children = Lists.newArrayList();
+		}
+		
+		this.children.add(child);
+	}
+	
+	public void removeChild(Property child)
+	{
+		if(this.children != null)
+		{
+			this.children.remove(child);
+		}
+	}
+	
+	public List<String> getChildrenNames()
+	{
+		if(this.children != null)
+		{
+			return this.children.parallelStream().map(Property::getName).collect(Collectors.toList());
+		}
+		
+		return Collections.emptyList();
+	}
+	
+	public List<Property> getChildren()
+	{
+		return this.children;
+	}
+	
+	public Property getChild(String name)
+	{
+		if(this.children != null)
+		{
+			for(Property child : this.children)
+			{
+				if(child.getName().equals(name))
+				{
+					return child;
+				}
+			}
+		}
+		
+		return null;
+	}
+	
 	public boolean isInside(EntityPlayer player)
 	{
+		return this.isInsideMain(player) || this.isInsideChild(player);
+	}
+	
+	public boolean isInsideMain(EntityPlayer player)
+	{
 		return MathHelper.floor(player.posX) >= this.xMin && MathHelper.floor(player.posX) <= this.xMax && MathHelper.floor(player.posZ) >= this.zMin && MathHelper.floor(player.posZ) <= this.zMax && player.dimension == this.dimension;
+	}
+	
+	public boolean isInsideChild(EntityPlayer player)
+	{
+		if(this.children != null)
+		{
+			for(Property child : this.children)
+			{
+				if(child != null)
+				{
+					if(child.isInside(player))
+					{
+						return true;
+					}
+				}
+			}
+		}
+		
+		return false;
 	}
 	
 	public List<PropertyOwner> getAllOwners()
@@ -137,15 +216,43 @@ public class Property
 		return String.join(delimiter, this.getCreators().parallelStream().map(PropertyOwner::getName).collect(Collectors.toList()));
 	}
 	
+	public String getChildren(String delimiter)
+	{
+		return String.join(delimiter, this.getChildrenNames());
+	}
+	
 	public double getSize()
 	{
-		return (this.getXMax() - this.getXMin()) * (this.getZMax() - this.getZMin());
+		return this.getMainSize() + this.getChildrenSize();
+	}
+	
+	public double getMainSize()
+	{
+		return (this.getXMax() - this.getXMin() + 1) * (this.getZMax() - this.getZMin() + 1);
+	}
+	
+	public double getChildrenSize()
+	{
+		double size = 0;
+		
+		if(this.children != null)
+		{
+			for(Property child : this.children)
+			{
+				if(child != null)
+				{
+					size += child.getSize();
+				}
+			}
+		}
+		
+		return size;
 	}
 	
 	public ITextComponent getDisplayName()
 	{
 		ITextComponent basetextcomponent = new TextComponentString(this.getTitle());
-		basetextcomponent.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(this.getTitle() + (this.title != null ? "\nName: " + this.name : "") + "\nCreators: " + this.getCreators(", ") + "\n" + (!this.getOwners().isEmpty() ? ("Owners: " + this.getOwners(", ") + "\n") : "") + "Dimension: " + Util.getDimension(this.dimension) + "\nX: [" + this.xMin + ", " + this.xMax + "]\nZ: [" + this.zMin + ", " + this.zMax + "]\nSize: " + this.getSize())));
+		basetextcomponent.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(this.getTitle() + (this.title != null ? "\nName: " + this.name : "") + "\nCreators: " + this.getCreators(", ") + "\n" + (!this.getOwners().isEmpty() ? ("Owners: " + this.getOwners(", ") + "\n") : "") + "Dimension: " + Util.getDimension(this.dimension) + "\n" + (this.children != null ? ("Children: " + this.getChildren(",") + "\n") : "") +  "X: [" + this.xMin + ", " + this.xMax + "]\nZ: [" + this.zMin + ", " + this.zMax + "]\nSize: " + this.getSize())));
 		basetextcomponent.getStyle().setInsertion(this.name);
 		return basetextcomponent;
 	}
