@@ -7,6 +7,9 @@
 /src/minecraft_server/mcp
 /src/minecraft_server/net
 !/patches/
+!README.md
+!patch.bat
+!patch.sh
 !.gitignore
 
 # Subdirs
