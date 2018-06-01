@@ -55,6 +55,7 @@ public class Veinminer
 		BLOCKS.put(Blocks.GRAVEL.getDefaultState(), 10);
 		BLOCKS.put(Blocks.SAND.getDefaultState().withProperty(BlockSand.VARIANT, BlockSand.EnumType.SAND), 5);
 		BLOCKS.put(Blocks.SAND.getDefaultState().withProperty(BlockSand.VARIANT, BlockSand.EnumType.RED_SAND), 5);
+		BLOCKS.put(Blocks.CLAY.getDefaultState(), 5);
 		
 		BLOCKS.put(Blocks.COAL_ORE.getDefaultState(), 17);
 		BLOCKS.put(Blocks.IRON_ORE.getDefaultState(), 9);
@@ -80,7 +81,7 @@ public class Veinminer
 				{
 					if(player.getHeldItemMainhand().getDestroySpeed(state) > 1.0F)
 					{
-						PriorityQueue<BlockPos> queue = calcVein(Config.BLOCK_LIMIT, BLOCKS.get(block), world.getBlockState(pos), pos, pos, world);
+						PriorityQueue<BlockPos> queue = calculateVein(Config.BLOCK_LIMIT, BLOCKS.get(block), world.getBlockState(pos), pos, pos, world);
 						List<Entry<BlockPos, IBlockState>> undo = new ArrayList<Entry<BlockPos, IBlockState>>();
 						queue.poll();
 						
@@ -142,7 +143,7 @@ public class Veinminer
 		return harvestBlock.apply(pos, false);
 	}
 	
-	private static PriorityQueue<BlockPos> calcVein(int limit, int radius, IBlockState state, BlockPos origin, BlockPos pos, World world)
+	private static PriorityQueue<BlockPos> calculateVein(int limit, int radius, IBlockState state, BlockPos origin, BlockPos pos, World world)
 	{
 		PriorityQueue<BlockPos> queue = new PriorityQueue<BlockPos>(getComparator(pos));
 		Collection<BlockPos> pending = Collections.singleton(pos);
@@ -173,21 +174,29 @@ public class Veinminer
 					{
 						for(int z : delta)
 						{
-							if(x != 0 || y != 0 || z != 0)
+							if(x == 0 && y == 0 && z == 0)
 							{
-								BlockPos nextBlock = block.add(x, y, z);
-								
-								if(Math.sqrt(nextBlock.distanceSq(origin.getX(), origin.getY(), origin.getZ())) < radius)
-								{
-									if(isEqualVariant(state, world.getBlockState(nextBlock)))
-									{
-										if(!queue.contains(nextBlock) && !pending.contains(nextBlock) && !next.contains(nextBlock))
-										{
-											next.add(nextBlock);
-										}
-									}
-								}
+								continue;
 							}
+							
+							BlockPos nextBlock = block.add(x, y, z);
+							
+							if(Math.sqrt(nextBlock.distanceSq(origin.getX(), origin.getY(), origin.getZ())) >= radius)
+							{
+								continue;
+							}
+							
+							if(!isEqualVariant(state, world.getBlockState(nextBlock)))
+							{
+								continue;
+							}
+							
+							if(queue.contains(nextBlock) || pending.contains(nextBlock) || next.contains(nextBlock))
+							{
+								continue;
+							}
+							
+							next.add(nextBlock);
 						}
 					}
 				}
