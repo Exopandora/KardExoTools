@@ -7,7 +7,7 @@
 /src/minecraft_server/mcp
 /src/minecraft_server/net
 !/patches/
-!/runtime/patch
+!/runtime/patch.py
 !patch.bat
 !patch.sh
 !README.md
