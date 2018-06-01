@@ -7,9 +7,10 @@
 /src/minecraft_server/mcp
 /src/minecraft_server/net
 !/patches/
-!README.md
+!/runtime/patch
 !patch.bat
 !patch.sh
+!README.md
 !.gitignore
 
 # Subdirs
