@@ -28,23 +28,30 @@
 
 # Concepts #
 
-## Property
+## Property ##
 
 A property is an abstract object for a specified area. It can either be a base or place with at least one creator and a set of owners.
 
-### Place
+### Place ###
 
 Places are used by whereis to provide a more specific context of the given position. 
 
-### Base
+### Base ###
 
 Bases can be used by players to receive a notification when a player enters or leaves their base. It is also used by whereis to provide a more specific context of the given position. The notifications can be customized or turned off by each player individually for a specific base. Creators and owners will not trigger a notification.
 
-## Veinminer
+## Veinminer ##
 
 Once activated you can mine veins of blocks (configurable) by sneaking. It only works with an appropiate tool that has more than one durability and the blocks are in radius of the configured size. There is also a maximum (configurable) amount of blocks you can mine at once. You can undo the last (configurable amount) veinmine as long as you have the applicable blocks in your inventory and there is no living entity or block (except fluids) in the area you mined out. Durability will not be refunded.
 
 # Setup #
+
+## Prerequisites ##
+
+1. Java SE 8
+2. Java Development Kit 8
+
+## Setup MCP ##
 
 1. Download MCP
 2. Update MCP mappings
@@ -55,7 +62,7 @@ Once activated you can mine veins of blocks (configurable) by sneaking. It only 
 7. Clone this repo into the MCP folder
 8. Run 'patch'
 
-# Configure #
+# Configure (Optional) #
 
 General: exopandora/kardexo/kardexotools/Config.java  
 Veinminer: exopandora/kardexo/kardexotools/Veinminer.java
