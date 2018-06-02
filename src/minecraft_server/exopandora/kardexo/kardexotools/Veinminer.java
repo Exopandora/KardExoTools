@@ -14,6 +14,7 @@ import java.util.PriorityQueue;
 import java.util.Stack;
 import java.util.function.BiFunction;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockNewLog;
 import net.minecraft.block.BlockOldLog;
 import net.minecraft.block.BlockPlanks;
@@ -39,34 +40,34 @@ public class Veinminer
 	
 	static
 	{
-		BLOCKS.put(Blocks.LOG.getDefaultState().withProperty(BlockOldLog.VARIANT, BlockPlanks.EnumType.OAK), 12);
-		BLOCKS.put(Blocks.LOG.getDefaultState().withProperty(BlockOldLog.VARIANT, BlockPlanks.EnumType.SPRUCE), 25);
-		BLOCKS.put(Blocks.LOG.getDefaultState().withProperty(BlockOldLog.VARIANT, BlockPlanks.EnumType.JUNGLE), 25);
-		BLOCKS.put(Blocks.LOG.getDefaultState().withProperty(BlockOldLog.VARIANT, BlockPlanks.EnumType.BIRCH), 15);
+		Veinminer.BLOCKS.put(Blocks.LOG.getDefaultState().withProperty(BlockOldLog.VARIANT, BlockPlanks.EnumType.OAK), 12);
+		Veinminer.BLOCKS.put(Blocks.LOG.getDefaultState().withProperty(BlockOldLog.VARIANT, BlockPlanks.EnumType.SPRUCE), 25);
+		Veinminer.BLOCKS.put(Blocks.LOG.getDefaultState().withProperty(BlockOldLog.VARIANT, BlockPlanks.EnumType.JUNGLE), 25);
+		Veinminer.BLOCKS.put(Blocks.LOG.getDefaultState().withProperty(BlockOldLog.VARIANT, BlockPlanks.EnumType.BIRCH), 15);
 		
-		BLOCKS.put(Blocks.LOG2.getDefaultState().withProperty(BlockNewLog.VARIANT, BlockPlanks.EnumType.DARK_OAK), 10);
-		BLOCKS.put(Blocks.LOG2.getDefaultState().withProperty(BlockNewLog.VARIANT, BlockPlanks.EnumType.ACACIA), 10);
+		Veinminer.BLOCKS.put(Blocks.LOG2.getDefaultState().withProperty(BlockNewLog.VARIANT, BlockPlanks.EnumType.DARK_OAK), 10);
+		Veinminer.BLOCKS.put(Blocks.LOG2.getDefaultState().withProperty(BlockNewLog.VARIANT, BlockPlanks.EnumType.ACACIA), 10);
 		
-		BLOCKS.put(Blocks.STONE.getDefaultState().withProperty(BlockStone.VARIANT, BlockStone.EnumType.ANDESITE), 15);
-		BLOCKS.put(Blocks.STONE.getDefaultState().withProperty(BlockStone.VARIANT, BlockStone.EnumType.DIORITE), 15);
-		BLOCKS.put(Blocks.STONE.getDefaultState().withProperty(BlockStone.VARIANT, BlockStone.EnumType.GRANITE), 15);
+		Veinminer.BLOCKS.put(Blocks.STONE.getDefaultState().withProperty(BlockStone.VARIANT, BlockStone.EnumType.ANDESITE), 15);
+		Veinminer.BLOCKS.put(Blocks.STONE.getDefaultState().withProperty(BlockStone.VARIANT, BlockStone.EnumType.DIORITE), 15);
+		Veinminer.BLOCKS.put(Blocks.STONE.getDefaultState().withProperty(BlockStone.VARIANT, BlockStone.EnumType.GRANITE), 15);
 		
-		BLOCKS.put(Blocks.GLOWSTONE.getDefaultState(), 10);
-		BLOCKS.put(Blocks.GRAVEL.getDefaultState(), 10);
-		BLOCKS.put(Blocks.SAND.getDefaultState().withProperty(BlockSand.VARIANT, BlockSand.EnumType.SAND), 5);
-		BLOCKS.put(Blocks.SAND.getDefaultState().withProperty(BlockSand.VARIANT, BlockSand.EnumType.RED_SAND), 5);
-		BLOCKS.put(Blocks.CLAY.getDefaultState(), 5);
+		Veinminer.BLOCKS.put(Blocks.GLOWSTONE.getDefaultState(), 10);
+		Veinminer.BLOCKS.put(Blocks.GRAVEL.getDefaultState(), 10);
+		Veinminer.BLOCKS.put(Blocks.SAND.getDefaultState().withProperty(BlockSand.VARIANT, BlockSand.EnumType.SAND), 5);
+		Veinminer.BLOCKS.put(Blocks.SAND.getDefaultState().withProperty(BlockSand.VARIANT, BlockSand.EnumType.RED_SAND), 5);
+		Veinminer.BLOCKS.put(Blocks.CLAY.getDefaultState(), 5);
 		
-		BLOCKS.put(Blocks.COAL_ORE.getDefaultState(), 17);
-		BLOCKS.put(Blocks.IRON_ORE.getDefaultState(), 9);
-		BLOCKS.put(Blocks.GOLD_ORE.getDefaultState(), 9);
-		BLOCKS.put(Blocks.DIAMOND_ORE.getDefaultState(), 9);
-		BLOCKS.put(Blocks.LAPIS_ORE.getDefaultState(), 7);
-		BLOCKS.put(Blocks.REDSTONE_ORE.getDefaultState(), 8);
-		BLOCKS.put(Blocks.QUARTZ_ORE.getDefaultState(), 14);
+		Veinminer.BLOCKS.put(Blocks.COAL_ORE.getDefaultState(), 17);
+		Veinminer.BLOCKS.put(Blocks.IRON_ORE.getDefaultState(), 9);
+		Veinminer.BLOCKS.put(Blocks.GOLD_ORE.getDefaultState(), 9);
+		Veinminer.BLOCKS.put(Blocks.DIAMOND_ORE.getDefaultState(), 9);
+		Veinminer.BLOCKS.put(Blocks.LAPIS_ORE.getDefaultState(), 7);
+		Veinminer.BLOCKS.put(Blocks.REDSTONE_ORE.getDefaultState(), 8);
+		Veinminer.BLOCKS.put(Blocks.QUARTZ_ORE.getDefaultState(), 14);
 		
-		BLOCKS.put(Blocks.PACKED_ICE.getDefaultState(), 10);
-		BLOCKS.put(Blocks.BONE_BLOCK.getDefaultState(), 10);
+		Veinminer.BLOCKS.put(Blocks.PACKED_ICE.getDefaultState(), 10);
+		Veinminer.BLOCKS.put(Blocks.BONE_BLOCK.getDefaultState(), 10);
 	}
 	
 	public static boolean mine(BlockPos pos, EntityPlayerMP player, World world, BiFunction<BlockPos, Boolean, Boolean> harvestBlock)
@@ -75,66 +76,63 @@ public class Veinminer
 		{
 			IBlockState state = world.getBlockState(pos);
 			
-			for(IBlockState block : BLOCKS.keySet())
+			for(IBlockState block : Veinminer.BLOCKS.keySet())
 			{
-				if(isEqualVariant(state, block))
+				if(isEqualVariant(state, block) && player.getHeldItemMainhand().getDestroySpeed(state) > 1.0F)
 				{
-					if(player.getHeldItemMainhand().getDestroySpeed(state) > 1.0F)
+					PriorityQueue<BlockPos> queue = calculateVein(Config.BLOCK_LIMIT, BLOCKS.get(block), world.getBlockState(pos), pos, pos, world);
+					List<Entry<BlockPos, IBlockState>> undo = new ArrayList<Entry<BlockPos, IBlockState>>();
+					queue.poll();
+					
+					if(queue.size() > 1)
 					{
-						PriorityQueue<BlockPos> queue = calculateVein(Config.BLOCK_LIMIT, BLOCKS.get(block), world.getBlockState(pos), pos, pos, world);
-						List<Entry<BlockPos, IBlockState>> undo = new ArrayList<Entry<BlockPos, IBlockState>>();
-						queue.poll();
+						Entry<BlockPos, IBlockState> next = new SimpleEntry<BlockPos, IBlockState>(pos, world.getBlockState(pos));
+						boolean harvest = harvestBlock.apply(pos, true);
 						
-						if(queue.size() > 1)
+						if(harvest)
 						{
-							Entry<BlockPos, IBlockState> next = new SimpleEntry<BlockPos, IBlockState>(pos, world.getBlockState(pos));
-							boolean harvest = harvestBlock.apply(pos, true);
+							undo.add(next);
 							
-							if(harvest)
+							for(int x = 0; x < Config.BLOCK_LIMIT; x++)
 							{
+								if(player.getHeldItemMainhand().getMaxDamage() - player.getHeldItemMainhand().getItemDamage() == 0 || queue.isEmpty())
+								{
+									break;
+								}
+								
+								next = new SimpleEntry<BlockPos, IBlockState>(queue.peek(), world.getBlockState(queue.peek()));
+								
+								if(!harvestBlock.apply(queue.poll(), true))
+								{
+									break;
+								}
+								
 								undo.add(next);
-								
-								for(int x = 0; x < Config.BLOCK_LIMIT; x++)
-								{
-									if(player.getHeldItemMainhand().getMaxDamage() - player.getHeldItemMainhand().getItemDamage() == 0 || queue.isEmpty())
-									{
-										break;
-									}
-									
-									next = new SimpleEntry<BlockPos, IBlockState>(queue.peek(), world.getBlockState(queue.peek()));
-									
-									if(!harvestBlock.apply(queue.poll(), true))
-									{
-										break;
-									}
-									
-									undo.add(next);
-								}
-								
-								if(undo.size() > 1)
-								{
-									Stack<List<Entry<BlockPos, IBlockState>>> history = HISTORY.get(player.getName());
-									
-									if(history != null)
-									{
-										if(history.size() == Config.HISTORY_SIZE)
-										{
-											history.remove(0);
-										}
-										
-										history.push(undo);
-									}
-									else
-									{
-										history = new Stack<List<Entry<BlockPos, IBlockState>>>();
-										history.add(undo);
-										HISTORY.put(player.getName(), history);
-									}
-								}
 							}
 							
-							return harvest;
+							if(undo.size() > 1)
+							{
+								Stack<List<Entry<BlockPos, IBlockState>>> history = Veinminer.HISTORY.get(player.getName());
+								
+								if(history != null)
+								{
+									if(history.size() == Config.HISTORY_SIZE)
+									{
+										history.remove(0);
+									}
+									
+									history.push(undo);
+								}
+								else
+								{
+									history = new Stack<List<Entry<BlockPos, IBlockState>>>();
+									history.add(undo);
+									Veinminer.HISTORY.put(player.getName(), history);
+								}
+							}
 						}
+						
+						return harvest;
 					}
 				}
 			}
@@ -243,7 +241,7 @@ public class Veinminer
 	
 	public static boolean undo(EntityPlayerMP player, World world)
 	{
-		Stack<List<Entry<BlockPos, IBlockState>>> history = HISTORY.get(player.getName());
+		Stack<List<Entry<BlockPos, IBlockState>>> history = Veinminer.HISTORY.get(player.getName());
 		List<Entry<BlockPos, IBlockState>> undo = history.peek();
 		IBlockState state = undo.get(0).getValue();
 		Item item = Item.getItemFromBlock(state.getBlock());
@@ -268,7 +266,7 @@ public class Veinminer
 			
 			if(history.empty())
 			{
-				HISTORY.remove(player.getName());
+				Veinminer.HISTORY.remove(player.getName());
 			}
 			
 			return true;
@@ -305,13 +303,11 @@ public class Veinminer
 	
 	private static boolean hasSpace(World world, List<Entry<BlockPos, IBlockState>> list)
 	{
-		IBlockState air = Blocks.AIR.getDefaultState();
-		
 		for(Entry<BlockPos, IBlockState> entry : list)
 		{
-			IBlockState state = world.getBlockState(entry.getKey());
+			Block block = world.getBlockState(entry.getKey()).getBlock();
 			
-			if(!state.equals(air) && !state.getBlock().equals(Blocks.WATER) && !state.getBlock().equals(Blocks.LAVA))
+			if(!block.equals(Blocks.AIR) && !block.equals(Blocks.WATER) && !block.equals(Blocks.LAVA))
 			{
 				return false;
 			}
@@ -335,6 +331,6 @@ public class Veinminer
 	
 	public static boolean hasUndo(String player)
 	{
-		return HISTORY.containsKey(player);
+		return Veinminer.HISTORY.containsKey(player);
 	}
 }

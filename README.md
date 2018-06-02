@@ -2,7 +2,7 @@
 
 # Features #
 
-* Server Management
+* Server management
 	* Scheduled saving
 	* Scheduled backup
 * Comfort features

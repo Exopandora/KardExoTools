@@ -13,8 +13,9 @@ public class ZipThread extends Thread
 	private final String destZipFile;
 	private final Consumer<Boolean> callback;
 	
-	public ZipThread(String srcFolder, String destZipFile, Consumer<Boolean> callback)
+	public ZipThread(String name, String srcFolder, String destZipFile, Consumer<Boolean> callback)
 	{
+		super(name);
 		this.srcFolder = srcFolder;
 		this.destZipFile = destZipFile;
 		this.callback = callback;

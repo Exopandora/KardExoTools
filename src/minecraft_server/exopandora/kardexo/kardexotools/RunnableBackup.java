@@ -7,11 +7,18 @@ import net.minecraft.util.text.TextComponentString;
 
 public class RunnableBackup implements Runnable
 {
+	private static boolean RUNNING;
+	
 	@Override
 	public synchronized void run()
 	{
-		try
+		if(RunnableBackup.RUNNING)
 		{
+			KardExo.notifyPlayers(KardExo.getServer(), new TextComponentString("Backup already in progress"));
+		}
+		else
+		{
+			RunnableBackup.RUNNING = true;
 			KardExo.notifyPlayers(KardExo.getServer(), new TextComponentString("Starting Backup..."));
 			KardExo.saveWorld(false);
 			
@@ -42,7 +49,7 @@ public class RunnableBackup implements Runnable
 				}
 			}
 			
-			ZipThread zipper = new ZipThread(folderName, new File(Config.BACKUP_DIRECTORY, folderName + "-" + time + ".zip").getPath(), success ->
+			ZipThread zipper = new ZipThread("backup", folderName, new File(Config.BACKUP_DIRECTORY, folderName + "-" + time + ".zip").getPath(), success ->
 			{
 				if(success)
 				{
@@ -52,13 +59,11 @@ public class RunnableBackup implements Runnable
 				{
 					KardExo.notifyPlayers(KardExo.getServer(), new TextComponentString("Backup Failed"));
 				}
+				
+				RunnableBackup.RUNNING = false;
 			});
 			
 			zipper.start();
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
 		}
 	}
 }

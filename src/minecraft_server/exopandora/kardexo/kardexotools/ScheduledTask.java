@@ -17,7 +17,7 @@ public class ScheduledTask extends Thread
 	
 	public ScheduledTask(String name, int offset, int interval, boolean requiresPlayers, Runnable task, String warning, int delay, TimeUnit unit)
 	{
-		super("KardExo " + name);
+		super(name);
 		this.name = name;
 		this.offset = offset;
 		this.interval = interval;
@@ -72,11 +72,9 @@ public class ScheduledTask extends Thread
 	@Override
 	public boolean equals(Object object)
 	{
-		if(object instanceof ScheduledTask)
+		if(object != null && object instanceof ScheduledTask)
 		{
-			ScheduledTask task = (ScheduledTask) object;
-			
-			return this.name.equals(task.getTaskName());
+			return this.name.equals(((ScheduledTask) object).getTaskName());
 		}
 		
 		return false;
