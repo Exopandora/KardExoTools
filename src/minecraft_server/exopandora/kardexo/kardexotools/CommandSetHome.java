@@ -26,6 +26,7 @@ public class CommandSetHome extends CommandBase
 	{
 		BlockPos pos = sender.getCommandSenderEntity().getPosition();
 		Config.HOME.getData().put(sender.getName(), new Home(pos, sender.getName(), sender.getCommandSenderEntity().dimension));
+		Config.HOME.save();
 		sender.sendMessage(new TextComponentString("Home set to " + pos.getX() + " " + pos.getY() + " " + pos.getZ()));
 	}
 	

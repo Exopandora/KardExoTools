@@ -9,7 +9,8 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.play.server.SPacketPlayerPosLook;
+import net.minecraft.init.Blocks;
+import net.minecraft.network.play.server.SPacketPlayerPosLook.EnumFlags;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -31,14 +32,22 @@ public class CommandHome extends CommandBase
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
 	{
-		if(Config.HOME.getData().containsKey(sender.getName()))
+		Home home = Config.HOME.getData().get(sender.getName());
+		
+		if(home != null)
 		{
 			Entity entity = getEntity(server, sender, sender.getName());
 			
 			if(entity.world != null)
 			{
-				Home home = Config.HOME.getData().get(sender.getName());
-				doTeleport(entity, getPlayerSpawnPosition(entity.getEntityWorld(), home.getPosition()), home.getDimension());
+				try
+				{
+					doTeleport(entity, getPlayerSpawnPosition(server.getWorld(home.getDimension()), home.getPosition()), home.getDimension());
+				}
+				catch(InvalidSpawnPositionException e)
+				{
+					throw new CommandException(e.getMessage());
+				}
 			}
 		}
 		else
@@ -53,12 +62,17 @@ public class CommandHome extends CommandBase
 		return true;
 	}
 	
-	private static BlockPos getPlayerSpawnPosition(World world, BlockPos pos)
+	private static BlockPos getPlayerSpawnPosition(World world, BlockPos pos) throws InvalidSpawnPositionException
 	{
 		BlockPos spawn = pos;
 		
 		while(!hasRoomForPlayer(world, spawn))
 		{
+			if(spawn.getY() > world.getHeight())
+			{
+				throw new InvalidSpawnPositionException("Could not find safe position");
+			}
+			
 			spawn = spawn.up();
 		}
 		
@@ -67,14 +81,13 @@ public class CommandHome extends CommandBase
 	
 	private static boolean hasRoomForPlayer(World world, BlockPos pos)
 	{
-		return world.getBlockState(pos.down()).isOpaqueCube() && !world.getBlockState(pos).getMaterial().isSolid() && !world.getBlockState(pos.up()).getMaterial().isSolid();
+		return world.getBlockState(pos.down()).isTopSolid() && !world.getBlockState(pos).getMaterial().isSolid() && !world.getBlockState(pos.up()).getMaterial().isSolid();
 	}
 	
 	public static void doTeleport(Entity entity, BlockPos pos, int dimension)
 	{ 
 		if(entity instanceof EntityPlayerMP)
 		{
-			Set<SPacketPlayerPosLook.EnumFlags> set = EnumSet.<SPacketPlayerPosLook.EnumFlags>noneOf(SPacketPlayerPosLook.EnumFlags.class);
 			entity.dismountRidingEntity();
 			
 			if(entity.dimension != dimension)
@@ -82,7 +95,7 @@ public class CommandHome extends CommandBase
 				entity.changeDimension(dimension);
 			}
 			
-			((EntityPlayerMP)entity).connection.setPlayerLocation(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, entity.rotationYaw, entity.rotationPitch, set);
+			((EntityPlayerMP) entity).connection.setPlayerLocation(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, entity.rotationYaw, entity.rotationPitch);
 		}
 		else
 		{
