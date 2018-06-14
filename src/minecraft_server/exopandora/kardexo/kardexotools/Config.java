@@ -4,7 +4,7 @@ import java.io.File;
 
 public class Config
 {	
-	public static final String VERSION = "1.12.2-2.29";
+	public static final String VERSION = "1.12.2-2.30";
 	
 	/** Time in minutes between saves **/
 	public static final int INTERVAL_SAVE = 20;
@@ -25,7 +25,7 @@ public class Config
 	public static final int WARNING_DELAY_BACKUP = 5;
 	
 	/** Number of backup files **/
-	public static final int BACKUP_FILES = 5;
+	public static final int BACKUP_FILES = 10;
 	
 	/** Number of blocks vein miner can harvest at once **/
 	public static final int BLOCK_LIMIT = 128;

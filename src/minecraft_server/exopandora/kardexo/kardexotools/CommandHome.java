@@ -1,19 +1,21 @@
 package exopandora.kardexo.kardexotools;
 
-import java.util.EnumSet;
-import java.util.Set;
-
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
-import net.minecraft.network.play.server.SPacketPlayerPosLook.EnumFlags;
+import net.minecraft.network.play.server.SPacketEntityEffect;
+import net.minecraft.network.play.server.SPacketPlayerAbilities;
+import net.minecraft.network.play.server.SPacketRespawn;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 public class CommandHome extends CommandBase
 {
@@ -42,7 +44,7 @@ public class CommandHome extends CommandBase
 			{
 				try
 				{
-					doTeleport(entity, getPlayerSpawnPosition(server.getWorld(home.getDimension()), home.getPosition()), home.getDimension());
+					doTeleport(server, entity, getPlayerSpawnPosition(server.getWorld(home.getDimension()), home.getPosition()), home.getDimension());
 				}
 				catch(InvalidSpawnPositionException e)
 				{
@@ -84,15 +86,16 @@ public class CommandHome extends CommandBase
 		return world.getBlockState(pos.down()).isTopSolid() && !world.getBlockState(pos).getMaterial().isSolid() && !world.getBlockState(pos.up()).getMaterial().isSolid();
 	}
 	
-	public static void doTeleport(Entity entity, BlockPos pos, int dimension)
+	public static void doTeleport(MinecraftServer server, Entity entity, BlockPos pos, int dimension)
 	{ 
 		if(entity instanceof EntityPlayerMP)
 		{
 			entity.dismountRidingEntity();
+			entity.removePassengers();
 			
 			if(entity.dimension != dimension)
 			{
-				entity.changeDimension(dimension);
+				changeDimension((EntityPlayerMP) entity, server, dimension);
 			}
 			
 			((EntityPlayerMP) entity).connection.setPlayerLocation(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, entity.rotationYaw, entity.rotationPitch);
@@ -107,5 +110,58 @@ public class CommandHome extends CommandBase
 			entity.motionY = 0.0D;
 			entity.onGround = true;
 		}
+	}
+	
+	private static void changeDimension(EntityPlayerMP player, MinecraftServer server, int dimensionIn)
+	{
+		int lastDimension = player.dimension;
+		PlayerList list = server.getPlayerList();
+		
+		WorldServer oldWorld = server.getWorld(player.dimension);
+		player.dimension = dimensionIn;
+		WorldServer toWorld = server.getWorld(player.dimension);
+		
+		player.connection.sendPacket(new SPacketRespawn(player.dimension, player.world.getDifficulty(), player.world.getWorldInfo().getTerrainType(), player.interactionManager.getGameType()));
+		list.updatePermissionLevel(player);
+		oldWorld.removeEntityDangerously(player);
+		player.isDead = false;
+		transferEntityToWorld(player, lastDimension, oldWorld, toWorld);
+		list.preparePlayer(player, oldWorld);
+		
+		player.connection.setPlayerLocation(player.posX, player.posY, player.posZ, player.rotationYaw, player.rotationPitch);
+		player.interactionManager.setWorld(toWorld);
+		player.connection.sendPacket(new SPacketPlayerAbilities(player.capabilities));
+		
+		list.updateTimeAndWeatherForPlayer(player, toWorld);
+		list.syncPlayerInventory(player);
+		
+		for(PotionEffect potioneffect : player.getActivePotionEffects())
+		{
+			player.connection.sendPacket(new SPacketEntityEffect(player.getEntityId(), potioneffect));
+		}
+	}
+	
+	private static void transferEntityToWorld(Entity entityIn, int lastDimension, WorldServer oldWorld, WorldServer toWorld)
+	{
+		double x = entityIn.posX;
+		double z = entityIn.posZ;
+		
+		if(lastDimension != 1)
+		{
+			oldWorld.profiler.startSection("placing");
+			x = (double)MathHelper.clamp((int) x, -29999872, 29999872);
+			z = (double)MathHelper.clamp((int) z, -29999872, 29999872);
+			
+			if(entityIn.isEntityAlive())
+			{
+				entityIn.setLocationAndAngles(x, entityIn.posY, z, entityIn.rotationYaw, entityIn.rotationPitch);
+				toWorld.spawnEntity(entityIn);
+				toWorld.updateEntityWithOptionalForce(entityIn, false);
+			}
+			
+			oldWorld.profiler.endSection();
+		}
+		
+		entityIn.setWorld(toWorld);
 	}
 }

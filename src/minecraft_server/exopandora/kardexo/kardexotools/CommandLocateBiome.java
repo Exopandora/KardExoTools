@@ -1,19 +1,16 @@
 package exopandora.kardexo.kardexotools;
 
-import java.util.List;
-import java.util.Random;
+import java.util.function.Function;
 
-import com.google.common.collect.Lists;
+import org.apache.commons.lang3.ArrayUtils;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.init.Biomes;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.layer.IntCache;
+import net.minecraft.world.biome.BiomeProvider;
 
 public class CommandLocateBiome extends CommandBase
 {
@@ -33,40 +30,70 @@ public class CommandLocateBiome extends CommandBase
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
 	{
 		sender.sendMessage(new TextComponentString("Currently not supported"));
-//		BlockPos pos = server.getEntityWorld().getBiomeProvider().findBiomePosition(sender.getPosition().getX(), sender.getPosition().getZ(), 5, Lists.newArrayList(Biomes.DESERT), new Random());
-//		this.test(sender.getPosition().getX(), sender.getPosition().getZ(), 20, Lists.newArrayList(Biomes.DESERT), new Random());
-//		if(pos != null)
+		
+//		BiomeProvider provider = sender.getEntityWorld().getBiomeProvider();
+//		
+//		int startX = sender.getPosition().getX();
+//		int startZ = sender.getPosition().getZ();
+//		
+//		boolean result = spiral(10, 16, sender.getPosition(), (pos, x, z) -> pos.add(x, 0, z), pos ->
 //		{
-//			sender.sendMessage(new TextComponentString(pos.toString()));
-//		}
-//		else
+//			boolean contains = ArrayUtils.contains(provider.getBiomes(null, pos.getX(), pos.getZ(), 1, 1, false), Biomes.DESERT);
+//			
+//			if(contains)
+//			{
+//				sender.sendMessage(new TextComponentString(pos.toString()));
+//			}
+//			
+//			return contains;
+//		});
+//		
+//		if(!result)
 //		{
 //			sender.sendMessage(new TextComponentString("No result"));
 //		}
 	}
 	
-//	private BlockPos test(int x, int z, int range, List<Biome> biomes, Random random)
-//    {
-//        IntCache.resetIntCache();
-//        int i = x - range >> 2;
-//        int j = z - range >> 2;
-//        int k = x + range >> 2;
-//        int l = z + range >> 2;
-//        int i1 = k - i + 1;
-//        int j1 = l - j + 1;
-//        
-//        System.out.println(i1 + " " + j1);
-//        
-//        BlockPos blockpos = null;
-//        int k1 = 0;
-//
-//        for (int l1 = 0; l1 < i1 * j1; ++l1)
-//        {
-//            int i2 = i + l1 % i1 << 2;
-//            int j2 = j + l1 / i1 << 2;
-//            System.out.println(l1 + " " + i2 + " " + j2);
-//        }
-//
-//        return blockpos;
-//    }
+	public interface TriFunction<T, U, V, R>
+	{
+		R apply(T t, U u, V v);
+	}
+	
+	private static <T> boolean spiral(int max, int interval, T start, TriFunction<T, Integer, Integer, T> mapper, Function<T, Boolean> consumer)
+	{
+		int x = 0;
+		int y = 0;
+		
+		if(consumer.apply(mapper.apply(start, x, y)))
+		{
+			return true;
+		}
+		
+		for(int delta = 1; delta <= max; delta++)
+		{
+			int direction = delta % 2 == 0 ? -1 : 1;
+			
+			for(int dx = 0; dx < delta; dx++)
+			{
+				x += direction;
+				
+				if(consumer.apply(mapper.apply(start, x * interval, y * interval)))
+				{
+					return true;
+				}
+			}
+			
+			for(int dy = 0; dy < delta; dy++)
+			{
+				y += direction;
+				
+				if(consumer.apply(mapper.apply(start, x * interval, y * interval)))
+				{
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
 }

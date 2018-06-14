@@ -4,20 +4,20 @@ import net.minecraft.util.math.BlockPos;
 
 public class Home
 {
-	private final BlockPos pos;
+	private final BlockPos home;
 	private final String player;
 	private final int dimension;
 	
 	public Home(BlockPos home, String player, int dimension)
 	{
-		this.pos = home;
+		this.home = home;
 		this.player = player;
 		this.dimension = dimension;
 	}
 	
 	public BlockPos getPosition()
 	{
-		return this.pos;
+		return this.home;
 	}
 	
 	public String getPlayer()

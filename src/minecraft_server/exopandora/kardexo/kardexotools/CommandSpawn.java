@@ -25,7 +25,7 @@ public class CommandSpawn extends CommandBase
 	{
 		if(sender.getCommandSenderEntity() instanceof EntityPlayer && server.getEntityWorld() != null)
 		{
-			CommandHome.doTeleport(sender.getCommandSenderEntity(), server.getEntityWorld().getTopSolidOrLiquidBlock(server.worlds[0].getSpawnPoint()), 0);
+			CommandHome.doTeleport(server, sender.getCommandSenderEntity(), server.getEntityWorld().getTopSolidOrLiquidBlock(server.worlds[0].getSpawnPoint()), 0);
 		}
 	}
 	
