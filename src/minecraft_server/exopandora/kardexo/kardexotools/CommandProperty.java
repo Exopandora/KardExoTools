@@ -16,6 +16,7 @@ import net.minecraft.command.NumberInvalidException;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.DimensionType;
 
 public abstract class CommandProperty extends CommandBase
 {
@@ -66,7 +67,7 @@ public abstract class CommandProperty extends CommandBase
 		}
 	}
 	
-	public void add(String[] args, PropertyOwner owner, int nameIndex, int dimIndex, int x1Index, int z1Index, int x2Index, int z2Index, int titleIndex) throws InvalidDimensionException, NumberInvalidException, IllegalStateException
+	public void add(String[] args, PropertyOwner owner, int nameIndex, int dimIndex, int x1Index, int z1Index, int x2Index, int z2Index, int titleIndex) throws IllegalArgumentException, NumberInvalidException, IllegalStateException
 	{
 		if(!this.file.getData().containsKey(args[nameIndex]))
 		{
@@ -79,7 +80,7 @@ public abstract class CommandProperty extends CommandBase
 		}
 	}
 	
-	public void addChild(Property parent, String[] args, int nameIndex, int dimIndex, int x1Index, int z1Index, int x2Index, int z2Index, int titleIndex) throws InvalidDimensionException, NumberInvalidException, IllegalStateException
+	public void addChild(Property parent, String[] args, int nameIndex, int dimIndex, int x1Index, int z1Index, int x2Index, int z2Index, int titleIndex) throws IllegalArgumentException, NumberInvalidException, IllegalStateException
 	{
 		if(parent.getChild(args[nameIndex]) == null)
 		{
@@ -92,9 +93,9 @@ public abstract class CommandProperty extends CommandBase
 		}
 	}
 	
-	private Property createProperty(String[] args, List<PropertyOwner> owners, int nameIndex, int dimIndex, int x1Index, int z1Index, int x2Index, int z2Index, int titleIndex) throws InvalidDimensionException, NumberInvalidException, IllegalStateException
+	private Property createProperty(String[] args, List<PropertyOwner> owners, int nameIndex, int dimIndex, int x1Index, int z1Index, int x2Index, int z2Index, int titleIndex) throws IllegalArgumentException, NumberInvalidException, IllegalStateException
 	{
-		int dimension = Util.getDimension(args[dimIndex]);
+		int dimension = DimensionType.byName(args[dimIndex]).getId();
 		double x1 = super.parseDouble(args[x1Index]);
 		double z1 = super.parseDouble(args[z1Index]);
 		double x2 = super.parseDouble(args[x2Index]);

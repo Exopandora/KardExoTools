@@ -25,7 +25,7 @@ public class CommandUndo extends CommandBase
 	{
 		if(sender.getCommandSenderEntity() instanceof EntityPlayerMP && Veinminer.hasUndo(sender.getName()))
 		{
-			if(!Veinminer.undo((EntityPlayerMP) sender.getCommandSenderEntity(), server.getEntityWorld()))
+			if(!Veinminer.undo((EntityPlayerMP) sender.getCommandSenderEntity(), server))
 			{
 				throw new CommandException("Cannot be undone");
 			}

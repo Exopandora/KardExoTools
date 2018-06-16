@@ -4,7 +4,7 @@ import java.io.File;
 
 public class Config
 {	
-	public static final String VERSION = "1.12.2-2.30";
+	public static final String VERSION = "1.12.2-2.31";
 	
 	/** Time in minutes between saves **/
 	public static final int INTERVAL_SAVE = 20;
@@ -32,6 +32,9 @@ public class Config
 	
 	/** Number of history entries for the undo command **/
 	public static final int HISTORY_SIZE = 5;
+	
+	/** Maximum radius to search for a biome **/
+	public static final int LOCATE_BIOME_RADIUS = 10000;
 	
 	/** Backup Directory **/
 	public static final File BACKUP_DIRECTORY = new File("backup");

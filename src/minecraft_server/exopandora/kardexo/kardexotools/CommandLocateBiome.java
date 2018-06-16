@@ -1,5 +1,7 @@
 package exopandora.kardexo.kardexotools;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Function;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -7,9 +9,14 @@ import org.apache.commons.lang3.ArrayUtils;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.command.WrongUsageException;
 import net.minecraft.init.Biomes;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeProvider;
 
 public class CommandLocateBiome extends CommandBase
@@ -29,37 +36,57 @@ public class CommandLocateBiome extends CommandBase
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
 	{
-		sender.sendMessage(new TextComponentString("Currently not supported"));
-		
-//		BiomeProvider provider = sender.getEntityWorld().getBiomeProvider();
-//		
-//		int startX = sender.getPosition().getX();
-//		int startZ = sender.getPosition().getZ();
-//		
-//		boolean result = spiral(10, 16, sender.getPosition(), (pos, x, z) -> pos.add(x, 0, z), pos ->
-//		{
-//			boolean contains = ArrayUtils.contains(provider.getBiomes(null, pos.getX(), pos.getZ(), 1, 1, false), Biomes.DESERT);
-//			
-//			if(contains)
-//			{
-//				sender.sendMessage(new TextComponentString(pos.toString()));
-//			}
-//			
-//			return contains;
-//		});
-//		
-//		if(!result)
-//		{
-//			sender.sendMessage(new TextComponentString("No result"));
-//		}
+		if(args.length > 0)
+		{
+			//TODO separate thread
+			ResourceLocation resource = new ResourceLocation(args[0]);
+			
+			if(Biome.REGISTRY.containsKey(resource))
+			{
+				Biome biome = Biome.REGISTRY.getObject(resource);
+				BiomeProvider provider = sender.getEntityWorld().getBiomeProvider();
+				
+				boolean result = spiral(Config.LOCATE_BIOME_RADIUS, 16, sender.getPosition(), (blockpos, x, z) -> blockpos.add(x, 0, z), blockpos ->
+				{
+					boolean contains = ArrayUtils.contains(provider.getBiomes(null, blockpos.getX(), blockpos.getZ(), 1, 1, false), biome);
+					
+					if(contains)
+					{
+		                sender.sendMessage(new TextComponentTranslation("commands.locate.success", new Object[]{resource, blockpos.getX(), blockpos.getZ()}));
+					}
+					
+					return contains;
+				});
+				
+				if(!result)
+				{
+	                throw new CommandException("commands.locate.failure", new Object[]{resource});
+				}
+			}
+			else
+			{
+				throw new CommandException("Invalid biome");
+			}
+		}
+		else
+		{
+			throw new WrongUsageException(this.getUsage(sender));
+		}
 	}
 	
+	@Override
+	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos pos)
+	{
+		return args.length == 1 ? this.getListOfStringsMatchingLastWord(args, Biome.REGISTRY.getKeys()) : Collections.<String>emptyList();
+	}
+	
+	@FunctionalInterface
 	public interface TriFunction<T, U, V, R>
 	{
 		R apply(T t, U u, V v);
 	}
 	
-	private static <T> boolean spiral(int max, int interval, T start, TriFunction<T, Integer, Integer, T> mapper, Function<T, Boolean> consumer)
+	private static <T> boolean spiral(int radius, int interval, T start, TriFunction<T, Integer, Integer, T> mapper, Function<T, Boolean> consumer)
 	{
 		int x = 0;
 		int y = 0;
@@ -69,7 +96,14 @@ public class CommandLocateBiome extends CommandBase
 			return true;
 		}
 		
-		for(int delta = 1; delta <= max; delta++)
+		if(radius > 30000000)
+		{
+			return false;
+		}
+		
+		final int diameter = radius * 2;
+		
+		for(int delta = 1; delta <= diameter; delta++)
 		{
 			int direction = delta % 2 == 0 ? -1 : 1;
 			

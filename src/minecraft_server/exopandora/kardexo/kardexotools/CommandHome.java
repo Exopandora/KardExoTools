@@ -6,9 +6,12 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.play.server.SPacketEffect;
 import net.minecraft.network.play.server.SPacketEntityEffect;
 import net.minecraft.network.play.server.SPacketPlayerAbilities;
 import net.minecraft.network.play.server.SPacketRespawn;
+import net.minecraft.network.play.server.SPacketSetExperience;
+import net.minecraft.network.play.server.SPacketUpdateHealth;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
@@ -131,6 +134,7 @@ public class CommandHome extends CommandBase
 		player.connection.setPlayerLocation(player.posX, player.posY, player.posZ, player.rotationYaw, player.rotationPitch);
 		player.interactionManager.setWorld(toWorld);
 		player.connection.sendPacket(new SPacketPlayerAbilities(player.capabilities));
+		player.connection.sendPacket(new SPacketSetExperience(player.experience, player.experienceTotal, player.experienceLevel));
 		
 		list.updateTimeAndWeatherForPlayer(player, toWorld);
 		list.syncPlayerInventory(player);
@@ -139,6 +143,8 @@ public class CommandHome extends CommandBase
 		{
 			player.connection.sendPacket(new SPacketEntityEffect(player.getEntityId(), potioneffect));
 		}
+		
+		player.connection.sendPacket(new SPacketEffect(1032, BlockPos.ORIGIN, 0, false));
 	}
 	
 	private static void transferEntityToWorld(Entity entityIn, int lastDimension, WorldServer oldWorld, WorldServer toWorld)

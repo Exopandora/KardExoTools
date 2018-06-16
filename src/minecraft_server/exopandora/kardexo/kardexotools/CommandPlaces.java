@@ -47,7 +47,7 @@ public class CommandPlaces extends CommandProperty
 						this.add(args, new PropertyOwner(sender.getName(), true, false, null, null), 1, 2, 3, 4, 5, 6, 7);
 						sender.sendMessage(new TextComponentString("Added place with id " + args[1]));
 					}
-					catch(InvalidDimensionException | NumberInvalidException e)
+					catch(IllegalArgumentException | NumberInvalidException e)
 					{
 						throw e;
 					}
@@ -120,7 +120,7 @@ public class CommandPlaces extends CommandProperty
 									this.addChild(this.file.getData().get(args[1]), args, 3, 4, 5, 6, 7, 8, 9);
 									sender.sendMessage(new TextComponentString("Added child with id " + args[3]));
 								}
-								catch(InvalidDimensionException | NumberInvalidException e)
+								catch(IllegalArgumentException | NumberInvalidException e)
 								{
 									throw e;
 								}

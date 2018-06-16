@@ -27,16 +27,18 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 public class Veinminer
 {
 	private static final Map<IBlockState, Integer> BLOCKS = new HashMap<IBlockState, Integer>();
-	private static final Map<String, Stack<List<Entry<BlockPos, IBlockState>>>> HISTORY = new HashMap<String, Stack<List<Entry<BlockPos, IBlockState>>>>();
+	private static final Map<String, Stack<Entry<Integer, List<Entry<BlockPos, IBlockState>>>>> HISTORY = new HashMap<String, Stack<Entry<Integer, List<Entry<BlockPos, IBlockState>>>>>();
 	
 	static
 	{
@@ -78,24 +80,31 @@ public class Veinminer
 			
 			for(IBlockState block : Veinminer.BLOCKS.keySet())
 			{
-				if(isEqualVariant(state, block) && player.getHeldItemMainhand().getDestroySpeed(state) > 1.0F)
+				ItemStack item = player.getHeldItemMainhand();
+				
+				if(isEqualVariant(state, block) && (item.getDestroySpeed(state) > 1.0F || block.getMaterial().isToolNotRequired()))
 				{
 					PriorityQueue<BlockPos> queue = calculateVein(Config.BLOCK_LIMIT, BLOCKS.get(block), world.getBlockState(pos), pos, pos, world);
-					List<Entry<BlockPos, IBlockState>> undo = new ArrayList<Entry<BlockPos, IBlockState>>();
+					Entry<Integer, List<Entry<BlockPos, IBlockState>>> undo = new SimpleEntry(player.dimension, new ArrayList<Entry<BlockPos, IBlockState>>());
 					queue.poll();
 					
-					if(queue.size() > 1)
+					if(!queue.isEmpty())
 					{
 						Entry<BlockPos, IBlockState> next = new SimpleEntry<BlockPos, IBlockState>(pos, world.getBlockState(pos));
 						boolean harvest = harvestBlock.apply(pos, true);
 						
 						if(harvest)
 						{
-							undo.add(next);
+							undo.getValue().add(next);
 							
 							for(int x = 0; x < Config.BLOCK_LIMIT; x++)
 							{
-								if(player.getHeldItemMainhand().getMaxDamage() - player.getHeldItemMainhand().getItemDamage() == 0 || queue.isEmpty())
+								if(item.getMaxDamage() > 0 ? item.getMaxDamage() - item.getItemDamage() == 0 : false)
+								{
+									break;
+								}
+								
+								if(queue.isEmpty())
 								{
 									break;
 								}
@@ -107,12 +116,12 @@ public class Veinminer
 									break;
 								}
 								
-								undo.add(next);
+								undo.getValue().add(next);
 							}
 							
-							if(undo.size() > 1)
+							if(undo.getValue().size() > 1)
 							{
-								Stack<List<Entry<BlockPos, IBlockState>>> history = Veinminer.HISTORY.get(player.getName());
+								Stack<Entry<Integer, List<Entry<BlockPos, IBlockState>>>> history = Veinminer.HISTORY.get(player.getName());
 								
 								if(history != null)
 								{
@@ -125,7 +134,7 @@ public class Veinminer
 								}
 								else
 								{
-									history = new Stack<List<Entry<BlockPos, IBlockState>>>();
+									history = new Stack<Entry<Integer, List<Entry<BlockPos, IBlockState>>>>();
 									history.add(undo);
 									Veinminer.HISTORY.put(player.getName(), history);
 								}
@@ -236,21 +245,23 @@ public class Veinminer
 	
 	private static final Comparator<BlockPos> getComparator(BlockPos origin)
 	{
-		return (BlockPos a, BlockPos b) -> (int) (a.distanceSq(origin.getX(), origin.getY(), origin.getZ()) - b.distanceSq(origin.getX(), origin.getY(), origin.getZ()));
+		return (a, b) -> (int) (a.distanceSq(origin.getX(), origin.getY(), origin.getZ()) - b.distanceSq(origin.getX(), origin.getY(), origin.getZ()));
 	}
 	
-	public static boolean undo(EntityPlayerMP player, World world)
+	public static boolean undo(EntityPlayerMP player, MinecraftServer server)
 	{
-		Stack<List<Entry<BlockPos, IBlockState>>> history = Veinminer.HISTORY.get(player.getName());
-		List<Entry<BlockPos, IBlockState>> undo = history.peek();
-		IBlockState state = undo.get(0).getValue();
+		Stack<Entry<Integer, List<Entry<BlockPos, IBlockState>>>> history = Veinminer.HISTORY.get(player.getName());
+		Entry<Integer, List<Entry<BlockPos, IBlockState>>> undo = history.peek();
+		List<Entry<BlockPos, IBlockState>> list = undo.getValue();
+		WorldServer world = server.getWorld(undo.getKey());
+		IBlockState state = list.get(0).getValue();
 		Item item = Item.getItemFromBlock(state.getBlock());
 		int metadata = state.getBlock().damageDropped(state);
-		int count = undo.size();
+		int count = list.size();
 		
-		if(playerHasItems(player, item, metadata, count) && hasSpace(world, undo) && hasNoCollidingEntities(world, undo))
+		if(playerHasItems(player, item, metadata, count) && hasSpace(world, list) && hasNoCollidingEntities(world, list))
 		{
-			for(Entry<BlockPos, IBlockState> entry : undo)
+			for(Entry<BlockPos, IBlockState> entry : list)
 			{
 				world.setBlockState(entry.getKey(), entry.getValue());
 			}

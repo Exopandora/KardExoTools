@@ -59,7 +59,7 @@ public class CommandBases extends CommandProperty
 						this.add(args, new PropertyOwner(args[7], true, true, null, null), 1, 2, 3, 4, 5, 6, 8);
 						sender.sendMessage(new TextComponentString("Added base with id " + args[1]));
 					}
-					catch(InvalidDimensionException | NumberInvalidException e)
+					catch(IllegalArgumentException | NumberInvalidException e)
 					{
 						throw e;
 					}
@@ -116,7 +116,7 @@ public class CommandBases extends CommandProperty
 									this.addChild(this.file.getData().get(args[1]), args, 3, 4, 5, 6, 7, 8, 9);
 									sender.sendMessage(new TextComponentString("Added child with id " + args[3]));
 								}
-								catch(InvalidDimensionException | NumberInvalidException e)
+								catch(IllegalArgumentException | NumberInvalidException e)
 								{
 									throw e;
 								}
