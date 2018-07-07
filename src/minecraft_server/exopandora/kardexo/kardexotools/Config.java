@@ -4,7 +4,7 @@ import java.io.File;
 
 public class Config
 {	
-	public static final String VERSION = "1.12.2-2.31";
+	public static final String VERSION = "1.12.2-2.32";
 	
 	/** Time in minutes between saves **/
 	public static final int INTERVAL_SAVE = 20;

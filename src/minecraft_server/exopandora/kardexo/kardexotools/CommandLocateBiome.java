@@ -1,7 +1,9 @@
 package exopandora.kardexo.kardexotools;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -10,7 +12,6 @@ import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
-import net.minecraft.init.Biomes;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -21,6 +22,8 @@ import net.minecraft.world.biome.BiomeProvider;
 
 public class CommandLocateBiome extends CommandBase
 {
+	private static final Map<String, Thread> LOCALIZATION = new HashMap<String, Thread>();
+	
 	@Override
 	public String getName()
 	{
@@ -38,29 +41,44 @@ public class CommandLocateBiome extends CommandBase
 	{
 		if(args.length > 0)
 		{
-			//TODO separate thread
 			ResourceLocation resource = new ResourceLocation(args[0]);
 			
 			if(Biome.REGISTRY.containsKey(resource))
 			{
-				Biome biome = Biome.REGISTRY.getObject(resource);
-				BiomeProvider provider = sender.getEntityWorld().getBiomeProvider();
-				
-				boolean result = spiral(Config.LOCATE_BIOME_RADIUS, 16, sender.getPosition(), (blockpos, x, z) -> blockpos.add(x, 0, z), blockpos ->
+				if(LOCALIZATION.containsKey(sender.getName()))
 				{
-					boolean contains = ArrayUtils.contains(provider.getBiomes(null, blockpos.getX(), blockpos.getZ(), 1, 1, false), biome);
-					
-					if(contains)
+					throw new CommandException("Localization already in progress");
+				}
+				else
+				{
+					Thread thread = new Thread(() ->
 					{
-		                sender.sendMessage(new TextComponentTranslation("commands.locate.success", new Object[]{resource, blockpos.getX(), blockpos.getZ()}));
-					}
+						Biome biome = Biome.REGISTRY.getObject(resource);
+						BiomeProvider provider = sender.getEntityWorld().getBiomeProvider();
+						
+						boolean result = spiral(Config.LOCATE_BIOME_RADIUS, 16, sender.getPosition(), (blockpos, x, z) -> blockpos.add(x, 0, z), blockpos ->
+						{
+							boolean contains = ArrayUtils.contains(provider.getBiomes(null, blockpos.getX(), blockpos.getZ(), 1, 1, false), biome);
+							
+							if(contains)
+							{
+								sender.sendMessage(new TextComponentTranslation("commands.locate.success", new Object[]{resource, blockpos.getX(), blockpos.getZ()}));
+							}
+							
+							return contains;
+						});
+						
+						if(!result)
+						{
+							sender.sendMessage(new TextComponentTranslation("commands.locate.failure", new Object[]{resource}));
+						}
+						
+						LOCALIZATION.remove(sender.getName());
+					});
 					
-					return contains;
-				});
-				
-				if(!result)
-				{
-	                throw new CommandException("commands.locate.failure", new Object[]{resource});
+					LOCALIZATION.put(sender.getName(), thread);
+					thread.start();
+					sender.sendMessage(new TextComponentString("Searching..."));
 				}
 			}
 			else
