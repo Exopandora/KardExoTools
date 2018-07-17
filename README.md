@@ -10,24 +10,24 @@
 	* Only one player is required to sleep
 * Commands
 
-	Command     | Feature                                     | Permissions
-	----------- | ------------------------------------------- | -----------
-	backup      | Fource world backup                         | Admin
-	bases       | Configure bases                             | Everyone
-	calc        | Calculate mathematical expression           | Everyone
-	forcesave   | Force world save                            | Admin
-	home        | Teleport to home location                   | Everyone
-	kardexo     | Display version and commands                | Everyone
-	locatebiome | Locate biome                                | Everyone
-	moonphase   | Print current moon phase                    | Everyone
-	places      | Configure places                            | Everyone
-	resource    | Calculate resources need for specified area | Everyone
-	sethome     | Set home location                           | Everyone
-	spawn       | Teleport to spawn location                  | Everyone
-	undo        | Undo last veinmine                          | Everyone
-	veinminer   | Toggle veinminer                            | Everyone
-	whereis     | Find players                                | Everyone
-	worldtime   | Prints current world time                   | Everyone
+	Command     | Feature                                                  | Permissions
+	----------- | -------------------------------------------------------- | -----------
+	backup      | Fource world backup                                      | Admin
+	bases       | Configure bases                                          | Everyone
+	calc        | Calculate mathematical expressions                       | Everyone
+	forcesave   | Force world save                                         | Admin
+	home        | Teleport to home location                                | Everyone
+	kardexo     | Print version and commands depending on your permissions | Everyone
+	locatebiome | Locate biome                                             | Everyone
+	moonphase   | Print current moon phase                                 | Everyone
+	places      | Configure places                                         | Everyone
+	resource    | Calculate resources needed for specified area            | Everyone
+	sethome     | Set home location                                        | Everyone
+	spawn       | Teleport to spawn location                               | Everyone
+	undo        | Undo last veinmine                                       | Everyone
+	veinminer   | Toggle veinminer and display vein blocks                 | Everyone
+	whereis     | Locate players                                           | Everyone
+	worldtime   | Print current world time                                 | Everyone
 
 # Concepts #
 
