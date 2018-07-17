@@ -1,11 +1,14 @@
 package exopandora.kardexo.kardexotools;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.minecraft.command.ICommand;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.IProgressUpdate;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.WorldServer;
@@ -114,5 +117,29 @@ public class KardExo
 	public static MinecraftServer getServer()
 	{
 		return KardExo.SERVER;
+	}
+	
+	public static final List<ICommand> getCommands()
+	{
+		List<ICommand> commands = new ArrayList<ICommand>();
+		
+		commands.add(new CommandMoonPhase());
+		commands.add(new CommandWhereIs());
+		commands.add(new CommandBackup());
+		commands.add(new CommandWorldTime());
+		commands.add(new CommandBases());
+		commands.add(new CommandResource());
+		commands.add(new CommandForceSave());
+		commands.add(new CommandCalculate());
+		commands.add(new CommandPlaces());
+		commands.add(new CommandHome());
+		commands.add(new CommandSetHome());
+		commands.add(new CommandSpawn());
+		commands.add(new CommandVeinminer());
+		commands.add(new CommandUndo());
+		commands.add(new CommandLocateBiome());
+		commands.add(new CommandKardExo());
+		
+		return commands;
 	}
 }

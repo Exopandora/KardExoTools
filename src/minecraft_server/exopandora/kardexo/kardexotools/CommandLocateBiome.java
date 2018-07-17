@@ -98,6 +98,12 @@ public class CommandLocateBiome extends CommandBase
 		return args.length == 1 ? this.getListOfStringsMatchingLastWord(args, Biome.REGISTRY.getKeys()) : Collections.<String>emptyList();
 	}
 	
+	@Override
+	public boolean checkPermission(MinecraftServer server, ICommandSender sender)
+	{
+		return true;
+	}
+	
 	@FunctionalInterface
 	public interface TriFunction<T, U, V, R>
 	{

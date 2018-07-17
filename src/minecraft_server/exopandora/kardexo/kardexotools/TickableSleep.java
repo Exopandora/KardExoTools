@@ -2,11 +2,13 @@ package exopandora.kardexo.kardexotools;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.WorldServer;
 
 public class TickableSleep implements ITickable
 {
@@ -37,8 +39,18 @@ public class TickableSleep implements ITickable
 					
 					if((this.sleep.get(playername) + 100) <= this.server.getServer().getEntityWorld().getWorldInfo().getWorldTime())
 					{
+						for(WorldServer server : this.server.worlds)
+						{
+							long i = server.getWorldInfo().getWorldTime() + 24000L;
+							server.getWorldInfo().setWorldTime(i - i % 24000L);
+							
+							for(EntityPlayer entityplayer : server.playerEntities.stream().filter(EntityPlayer::isPlayerSleeping).collect(Collectors.toList()))
+							{
+								entityplayer.wakeUpPlayer(false, false, true);
+							}
+						}
+						
 						this.sleep.clear();
-						this.server.getServer().getEntityWorld().getWorldInfo().setWorldTime(0);
 					}
 				}
 				else

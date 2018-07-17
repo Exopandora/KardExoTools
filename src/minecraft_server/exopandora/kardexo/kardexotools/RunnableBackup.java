@@ -3,7 +3,14 @@ package exopandora.kardexo.kardexotools;
 import java.io.File;
 import java.time.LocalDateTime;
 
+import org.apache.commons.io.FileUtils;
+
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.event.HoverEvent;
+import net.minecraft.util.text.event.HoverEvent.Action;;
 
 public class RunnableBackup implements Runnable
 {
@@ -49,11 +56,13 @@ public class RunnableBackup implements Runnable
 				}
 			}
 			
-			ZipThread zipper = new ZipThread("backup", folderName, new File(Config.BACKUP_DIRECTORY, folderName + "-" + time + ".zip").getPath(), success ->
+			ZipThread zipper = new ZipThread("backup", folderName, new File(Config.BACKUP_DIRECTORY, folderName + "-" + time + ".zip").getPath(), bytes ->
 			{
-				if(success)
+				if(bytes > 0)
 				{
-					KardExo.notifyPlayers(KardExo.getServer(), new TextComponentString("Backup Complete"));
+					ITextComponent size = new TextComponentString(FileUtils.byteCountToDisplaySize(bytes));
+					size.setStyle(new Style().setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new TextComponentTranslation("%s bytes", String.format("%,d", bytes)))));
+					KardExo.notifyPlayers(KardExo.getServer(), new TextComponentTranslation("Backup Complete (%s)", size));
 				}
 				else
 				{

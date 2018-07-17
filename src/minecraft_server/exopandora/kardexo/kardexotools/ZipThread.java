@@ -11,9 +11,9 @@ public class ZipThread extends Thread
 {
 	private final String srcFolder;
 	private final String destZipFile;
-	private final Consumer<Boolean> callback;
+	private final Consumer<Long> callback;
 	
-	public ZipThread(String name, String srcFolder, String destZipFile, Consumer<Boolean> callback)
+	public ZipThread(String name, String srcFolder, String destZipFile, Consumer<Long> callback)
 	{
 		super(name);
 		this.srcFolder = srcFolder;
@@ -25,25 +25,31 @@ public class ZipThread extends Thread
 	{
 		try
 		{
-			this.zipFolder(this.srcFolder, this.destZipFile);
-			this.callback.accept(true);
+			this.callback.accept(this.zipFolder(this.srcFolder, this.destZipFile));
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
-			this.callback.accept(false);
+			this.callback.accept(0L);
 		}
 	}
 	
-	private void zipFolder(String srcFolder, String destZipFile) throws Exception
+	private long zipFolder(String srcFolder, String destZipFile) throws Exception
 	{
 		FileOutputStream fileOut = new FileOutputStream(destZipFile);
 		ZipOutputStream zipOut = new ZipOutputStream(fileOut);
 		
 		this.addFolderToZip("", srcFolder, zipOut);
-		
+
+		fileOut.flush();
 		zipOut.flush();
+		
+		long size = fileOut.getChannel().size();
+		
 		zipOut.close();
+		fileOut.close();
+		
+		return size;
 	}
 	
 	private void addFolderToZip(String path, String srcFolder, ZipOutputStream zip) throws Exception

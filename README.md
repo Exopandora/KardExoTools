@@ -10,21 +10,24 @@
 	* Only one player is required to sleep
 * Commands
 
-	Command   | Feature
-	--------- | -------------------------------------------
-	bases     | Configure bases
-	calc      | Calculate mathematical expression
-	forcesave | Force world save
-	home      | Teleport to home location
-	moonphase | Print current moon phase
-	places    | Configure places
-	resource  | Calculate resources need for specified area
-	sethome   | Set home location
-	spawn     | Teleport to spawn location
-	undo      | Undo last veinmine
-	veinminer | Toggle veinminer
-	whereis   | Find players
-	worldtime | Prints current world time
+	Command     | Feature                                     | Permissions
+	----------- | ------------------------------------------- | -----------
+	backup      | Fource world backup                         | Admin
+	bases       | Configure bases                             | Everyone
+	calc        | Calculate mathematical expression           | Everyone
+	forcesave   | Force world save                            | Admin
+	home        | Teleport to home location                   | Everyone
+	kardexo     | Display version and commands                | Everyone
+	locatebiome | Locate biome                                | Everyone
+	moonphase   | Print current moon phase                    | Everyone
+	places      | Configure places                            | Everyone
+	resource    | Calculate resources need for specified area | Everyone
+	sethome     | Set home location                           | Everyone
+	spawn       | Teleport to spawn location                  | Everyone
+	undo        | Undo last veinmine                          | Everyone
+	veinminer   | Toggle veinminer                            | Everyone
+	whereis     | Find players                                | Everyone
+	worldtime   | Prints current world time                   | Everyone
 
 # Concepts #
 
@@ -70,8 +73,9 @@ Veinminer: exopandora/kardexo/kardexotools/Veinminer.java
 # Recompile #
 
 1. Run 'recompile'
-2. Run 'reobfuscate'
-3. Compiled sources can be found in 'rebof/minecraft_server'
+2. Create an empty file called 'client_meta.log' in 'temp/' 
+3. Run 'reobfuscate'
+4. Compiled sources can be found in 'rebof/minecraft_server'
 
 # Install #
 

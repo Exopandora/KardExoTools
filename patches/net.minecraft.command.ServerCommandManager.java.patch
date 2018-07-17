@@ -1,45 +1,19 @@
 diff -r -U 3 minecraft_server\net\minecraft\command\ServerCommandManager.java minecraft_server_patched\net\minecraft\command\ServerCommandManager.java
 --- minecraft_server\net\minecraft\command\ServerCommandManager.java
 +++ minecraft_server_patched\net\minecraft\command\ServerCommandManager.java
-@@ -1,5 +1,19 @@
+@@ -1,5 +1,6 @@
  package net.minecraft.command;
  
-+import exopandora.kardexo.kardexotools.CommandBackup;
-+import exopandora.kardexo.kardexotools.CommandBases;
-+import exopandora.kardexo.kardexotools.CommandCalculate;
-+import exopandora.kardexo.kardexotools.CommandForceSave;
-+import exopandora.kardexo.kardexotools.CommandHome;
-+import exopandora.kardexo.kardexotools.CommandMoonPhase;
-+import exopandora.kardexo.kardexotools.CommandPlaces;
-+import exopandora.kardexo.kardexotools.CommandResource;
-+import exopandora.kardexo.kardexotools.CommandSetHome;
-+import exopandora.kardexo.kardexotools.CommandSpawn;
-+import exopandora.kardexo.kardexotools.CommandUndo;
-+import exopandora.kardexo.kardexotools.CommandVeinminer;
-+import exopandora.kardexo.kardexotools.CommandWhereIs;
-+import exopandora.kardexo.kardexotools.CommandWorldTime;
++import exopandora.kardexo.kardexotools.KardExo;
  import net.minecraft.command.server.CommandBanIp;
  import net.minecraft.command.server.CommandBanPlayer;
  import net.minecraft.command.server.CommandBroadcast;
-@@ -107,6 +121,21 @@
+@@ -107,6 +121,8 @@
              this.registerCommand(new CommandListPlayers());
              this.registerCommand(new CommandWhitelist());
              this.registerCommand(new CommandSetPlayerTimeout());
 +            
-+            this.registerCommand(new CommandMoonPhase());
-+            this.registerCommand(new CommandWhereIs());
-+            this.registerCommand(new CommandBackup());
-+            this.registerCommand(new CommandWorldTime());
-+            this.registerCommand(new CommandBases());
-+            this.registerCommand(new CommandResource());
-+            this.registerCommand(new CommandForceSave());
-+            this.registerCommand(new CommandCalculate());
-+            this.registerCommand(new CommandPlaces());
-+            this.registerCommand(new CommandHome());
-+            this.registerCommand(new CommandSetHome());
-+            this.registerCommand(new CommandSpawn());
-+            this.registerCommand(new CommandVeinminer());
-+            this.registerCommand(new CommandUndo());
++            KardExo.getCommands().forEach(this::registerCommand);
          }
          else
          {

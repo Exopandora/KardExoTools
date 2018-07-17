@@ -260,6 +260,12 @@ public class CommandPlaces extends CommandProperty
 		return Collections.<String>emptyList();
 	}
 	
+	@Override
+	public boolean checkPermission(MinecraftServer server, ICommandSender sender)
+	{
+		return true;
+	}
+	
 	private boolean verifyPlace(String place) throws CommandException
 	{
 		if(this.file.getData().containsKey(place))

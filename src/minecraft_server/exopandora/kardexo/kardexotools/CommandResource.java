@@ -20,19 +20,18 @@ import net.minecraft.world.World;
 
 public class CommandResource extends CommandBase
 {
-
 	@Override
 	public String getName()
 	{
 		return "resource";
 	}
-
+	
 	@Override
 	public String getUsage(ICommandSender sender)
 	{
 		return "resource <x1> <y1> <z1> <x2> <y2> <z2>";
 	}
-
+	
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
 	{
@@ -105,6 +104,12 @@ public class CommandResource extends CommandBase
 		{
             throw new WrongUsageException(this.getUsage(sender));
 		}
+	}
+	
+	@Override
+	public boolean checkPermission(MinecraftServer server, ICommandSender sender)
+	{
+		return true;
 	}
 	
 	@Override

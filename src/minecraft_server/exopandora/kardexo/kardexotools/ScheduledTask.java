@@ -7,25 +7,23 @@ import net.minecraft.util.text.TextComponentString;
 public class ScheduledTask extends Thread
 {
 	private final String name;
-	private final int offset;
-	private final int interval;
-	private final int delay;
+	private final long offset;
+	private final long interval;
+	private final long delay;
 	private final Runnable task;
 	private final boolean requiresPlayers;
 	private final String warning;
-	private final TimeUnit unit;
 	
-	public ScheduledTask(String name, int offset, int interval, boolean requiresPlayers, Runnable task, String warning, int delay, TimeUnit unit)
+	public ScheduledTask(String name, int offset, int interval, boolean requiresPlayers, Runnable task, String warning, int delay)
 	{
 		super(name);
 		this.name = name;
-		this.offset = offset;
-		this.interval = interval;
+		this.offset = TimeUnit.MINUTES.toMillis(offset);
+		this.interval = TimeUnit.MINUTES.toMillis(interval);
 		this.task = task;
 		this.requiresPlayers = requiresPlayers;
 		this.warning = String.format(warning, delay);
-		this.delay = delay;
-		this.unit = unit;
+		this.delay = TimeUnit.MINUTES.toMillis(delay);
 	}
 	
 	@Override
@@ -33,7 +31,7 @@ public class ScheduledTask extends Thread
 	{
 		try
 		{
-			Thread.sleep(TimeUnit.MINUTES.toMillis(this.offset));
+			Thread.sleep(Math.max(0, this.offset - this.delay));
 			
 			while(KardExo.getServer().isServerRunning())
 			{
@@ -46,11 +44,11 @@ public class ScheduledTask extends Thread
 				else
 				{
 					KardExo.notifyPlayers(KardExo.getServer(), new TextComponentString(this.warning));
-					Thread.sleep(this.unit.toMillis(this.delay));
+					Thread.sleep(this.delay);
 					KardExo.getServer().addScheduledTask(this.task);
 				}
 				
-				Thread.sleep(TimeUnit.MINUTES.toMillis(this.interval) - (System.currentTimeMillis() - millis));
+				Thread.sleep(this.interval - (System.currentTimeMillis() - millis));
 			}
 		}
 		catch(InterruptedException e)

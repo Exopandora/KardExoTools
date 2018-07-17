@@ -16,11 +16,6 @@ import java.util.function.BiFunction;
 import com.google.common.collect.Lists;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockNewLog;
-import net.minecraft.block.BlockOldLog;
-import net.minecraft.block.BlockPlanks;
-import net.minecraft.block.BlockSand;
-import net.minecraft.block.BlockStone;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -38,56 +33,21 @@ import net.minecraft.world.WorldServer;
 
 public class Veinminer
 {
-	private static final Map<IBlockState, Integer> BLOCKS = new HashMap<IBlockState, Integer>();
 	private static final Map<String, Stack<Entry<Integer, Map<IBlockState, List<BlockPos>>>>> HISTORY = new HashMap<String, Stack<Entry<Integer,Map<IBlockState, List<BlockPos>>>>>();
-	
-	static
-	{
-		Veinminer.BLOCKS.put(Blocks.LOG.getDefaultState().withProperty(BlockOldLog.VARIANT, BlockPlanks.EnumType.OAK), 12);
-		Veinminer.BLOCKS.put(Blocks.LOG.getDefaultState().withProperty(BlockOldLog.VARIANT, BlockPlanks.EnumType.SPRUCE), 26);
-		Veinminer.BLOCKS.put(Blocks.LOG.getDefaultState().withProperty(BlockOldLog.VARIANT, BlockPlanks.EnumType.JUNGLE), 26);
-		Veinminer.BLOCKS.put(Blocks.LOG.getDefaultState().withProperty(BlockOldLog.VARIANT, BlockPlanks.EnumType.BIRCH), 15);
-		
-		Veinminer.BLOCKS.put(Blocks.LOG2.getDefaultState().withProperty(BlockNewLog.VARIANT, BlockPlanks.EnumType.DARK_OAK), 10);
-		Veinminer.BLOCKS.put(Blocks.LOG2.getDefaultState().withProperty(BlockNewLog.VARIANT, BlockPlanks.EnumType.ACACIA), 10);
-		
-		Veinminer.BLOCKS.put(Blocks.STONE.getDefaultState().withProperty(BlockStone.VARIANT, BlockStone.EnumType.ANDESITE), 15);
-		Veinminer.BLOCKS.put(Blocks.STONE.getDefaultState().withProperty(BlockStone.VARIANT, BlockStone.EnumType.DIORITE), 15);
-		Veinminer.BLOCKS.put(Blocks.STONE.getDefaultState().withProperty(BlockStone.VARIANT, BlockStone.EnumType.GRANITE), 15);
-		
-		Veinminer.BLOCKS.put(Blocks.GRAVEL.getDefaultState(), 10);
-		Veinminer.BLOCKS.put(Blocks.GLOWSTONE.getDefaultState(), 10);
-		Veinminer.BLOCKS.put(Blocks.SOUL_SAND.getDefaultState(), 5);
-		Veinminer.BLOCKS.put(Blocks.OBSIDIAN.getDefaultState(), 5);
-		Veinminer.BLOCKS.put(Blocks.SAND.getDefaultState().withProperty(BlockSand.VARIANT, BlockSand.EnumType.SAND), 5);
-		Veinminer.BLOCKS.put(Blocks.SAND.getDefaultState().withProperty(BlockSand.VARIANT, BlockSand.EnumType.RED_SAND), 5);
-		Veinminer.BLOCKS.put(Blocks.CLAY.getDefaultState(), 5);
-		
-		Veinminer.BLOCKS.put(Blocks.COAL_ORE.getDefaultState(), 17);
-		Veinminer.BLOCKS.put(Blocks.IRON_ORE.getDefaultState(), 9);
-		Veinminer.BLOCKS.put(Blocks.GOLD_ORE.getDefaultState(), 9);
-		Veinminer.BLOCKS.put(Blocks.DIAMOND_ORE.getDefaultState(), 9);
-		Veinminer.BLOCKS.put(Blocks.LAPIS_ORE.getDefaultState(), 7);
-		Veinminer.BLOCKS.put(Blocks.REDSTONE_ORE.getDefaultState(), 8);
-		Veinminer.BLOCKS.put(Blocks.QUARTZ_ORE.getDefaultState(), 14);
-		
-		Veinminer.BLOCKS.put(Blocks.PACKED_ICE.getDefaultState(), 10);
-		Veinminer.BLOCKS.put(Blocks.BONE_BLOCK.getDefaultState(), 10);
-	}
 	
 	public static boolean mine(BlockPos pos, EntityPlayerMP player, World world, BiFunction<BlockPos, Boolean, Boolean> harvestBlock)
 	{
-		if(Config.VEINMINER.getData().containsKey(player.getName()) && Config.VEINMINER.getData().get(player.getName()).isEnabled() && player.isSneaking())
+		if(Config.PLAYERS.getData().containsKey(player.getName()) && Config.PLAYERS.getData().get(player.getName()).isVeinminerEnabled() && player.isSneaking())
 		{
 			IBlockState state = world.getBlockState(pos);
 			
-			for(IBlockState block : Veinminer.BLOCKS.keySet())
+			for(IBlockState block : Config.VEINMINER.getData().keySet())
 			{
 				ItemStack item = player.getHeldItemMainhand();
 				
 				if(isEqualVariant(state, block) && (item.getDestroySpeed(state) > 1.0F || block.getMaterial().isToolNotRequired()))
 				{
-					PriorityQueue<BlockPos> queue = calculateVein(Config.BLOCK_LIMIT, BLOCKS.get(block), world.getBlockState(pos), pos, pos, world);
+					PriorityQueue<BlockPos> queue = calculateVein(Config.BLOCK_LIMIT, Config.VEINMINER.getData().get(block).getRadius(), world.getBlockState(pos), pos, pos, world);
 					Map<IBlockState, List<BlockPos>> statemap = new HashMap<IBlockState, List<BlockPos>>();
 					Entry<Integer, Map<IBlockState, List<BlockPos>>> undo = new SimpleEntry(player.dimension, statemap);
 					queue.poll();
