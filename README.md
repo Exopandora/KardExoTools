@@ -47,7 +47,7 @@ Bases can be used by players to receive a notification when a player enters or l
 
 Once activated you can mine veins of blocks (configurable) by sneaking. It only works with an appropiate tool that has more than one durability and the blocks are in radius of the configured size. There is also a maximum (configurable) amount of blocks you can mine at once. You can undo the last (configurable amount) veinmine as long as you have the applicable blocks in your inventory and there is no living entity or block (except fluids) in the area you mined out. Durability will not be refunded.
 
-# Setup #
+# Installation #
 
 ## Prerequisites ##
 
@@ -65,19 +65,18 @@ Once activated you can mine veins of blocks (configurable) by sneaking. It only 
 7. Clone this repo into the MCP folder
 8. Run 'patch'
 
-# Configure (Optional) #
+## Configure (Optional) ##
 
 General: exopandora/kardexo/kardexotools/Config.java  
-Veinminer: exopandora/kardexo/kardexotools/Veinminer.java
 
-# Recompile #
+## Recompile ##
 
 1. Run 'recompile'
 2. Create an empty file called 'client_meta.log' in 'temp/' 
 3. Run 'reobfuscate'
 4. Compiled sources can be found in 'rebof/minecraft_server'
 
-# Install #
+## Install ##
 
 1. Open a vanilla 'minecraft_server.jar' as a zip file
 2. Copy all files from 'rebof/minecraft_server' into the jar
