@@ -50,7 +50,14 @@ public class KardExo
 		
 		Runtime.getRuntime().addShutdownHook(new ShutdownHook());
 		
-		Tasks.start();
+		try
+		{
+			Tasks.start();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 		
 		KardExo.LOGGER.info("Turned off world auto-saving");
 	}

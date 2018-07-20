@@ -14,7 +14,7 @@ import net.minecraft.init.Blocks;
 
 public class Config
 {	
-	public static final String VERSION = "1.12.2-2.33";
+	public static final String VERSION = "1.12.2-2.34";
 	
 	/** Time in minutes between saves **/
 	public static final int INTERVAL_SAVE = 20;
@@ -29,10 +29,16 @@ public class Config
 	public static final int OFFSET_BACKUP = 20;
 	
 	/** Time in seconds before the save starts **/
-	public static final int WARNING_DELAY_SAVE = 5;
+	public static final int[] WARNING_TIMES_SAVE = {5, 10};
+	
+	/** Warning message displayed before saving **/
+	public static final String WARNING_MESSAGE_SAVE = "Saving in %d seconds";
 	
 	/** Time in seconds before the backup starts **/
-	public static final int WARNING_DELAY_BACKUP = 5;
+	public static final int[] WARNING_TIMES_BACKUP = {5, 10};
+	
+	/** Warning message displayed before a backup **/
+	public static final String WARNING_MESSAGE_BACKUP = "Starting Backup in %d seconds";
 	
 	/** Number of backup files **/
 	public static final int BACKUP_FILES = 10;

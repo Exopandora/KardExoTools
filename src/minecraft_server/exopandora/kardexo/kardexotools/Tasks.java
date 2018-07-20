@@ -8,8 +8,8 @@ public class Tasks
 	public static final Runnable SAVE = KardExo::saveWorld;
 	public static final Runnable BACKUP = new RunnableBackup();
 	
-	private static final ScheduledTask SCHEDULED_SAVE = new ScheduledTask("save", Config.OFFSET_SAVE, Config.INTERVAL_SAVE, false, SAVE, "Saving in %d seconds", Config.WARNING_DELAY_SAVE);
-	private static final ScheduledTask SCHEDULED_BACKUP = new ScheduledTask("backup", Config.OFFSET_BACKUP, Config.INTERVAL_BACKUP, true, BACKUP, "Starting Backup in %d seconds", Config.WARNING_DELAY_BACKUP);
+	private static final ScheduledTask SCHEDULED_SAVE = new ScheduledTask("save", Config.OFFSET_SAVE, Config.INTERVAL_SAVE, false, SAVE, Config.WARNING_MESSAGE_SAVE, Config.WARNING_TIMES_SAVE);
+	private static final ScheduledTask SCHEDULED_BACKUP = new ScheduledTask("backup", Config.OFFSET_BACKUP, Config.INTERVAL_BACKUP, true, BACKUP, Config.WARNING_MESSAGE_BACKUP, Config.WARNING_TIMES_BACKUP);
 	
 	private static final List<ScheduledTask> TASKS = new ArrayList<ScheduledTask>();
 	private static boolean RUNNING;
