@@ -23,7 +23,7 @@ public class CommandKardExo extends CommandBase
 	@Override
 	public String getUsage(ICommandSender sender)
 	{
-		return "/kardexo <list|commands>";
+		return "/kardexo <commands|version>";
 	}
 	
 	@Override
@@ -35,7 +35,7 @@ public class CommandKardExo extends CommandBase
 			{
 				sender.sendMessage(new TextComponentString("Commands:"));
 				
-				for(ICommand command : KardExo.getCommands())
+				for(ICommand command : Config.getCommands())
 				{
 					if(!command.getName().equals(this.getName()) && command.checkPermission(server, sender))
 					{

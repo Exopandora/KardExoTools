@@ -63,7 +63,7 @@ public class Veinminer
 							
 							for(int x = 0; x < Config.BLOCK_LIMIT; x++)
 							{
-								if(item.getMaxDamage() > 0 ? item.getMaxDamage() - item.getItemDamage() == 0 : false)
+								if(item.getMaxDamage() > 0 ? item.getMaxDamage() == item.getItemDamage() : false)
 								{
 									break;
 								}

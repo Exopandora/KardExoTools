@@ -1,7 +1,9 @@
 package exopandora.kardexo.kardexotools;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import net.minecraft.block.BlockNewLog;
@@ -10,11 +12,14 @@ import net.minecraft.block.BlockPlanks;
 import net.minecraft.block.BlockSand;
 import net.minecraft.block.BlockStone;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.command.ICommand;
 import net.minecraft.init.Blocks;
 
 public class Config
-{	
-	public static final String VERSION = "1.12.2-2.34";
+{
+	public static final String VERSION = "1.12.2-2.35";
+	
+	//** CONFIGURABLE VALUES **//
 	
 	/** Time in minutes between saves **/
 	public static final int INTERVAL_SAVE = 20;
@@ -38,10 +43,13 @@ public class Config
 	public static final int[] WARNING_TIMES_BACKUP = {5, 10};
 	
 	/** Warning message displayed before a backup **/
-	public static final String WARNING_MESSAGE_BACKUP = "Starting Backup in %d seconds";
+	public static final String WARNING_MESSAGE_BACKUP = "Starting backup in %d seconds";
 	
 	/** Number of backup files **/
 	public static final int BACKUP_FILES = 10;
+	
+	/** Disable automatic world saving **/
+	public static final boolean DISABLE_AUTO_SAVING = true;
 	
 	/** Number of blocks vein miner can harvest at once **/
 	public static final int BLOCK_LIMIT = 128;
@@ -65,8 +73,10 @@ public class Config
 	public static final DataFile<Property, String> PLACES = new DataFile<Property, String>(new File(CONFIG_DIRECTORY, "places.json"), Property[].class, Property::getName);
 	public static final DataFile<Home, String> HOME = new DataFile<Home, String>(new File(CONFIG_DIRECTORY, "home.json"), Home[].class, Home::getPlayer);
 	public static final DataFile<PlayerData, String> PLAYERS = new DataFile<PlayerData, String>(new File(CONFIG_DIRECTORY, "playerdata.json"), PlayerData[].class, PlayerData::getPlayer);
-	public static final DataFile<VeinminerEntry, IBlockState> VEINMINER = new DataFile<VeinminerEntry, IBlockState>(new File(CONFIG_DIRECTORY, "veinminer.json"), VeinminerEntry[].class, VeinminerEntry::toBlockState,() -> 
+	public static final DataFile<VeinminerEntry, IBlockState> VEINMINER = new DataFile<VeinminerEntry, IBlockState>(new File(CONFIG_DIRECTORY, "veinminer.json"), VeinminerEntry[].class, VeinminerEntry::toBlockState, () -> 
 	{
+		//Default veinminer configuration
+		
 		Set<VeinminerEntry> initial = new HashSet<VeinminerEntry>();
 		
 		initial.add(VeinminerEntry.fromBlockState(Blocks.LOG.getDefaultState().withProperty(BlockOldLog.VARIANT, BlockPlanks.EnumType.OAK), 12));
@@ -102,6 +112,34 @@ public class Config
 		
 		return initial;
 	});
+	
+	public static final List<ICommand> getCommands()
+	{
+		//List of all available commands
+		
+		List<ICommand> commands = new ArrayList<ICommand>();
+		
+		commands.add(new CommandMoonPhase());
+		commands.add(new CommandWhereIs());
+		commands.add(new CommandBackup());
+		commands.add(new CommandWorldTime());
+		commands.add(new CommandBases());
+		commands.add(new CommandResource());
+		commands.add(new CommandForceSave());
+		commands.add(new CommandCalculate());
+		commands.add(new CommandPlaces());
+		commands.add(new CommandHome());
+		commands.add(new CommandSetHome());
+		commands.add(new CommandSpawn());
+		commands.add(new CommandVeinminer());
+		commands.add(new CommandUndo());
+		commands.add(new CommandLocateBiome());
+		commands.add(new CommandKardExo());
+		
+		return commands;
+	}
+	
+	//** DOT EDIT BELOW THIS LINE **//
 	
 	static
 	{

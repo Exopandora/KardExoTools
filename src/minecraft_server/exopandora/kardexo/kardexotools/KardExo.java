@@ -1,12 +1,8 @@
 package exopandora.kardexo.kardexotools;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.minecraft.command.ICommand;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.util.text.ITextComponent;
@@ -21,45 +17,34 @@ public class KardExo
 	
 	public static void init(MinecraftServer server)
 	{
-		KardExo.LOGGER.info("KardExoTools " + Config.VERSION + " bootstrap");
+		KardExo.LOGGER.info("Loading KardExoTools " + Config.VERSION);
 		
 		SERVER = server;
 		
-		for(int i = 0; i < server.worlds.length; i++)
+		if(Config.DISABLE_AUTO_SAVING)
 		{
-			if(server.worlds[i] != null)
+			for(int i = 0; i < server.worlds.length; i++)
 			{
 				WorldServer worldserver = server.worlds[i];
 				
-				if(!worldserver.disableLevelSaving)
+				if(worldserver != null)
 				{
-					worldserver.disableLevelSaving = true;
+					if(!worldserver.disableLevelSaving)
+					{
+						worldserver.disableLevelSaving = true;
+					}
 				}
 			}
 		}
 		
-		KardExo.LOGGER.info("Loading files");
-		
 		Config.readAllFiles();
-		
-		KardExo.LOGGER.info("Adding hooks");
 		
 		server.registerTickable(new TickableSleep(server));
 		server.registerTickable(new TickableBases(server));
 		server.registerTickable(new TickableDeathListener(server));
 		
 		Runtime.getRuntime().addShutdownHook(new ShutdownHook());
-		
-		try
-		{
-			Tasks.start();
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-		
-		KardExo.LOGGER.info("Turned off world auto-saving");
+		Tasks.start();
 	}
 	
 	public static void notifyPlayers(MinecraftServer server, ITextComponent message)
@@ -124,29 +109,5 @@ public class KardExo
 	public static MinecraftServer getServer()
 	{
 		return KardExo.SERVER;
-	}
-	
-	public static final List<ICommand> getCommands()
-	{
-		List<ICommand> commands = new ArrayList<ICommand>();
-		
-		commands.add(new CommandMoonPhase());
-		commands.add(new CommandWhereIs());
-		commands.add(new CommandBackup());
-		commands.add(new CommandWorldTime());
-		commands.add(new CommandBases());
-		commands.add(new CommandResource());
-		commands.add(new CommandForceSave());
-		commands.add(new CommandCalculate());
-		commands.add(new CommandPlaces());
-		commands.add(new CommandHome());
-		commands.add(new CommandSetHome());
-		commands.add(new CommandSpawn());
-		commands.add(new CommandVeinminer());
-		commands.add(new CommandUndo());
-		commands.add(new CommandLocateBiome());
-		commands.add(new CommandKardExo());
-		
-		return commands;
 	}
 }
