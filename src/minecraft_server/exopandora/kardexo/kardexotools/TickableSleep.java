@@ -23,21 +23,21 @@ public class TickableSleep implements ITickable
 	@Override
 	public void update()
 	{
-		if(!this.server.getServer().getEntityWorld().playerEntities.isEmpty())
+		if(!this.server.getEntityWorld().playerEntities.isEmpty())
 		{
-			for(EntityPlayer player : this.server.getServer().getEntityWorld().playerEntities)
+			for(EntityPlayer player : this.server.getPlayerList().getPlayers())
 			{
 				String playername = player.getName();
 				
 				if(player.isPlayerSleeping())
 				{
-					if(!this.sleep.containsKey(playername) && !this.server.getServer().getEntityWorld().isDaytime())
+					if(!this.sleep.containsKey(playername) && !this.server.getEntityWorld().isDaytime())
 					{
 						KardExo.notifyPlayers(this.server, new TextComponentTranslation("%s is now sleeping", player.getDisplayName()));
-						this.sleep.put(playername, this.server.getServer().getEntityWorld().getWorldInfo().getWorldTime());
+						this.sleep.put(playername, this.server.getEntityWorld().getWorldInfo().getWorldTime());
 					}
 					
-					if((this.sleep.get(playername) + 100) <= this.server.getServer().getEntityWorld().getWorldInfo().getWorldTime())
+					if((this.sleep.get(playername) + 100) <= this.server.getEntityWorld().getWorldInfo().getWorldTime())
 					{
 						for(WorldServer server : this.server.worlds)
 						{
