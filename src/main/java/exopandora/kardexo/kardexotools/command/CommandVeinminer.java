@@ -1,0 +1,65 @@
+package exopandora.kardexo.kardexotools.command;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
+
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+
+import exopandora.kardexo.kardexotools.data.Config;
+import exopandora.kardexo.kardexotools.data.PlayerData;
+import exopandora.kardexo.kardexotools.veinminer.VeinminerEntry;
+import net.minecraft.block.Block;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
+
+public class CommandVeinminer
+{
+	public static void register(CommandDispatcher<CommandSource> dispatcher)
+	{
+		dispatcher.register(Commands.literal("veinminer")
+				.then(Commands.literal("on")
+						.executes(context -> CommandVeinminer.setVeinminer(context.getSource(), true)))
+				.then(Commands.literal("off")
+						.executes(context -> CommandVeinminer.setVeinminer(context.getSource(), false)))
+				.then(Commands.literal("list")
+						.executes(context -> list(context.getSource()))));
+	}
+	
+	private static int setVeinminer(CommandSource source, boolean enabled) throws CommandSyntaxException
+	{
+		Config.PLAYERS.getData().put(source.getName(), new PlayerData(source.getName(), enabled));
+		
+		if(enabled)
+		{
+			source.sendFeedback(new TextComponentString("Veinminer enabled"), false);
+		}
+		else
+		{
+			source.sendFeedback(new TextComponentString("Veinminer disabled"), false);
+		}
+		
+		return 1;
+	}
+	
+	private static int list(CommandSource source) throws CommandSyntaxException
+	{
+		List<ITextComponent> list = new ArrayList<ITextComponent>(Config.VEINMINER.getData().size());
+		
+		for(Entry<Block, VeinminerEntry> entry : Config.VEINMINER.getData().entrySet())
+		{
+			ItemStack stack = new ItemStack(entry.getKey().asItem(), 1);
+			list.add(new TextComponentTranslation("%s = %s", stack.getDisplayName(), entry.getValue().getRadius()));
+		}
+		
+		list.sort((a, b) -> a.toString().compareTo(b.toString()));
+		list.forEach(message -> source.sendFeedback(message, false));
+		
+		return list.size();
+	}
+}

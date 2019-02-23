@@ -1,0 +1,11 @@
+--- a/net/minecraft/server/MinecraftServer.java
++++ b/net/minecraft/server/MinecraftServer.java
+@@ -1107,7 +1107,7 @@
+ 
+     public String getServerModName()
+     {
+-        return "vanilla";
++        return "KardExo";
+     }
+ 
+     public CrashReport addServerInfoToCrashReport(CrashReport report)

@@ -4,14 +4,9 @@
 # Except
 
 !/src/
-/src/minecraft_server/mcp
-/src/minecraft_server/net
 !/patches/
-!/runtime/patch.py
-!patch.bat
-!patch.sh
-!README.md
 !.gitignore
+!README.md
 
 # Subdirs
 # !*/

@@ -51,33 +51,27 @@ Once activated you can mine veins of blocks (configurable) by sneaking. It only 
 
 ## Prerequisites ##
 
-1. Java SE 8
-2. Java Development Kit 8
+1. Java SE 8 Update 92
+2. Java Development Kit 8 Update 92
 
-## Setup MCP ##
+## Setup jarmod-buildsystem-2 ##
 
-1. Download MCP
-2. Update MCP mappings
-3. Download 'minecraft_server.jar'
-4. Rename it to 'minecraft_server.jar'
-5. Put it inside the folder 'jars'
-6. Run 'decompile --server'
-7. Clone this repo into the MCP folder
-8. Run 'patch'
+1. Download [jarmod-buildsystem-2](https://github.com/Earthcomputer/jarmod-buildsystem-2)
+2. Delete the folders `patches` and `src` and the file `conf/settings.json`
+3. Copy the folders `patches` and `src` and the file `conf/settings.json` from this repo
+4. Run `gradlew setup`
 
 ## Configure (Optional) ##
 
-General: exopandora/kardexo/kardexotools/Config.java  
+General config file: `src/main/java/exopandora/kardexo/kardexotools/data/Config.java`
 
-## Recompile ##
+## Build ##
 
-1. Run 'recompile'
-2. Create an empty file called 'client_meta.log' in 'temp/' 
-3. Run 'reobfuscate'
-4. Compiled sources can be found in 'rebof/minecraft_server'
+1. Run `gradlew releaseProject`
+2. Compiled sources can be found in `build/distributions/`
 
 ## Install ##
 
-1. Open a vanilla 'minecraft_server.jar' as a zip file
-2. Copy all files from 'rebof/minecraft_server' into the jar
+1. Open a vanilla `minecraft_server.jar` as a zip file
+2. Copy all files from `build/distributions/KardExoTools_VERSION_Server.zip` into the jar
 3. Run the server
