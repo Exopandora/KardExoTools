@@ -12,9 +12,9 @@
      }
  
 -    public boolean tryHarvestBlock(BlockPos pos)
-+	public boolean tryHarvestBlock(BlockPos pos)
-+	{
-+    	return Veinminer.mine(pos, this.player, this.world, this::tryHarvestBlock);
++    public boolean tryHarvestBlock(BlockPos pos)
++    {
++        return Veinminer.mine(pos, this.player, this.world, this::tryHarvestBlock);
 +    }
 +
 +    public boolean tryHarvestBlock(BlockPos pos, boolean dropAtPlayer)

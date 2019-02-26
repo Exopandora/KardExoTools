@@ -24,11 +24,11 @@ public class CommandVeinminer
 	{
 		dispatcher.register(Commands.literal("veinminer")
 				.then(Commands.literal("on")
-						.executes(context -> CommandVeinminer.setVeinminer(context.getSource(), true)))
+					.executes(context -> CommandVeinminer.setVeinminer(context.getSource(), true)))
 				.then(Commands.literal("off")
-						.executes(context -> CommandVeinminer.setVeinminer(context.getSource(), false)))
+					.executes(context -> CommandVeinminer.setVeinminer(context.getSource(), false)))
 				.then(Commands.literal("list")
-						.executes(context -> list(context.getSource()))));
+					.executes(context -> list(context.getSource()))));
 	}
 	
 	private static int setVeinminer(CommandSource source, boolean enabled) throws CommandSyntaxException

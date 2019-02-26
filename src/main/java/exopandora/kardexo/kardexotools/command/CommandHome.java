@@ -59,7 +59,7 @@ public class CommandHome
 	
 	protected static boolean hasRoomForPlayer(IBlockReader reader, BlockPos pos)
 	{
-    	return reader.getBlockState(pos.down()).isTopSolid() && !reader.getBlockState(pos).getMaterial().isSolid() && !reader.getBlockState(pos.up()).getMaterial().isSolid();
+		return reader.getBlockState(pos.down()).isTopSolid() && !reader.getBlockState(pos).getMaterial().isSolid() && !reader.getBlockState(pos.up()).getMaterial().isSolid();
 	}
 	
 	public static void doTeleport(MinecraftServer server, Entity entity, BlockPos pos, int dimension)
@@ -83,10 +83,10 @@ public class CommandHome
 			entity.setPosition(x, y, z);
 		}
 		
-        if(!(entity instanceof EntityLivingBase) || !((EntityLivingBase) entity).isElytraFlying())
-        {
-            entity.motionY = 0.0D;
-            entity.onGround = true;
-        }
+		if(!(entity instanceof EntityLivingBase) || !((EntityLivingBase) entity).isElytraFlying())
+		{
+			entity.motionY = 0.0D;
+			entity.onGround = true;
+		}
 	}
 }

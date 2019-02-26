@@ -87,7 +87,7 @@ public class KardExo
 	
 	public static void registerCommands(CommandDispatcher<CommandSource> dispatcher)
 	{
-        Config.getCommands().forEach(command -> command.accept(dispatcher));
+		Config.getCommands().forEach(command -> command.accept(dispatcher));
 	}
 	
 	public static void notifyPlayers(MinecraftServer server, ITextComponent message)
@@ -123,11 +123,11 @@ public class KardExo
 			{
 				if(worldserver != null)
 				{
-			        boolean flag = worldserver.disableLevelSaving;
-			        worldserver.disableLevelSaving = false;
-			        worldserver.saveAllChunks(true, (IProgressUpdate) null);
-			        worldserver.flushToDisk();
-			        worldserver.disableLevelSaving = flag;
+					boolean flag = worldserver.disableLevelSaving;
+					worldserver.disableLevelSaving = false;
+					worldserver.saveAllChunks(true, (IProgressUpdate) null);
+					worldserver.flushToDisk();
+					worldserver.disableLevelSaving = flag;
 				}
 			}
 		}

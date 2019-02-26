@@ -83,7 +83,7 @@ public class CommandWhereIs
 		String result = "%s: d: " + dimension + " x: " + pos.getX() + " y: " + pos.getY() + " z: " + pos.getZ() + (textComponent != null ? " (%s)" : "");
 		source.getServer().logInfo("Query: " + String.format(result, target.getName().getString(), String.join(", ", bases.parallelStream().map(Property::getName).collect(Collectors.toList()))));
 		source.sendFeedback(new TextComponentTranslation(result, target.getDisplayName(), textComponent), false);
-        
-        return 1;
+		
+		return 1;
 	}
 }
