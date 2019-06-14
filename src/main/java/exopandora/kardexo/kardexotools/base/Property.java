@@ -6,10 +6,10 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.world.dimension.DimensionType;
 
@@ -166,12 +166,12 @@ public class Property
 		return null;
 	}
 	
-	public boolean isInside(EntityPlayer player)
+	public boolean isInside(PlayerEntity player)
 	{
 		return this.isInsideMain(player) || this.isInsideChild(player);
 	}
 	
-	public boolean isInsideMain(EntityPlayer player)
+	public boolean isInsideMain(PlayerEntity player)
 	{
 		float posX = MathHelper.floor(player.posX);
 		float posZ = MathHelper.floor(player.posZ);
@@ -179,7 +179,7 @@ public class Property
 		return posX >= this.xMin && posX <= this.xMax && posZ >= this.zMin && posZ <= this.zMax && player.dimension.getId() == this.dimension;
 	}
 	
-	public boolean isInsideChild(EntityPlayer player)
+	public boolean isInsideChild(PlayerEntity player)
 	{
 		if(this.children != null)
 		{
@@ -282,8 +282,8 @@ public class Property
 	
 	public ITextComponent getDisplayName()
 	{
-		ITextComponent basetextcomponent = new TextComponentString(this.getTitle());
-		basetextcomponent.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(this.getTitle() + (this.title != null ? "\nName: " + this.name : "") + "\nCreators: " + this.getCreators(", ") + "\n" + (!this.getOwners().isEmpty() ? ("Owners: " + this.getOwners(", ") + "\n") : "") + "Dimension: " + DimensionType.getById(this.dimension).getSuffix() + "\n" + (this.children != null ? ("Children: " + this.getChildren(",") + "\n") : "") +  "X: [" + this.xMin + ", " + this.xMax + "]\nZ: [" + this.zMin + ", " + this.zMax + "]\nSize: " + this.getSize())));
+		ITextComponent basetextcomponent = new StringTextComponent(this.getTitle());
+		basetextcomponent.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent(this.getTitle() + (this.title != null ? "\nName: " + this.name : "") + "\nCreators: " + this.getCreators(", ") + "\n" + (!this.getOwners().isEmpty() ? ("Owners: " + this.getOwners(", ") + "\n") : "") + "Dimension: " + DimensionType.getById(this.dimension).getSuffix() + "\n" + (this.children != null ? ("Children: " + this.getChildren(",") + "\n") : "") +  "X: [" + this.xMin + ", " + this.xMax + "]\nZ: [" + this.zMin + ", " + this.zMax + "]\nSize: " + this.getSize())));
 		basetextcomponent.getStyle().setInsertion(this.name);
 		return basetextcomponent;
 	}

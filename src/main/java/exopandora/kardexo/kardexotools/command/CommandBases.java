@@ -20,11 +20,11 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.ColumnPosArgument;
-import net.minecraft.command.arguments.ColumnPosArgument.ColumnPos;
 import net.minecraft.command.arguments.DimensionArgument;
 import net.minecraft.command.arguments.EntityArgument;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.ColumnPos;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.dimension.DimensionType;
 
 public class CommandBases
@@ -38,9 +38,9 @@ public class CommandBases
 							.then(Commands.argument("from", ColumnPosArgument.columnPos())
 								.then(Commands.argument("to", ColumnPosArgument.columnPos())
 									.then(Commands.argument("owner", EntityArgument.player())
-										.executes(context -> add(context.getSource(), StringArgumentType.getString(context, "id"), DimensionArgument.func_212592_a(context, "dimension"), ColumnPosArgument.getColumnPos(context, "from"), ColumnPosArgument.getColumnPos(context, "to"), EntityArgument.getPlayer(context, "owner"), null))
+										.executes(context -> add(context.getSource(), StringArgumentType.getString(context, "id"), DimensionArgument.func_212592_a(context, "dimension"), ColumnPosArgument.func_218101_a(context, "from"), ColumnPosArgument.func_218101_a(context, "to"), EntityArgument.getPlayer(context, "owner"), null))
 										.then(Commands.argument("title", StringArgumentType.greedyString())
-											.executes(context -> add(context.getSource(), StringArgumentType.getString(context, "id"), DimensionArgument.func_212592_a(context, "dimension"), ColumnPosArgument.getColumnPos(context, "from"), ColumnPosArgument.getColumnPos(context, "to"), EntityArgument.getPlayer(context, "owner"), StringArgumentType.getString(context, "title"))))))))))
+											.executes(context -> add(context.getSource(), StringArgumentType.getString(context, "id"), DimensionArgument.func_212592_a(context, "dimension"), ColumnPosArgument.func_218101_a(context, "from"), ColumnPosArgument.func_218101_a(context, "to"), EntityArgument.getPlayer(context, "owner"), StringArgumentType.getString(context, "title"))))))))))
 				.then(Commands.literal("remove")
 					.then(Commands.argument("id", StringArgumentType.word())
 						.suggests(CommandBases::getSuggestions)
@@ -101,21 +101,21 @@ public class CommandBases
 								.then(Commands.argument("dimension", DimensionArgument.getDimension())
 									.then(Commands.argument("from", ColumnPosArgument.columnPos())
 										.then(Commands.argument("to", ColumnPosArgument.columnPos())
-											.executes(context -> addChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child"), DimensionArgument.func_212592_a(context, "dimension"), ColumnPosArgument.getColumnPos(context, "from"), ColumnPosArgument.getColumnPos(context, "to"), null)))))))
+											.executes(context -> addChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child"), DimensionArgument.func_212592_a(context, "dimension"), ColumnPosArgument.func_218101_a(context, "from"), ColumnPosArgument.func_218101_a(context, "to"), null)))))))
 											.then(Commands.argument("title", StringArgumentType.greedyString())
-												.executes(context -> addChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child"), DimensionArgument.func_212592_a(context, "dimension"), ColumnPosArgument.getColumnPos(context, "from"), ColumnPosArgument.getColumnPos(context, "to"), StringArgumentType.getString(context, "title"))))
+												.executes(context -> addChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child"), DimensionArgument.func_212592_a(context, "dimension"), ColumnPosArgument.func_218101_a(context, "from"), ColumnPosArgument.func_218101_a(context, "to"), StringArgumentType.getString(context, "title"))))
 						.then(Commands.literal("remove")
 							.then(Commands.argument("child", StringArgumentType.word())
 								.suggests(CommandBases::getChildSuggestions)
 								.executes(context -> removeChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child"))))))));
 	}
 	
-	private static int add(CommandSource source, String id, DimensionType dimension, ColumnPos from, ColumnPos to, EntityPlayer owner, String title) throws CommandSyntaxException
+	private static int add(CommandSource source, String id, DimensionType dimension, ColumnPos from, ColumnPos to, PlayerEntity owner, String title) throws CommandSyntaxException
 	{
 		try
 		{
 			CommandProperty.add(id, dimension, from, to, owner.getGameProfile().getName(), title, Config.BASES);
-			source.sendFeedback(new TextComponentString("Added base with id " + id), false);
+			source.sendFeedback(new StringTextComponent("Added base with id " + id), false);
 		}
 		catch(IllegalStateException e)
 		{
@@ -132,7 +132,7 @@ public class CommandBases
 		try
 		{
 			CommandProperty.remove(id, Config.BASES);
-			source.sendFeedback(new TextComponentString("Removed base with id " + id), false);
+			source.sendFeedback(new StringTextComponent("Removed base with id " + id), false);
 		}
 		catch(NoSuchElementException e)
 		{
@@ -142,41 +142,41 @@ public class CommandBases
 		return 1;
 	}
 	
-	private static int setEnterMessage(CommandSource source, String id, EntityPlayer player, String message) throws CommandSyntaxException
+	private static int setEnterMessage(CommandSource source, String id, PlayerEntity player, String message) throws CommandSyntaxException
 	{
 		ensuredForOwner(source, id, player, owner -> 
 		{
 			owner.setEnterMessage(message);
-			source.sendFeedback(new TextComponentString("Message upon entrance has been set to \"" + message + "\""), false);
+			source.sendFeedback(new StringTextComponent("Message upon entrance has been set to \"" + message + "\""), false);
 		});
 		
 		return 1;
 	}
 	
-	private static int setExitMessage(CommandSource source, String id, EntityPlayer player, String message) throws CommandSyntaxException
+	private static int setExitMessage(CommandSource source, String id, PlayerEntity player, String message) throws CommandSyntaxException
 	{
 		ensuredForOwner(source, id, player, owner -> 
 		{
 			owner.setExitMessage(message);
-			source.sendFeedback(new TextComponentString("Message upon exit has been set to \"" + message + "\""), false);
+			source.sendFeedback(new StringTextComponent("Message upon exit has been set to \"" + message + "\""), false);
 		});
 		
 		return 1;
 	}
 	
-	private static int setBothMessages(CommandSource source, String id, EntityPlayer player, String message) throws CommandSyntaxException
+	private static int setBothMessages(CommandSource source, String id, PlayerEntity player, String message) throws CommandSyntaxException
 	{
 		ensuredForOwner(source, id, player, owner -> 
 		{
 			owner.setEnterMessage(message);
 			owner.setExitMessage(message);
-			source.sendFeedback(new TextComponentString("Both messages have been set to \"" + message + "\""), false);
+			source.sendFeedback(new StringTextComponent("Both messages have been set to \"" + message + "\""), false);
 		});
 		
 		return 1;
 	}
 	
-	private static void ensuredForOwner(CommandSource source, String id, EntityPlayer player, Consumer<PropertyOwner> callback) throws CommandSyntaxException
+	private static void ensuredForOwner(CommandSource source, String id, PlayerEntity player, Consumer<PropertyOwner> callback) throws CommandSyntaxException
 	{
 		ensurePermission(source, id, player);
 		ensureOwner(player.getGameProfile().getName(), id);
@@ -188,7 +188,7 @@ public class CommandBases
 		});
 	}
 	
-	private static int addOwner(CommandSource source, String id, EntityPlayer player, boolean creator) throws CommandSyntaxException
+	private static int addOwner(CommandSource source, String id, PlayerEntity player, boolean creator) throws CommandSyntaxException
 	{
 		ensurePermission(source, id, null);
 		String name = player.getGameProfile().getName();
@@ -204,17 +204,17 @@ public class CommandBases
 		
 		if(creator)
 		{
-			source.sendFeedback(new TextComponentString("Added " + name +  " as a creator to base with id " + id), false);
+			source.sendFeedback(new StringTextComponent("Added " + name +  " as a creator to base with id " + id), false);
 		}
 		else
 		{
-			source.sendFeedback(new TextComponentString("Added " + name +  " as an owner to base with id " + id), false);
+			source.sendFeedback(new StringTextComponent("Added " + name +  " as an owner to base with id " + id), false);
 		}
 		
 		return 1;
 	}
 	
-	private static int removeOwner(CommandSource source, String id, EntityPlayer player) throws CommandSyntaxException
+	private static int removeOwner(CommandSource source, String id, PlayerEntity player) throws CommandSyntaxException
 	{
 		ensurePermission(source, id, player);
 		ensureOwner(player.getGameProfile().getName(), id);
@@ -223,13 +223,13 @@ public class CommandBases
 		
 		PropertyOwner owner = new PropertyOwner(player.getGameProfile().getName());
 		property.removeOwner(owner);
-		source.sendFeedback(new TextComponentString("Removed " + owner.getName() +  " as an owner of the base with id " + id), false);
+		source.sendFeedback(new StringTextComponent("Removed " + owner.getName() +  " as an owner of the base with id " + id), false);
 		Config.BASES.save();
 		
 		return 1;
 	}
 	
-	private static int setOwner(CommandSource source, String id, EntityPlayer player, boolean creator) throws CommandSyntaxException
+	private static int setOwner(CommandSource source, String id, PlayerEntity player, boolean creator) throws CommandSyntaxException
 	{
 		ensurePermission(source, id, null);
 		ensureOwner(player.getGameProfile().getName(), id);
@@ -242,25 +242,25 @@ public class CommandBases
 			{
 				if(owner.isCreator() && creator)
 				{
-					source.sendFeedback(new TextComponentString(owner.getName() + " is already a creator of base with id " + id), false);
+					source.sendFeedback(new StringTextComponent(owner.getName() + " is already a creator of base with id " + id), false);
 				}
 				else if(!owner.isCreator() && creator)
 				{
 					owner.setCreator(true);
-					source.sendFeedback(new TextComponentString(owner.getName() + " is now a creator of base with id " + id), false);
+					source.sendFeedback(new StringTextComponent(owner.getName() + " is now a creator of base with id " + id), false);
 					
 					Config.BASES.save();
 				}
 				else if(owner.isCreator() && !creator)
 				{
 					owner.setCreator(false);
-					source.sendFeedback(new TextComponentString(owner.getName() + " is now an owner of base with id " + id), false);
+					source.sendFeedback(new StringTextComponent(owner.getName() + " is now an owner of base with id " + id), false);
 					
 					Config.BASES.save();
 				}
 				else if(!owner.isCreator() && !creator)
 				{
-					source.sendFeedback(new TextComponentString(owner.getName() + " is already an owner of base with id " + id), false);
+					source.sendFeedback(new StringTextComponent(owner.getName() + " is already an owner of base with id " + id), false);
 				}
 				
 				return 1;
@@ -270,7 +270,7 @@ public class CommandBases
 		return 0;
 	}
 	
-	private static int setNotify(CommandSource source, String id, EntityPlayer player, boolean notify) throws CommandSyntaxException
+	private static int setNotify(CommandSource source, String id, PlayerEntity player, boolean notify) throws CommandSyntaxException
 	{
 		ensurePermission(source, id, player);
 		ensureOwner(player.getGameProfile().getName(), id);
@@ -285,11 +285,11 @@ public class CommandBases
 				
 				if(notify)
 				{
-					source.sendFeedback(new TextComponentString(owner.getName() + " will now be notified"), false);
+					source.sendFeedback(new StringTextComponent(owner.getName() + " will now be notified"), false);
 				}
 				else
 				{
-					source.sendFeedback(new TextComponentString(owner.getName() + " will no longer be notified"), false);
+					source.sendFeedback(new StringTextComponent(owner.getName() + " will no longer be notified"), false);
 				}
 				
 				return 1;
@@ -307,7 +307,7 @@ public class CommandBases
 		try
 		{
 			CommandProperty.addChild(parent, child, dimension, from, to, title, Config.BASES);
-			source.sendFeedback(new TextComponentString("Added child with id " + child + " to base with id " + id), false);
+			source.sendFeedback(new StringTextComponent("Added child with id " + child + " to base with id " + id), false);
 		}
 		catch(IllegalStateException e)
 		{
@@ -325,7 +325,7 @@ public class CommandBases
 		try
 		{
 			CommandProperty.removeChild(parent, child, Config.BASES);
-			source.sendFeedback(new TextComponentString("Removed child with id " + child + " from base with id " + id), false);
+			source.sendFeedback(new StringTextComponent("Removed child with id " + child + " from base with id " + id), false);
 		}
 		catch(NoSuchElementException e)
 		{
@@ -354,7 +354,7 @@ public class CommandBases
 		try
 		{
 			Config.BASES.read();
-			source.sendFeedback(new TextComponentString("Successfully reloaded bases"), false);
+			source.sendFeedback(new StringTextComponent("Successfully reloaded bases"), false);
 		}
 		catch(Exception e)
 		{
@@ -364,7 +364,7 @@ public class CommandBases
 		return Config.BASES.getData().size();
 	}
 	
-	private static void ensurePermission(CommandSource source, String id, EntityPlayer target) throws CommandSyntaxException
+	private static void ensurePermission(CommandSource source, String id, PlayerEntity target) throws CommandSyntaxException
 	{
 		if(!CommandProperty.hasPermission(source, id, target, Config.BASES))
 		{
@@ -380,7 +380,7 @@ public class CommandBases
 		}
 	}
 	
-	private static void ensureCreatorSize(String id, EntityPlayer player, Property property, boolean condition) throws CommandSyntaxException
+	private static void ensureCreatorSize(String id, PlayerEntity player, Property property, boolean condition) throws CommandSyntaxException
 	{
 		if(condition && property.getCreators().size() == 1)
 		{

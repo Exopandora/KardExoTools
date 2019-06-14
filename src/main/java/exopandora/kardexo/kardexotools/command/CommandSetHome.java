@@ -7,9 +7,9 @@ import exopandora.kardexo.kardexotools.base.Home;
 import exopandora.kardexo.kardexotools.data.Config;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 
 public class CommandSetHome
 {
@@ -21,13 +21,13 @@ public class CommandSetHome
 	
 	private static int setHome(CommandSource source) throws CommandSyntaxException
 	{
-		EntityPlayerMP sender = source.asPlayer();
+		ServerPlayerEntity sender = source.asPlayer();
 		BlockPos pos = sender.getPosition();
 		
 		Config.HOME.getData().put(source.getName(), new Home(pos, source.getName(), sender.dimension.getId()));
 		Config.HOME.save();
 		
-		source.sendFeedback(new TextComponentString("Home set to " + pos.getX() + " " + pos.getY() + " " + pos.getZ()), false);
+		source.sendFeedback(new StringTextComponent("Home set to " + pos.getX() + " " + pos.getY() + " " + pos.getZ()), false);
 		return 1;
 	}
 }

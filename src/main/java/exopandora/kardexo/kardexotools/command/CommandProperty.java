@@ -17,10 +17,10 @@ import exopandora.kardexo.kardexotools.base.PropertyOwner;
 import exopandora.kardexo.kardexotools.data.DataFile;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.ISuggestionProvider;
-import net.minecraft.command.arguments.ColumnPosArgument.ColumnPos;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.ColumnPos;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.dimension.DimensionType;
 
 public abstract class CommandProperty
@@ -41,24 +41,24 @@ public abstract class CommandProperty
 		
 		for(Property property : list)
 		{
-			source.sendFeedback(new TextComponentTranslation(indentation + (indentation.isEmpty() ? "Name" : "Child") + ": %s", property.getDisplayName()), false);
+			source.sendFeedback(new TranslationTextComponent(indentation + (indentation.isEmpty() ? "Name" : "Child") + ": %s", property.getDisplayName()), false);
 			
 			String creators = property.getCreators(", ");
 			
 			if(!creators.isEmpty())
 			{
-				source.sendFeedback(new TextComponentString(indentation + " Creators: " + creators), false);
+				source.sendFeedback(new StringTextComponent(indentation + " Creators: " + creators), false);
 			}
 			
 			String owners = property.getOwners(", ");
 			
 			if(!owners.isEmpty())
 			{
-				source.sendFeedback(new TextComponentString(indentation + " Owners: " + owners), false);
+				source.sendFeedback(new StringTextComponent(indentation + " Owners: " + owners), false);
 			}
 			
-			source.sendFeedback(new TextComponentString(indentation + " X: [" + property.getXMin() + ", " + property.getXMax() + "]"), false);
-			source.sendFeedback(new TextComponentString(indentation + " Z: [" + property.getZMin() + ", " + property.getZMax() + "]"), false);
+			source.sendFeedback(new StringTextComponent(indentation + " X: [" + property.getXMin() + ", " + property.getXMax() + "]"), false);
+			source.sendFeedback(new StringTextComponent(indentation + " Z: [" + property.getZMin() + ", " + property.getZMax() + "]"), false);
 			
 			if(property.getChildren() != null)
 			{
@@ -71,11 +71,11 @@ public abstract class CommandProperty
 	
 	public static void add(String id, DimensionType dimension, ColumnPos from, ColumnPos to, String owner, String title, DataFile<Property, String> file) throws IllegalStateException
 	{
-		double xMin = Math.min(from.field_212600_a, to.field_212600_a);
-		double zMin = Math.min(from.field_212601_b, to.field_212601_b);
+		double xMin = Math.min(from.x, to.x);
+		double zMin = Math.min(from.z, to.z);
 		
-		double xMax = Math.max(from.field_212600_a, to.field_212600_a);
-		double zMax = Math.max(from.field_212601_b, to.field_212601_b);
+		double xMax = Math.max(from.x, to.x);
+		double zMax = Math.max(from.z, to.z);
 		
 		List<PropertyOwner> owners = new ArrayList<PropertyOwner>();
 		owners.add(new PropertyOwner(owner, true, true, null, null));
@@ -104,11 +104,11 @@ public abstract class CommandProperty
 	
 	public static void addChild(Property parent, String id, DimensionType dimension, ColumnPos from, ColumnPos to, String title, DataFile<Property, String> file) throws IllegalStateException
 	{
-		double xMin = Math.min(from.field_212600_a, to.field_212600_a);
-		double zMin = Math.min(from.field_212601_b, to.field_212601_b);
+		double xMin = Math.min(from.x, to.x);
+		double zMin = Math.min(from.z, to.z);
 		
-		double xMax = Math.max(from.field_212600_a, to.field_212600_a);
-		double zMax = Math.max(from.field_212601_b, to.field_212601_b);
+		double xMax = Math.max(from.x, to.x);
+		double zMax = Math.max(from.z, to.z);
 		
 		Property property = new Property(id, title, Collections.emptyList(), dimension.getId(), xMin, zMin, xMax, zMax);
 		
@@ -157,7 +157,7 @@ public abstract class CommandProperty
 		return null;
 	}
 	
-	public static void forOwner(String id, EntityPlayer player, DataFile<Property, String> file, Consumer<PropertyOwner> callback)
+	public static void forOwner(String id, PlayerEntity player, DataFile<Property, String> file, Consumer<PropertyOwner> callback)
 	{
 		PropertyOwner owner = getOwner(id, player.getGameProfile().getName(), file);
 		
@@ -167,7 +167,7 @@ public abstract class CommandProperty
 		}
 	}
 	
-	public static boolean hasPermission(CommandSource source, String id, EntityPlayer target, DataFile<Property, String> file)
+	public static boolean hasPermission(CommandSource source, String id, PlayerEntity target, DataFile<Property, String> file)
 	{
 		return source.hasPermissionLevel(4) || isCreator(source.getName(), id, file) || (target != null ? (isOwner(source.getName(), id, file) && target.equals(source.getEntity())) : false);
 	}

@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import exopandora.kardexo.kardexotools.KardExo;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 
 public class ScheduledTask extends Thread
 {
@@ -47,7 +47,7 @@ public class ScheduledTask extends Thread
 				{
 					for(int x = 0; x < this.warningTimes.length; x++)
 					{
-						KardExo.notifyPlayers(KardExo.getServer(), new TextComponentString(String.format(this.warningMessage, TimeUnit.MILLISECONDS.toSeconds(this.warningTimes[x]))));
+						KardExo.notifyPlayers(KardExo.getServer(), new StringTextComponent(String.format(this.warningMessage, TimeUnit.MILLISECONDS.toSeconds(this.warningTimes[x]))));
 						
 						long waitTime = this.warningTimes[x];
 						
@@ -59,7 +59,7 @@ public class ScheduledTask extends Thread
 						Thread.sleep(waitTime);
 					}
 					
-					KardExo.getServer().addScheduledTask(this.task);
+					KardExo.getServer().execute(this.task);
 				}
 				
 				Thread.sleep(Math.max(0, this.interval - this.warningTimes[0] - (System.currentTimeMillis() - millis)));

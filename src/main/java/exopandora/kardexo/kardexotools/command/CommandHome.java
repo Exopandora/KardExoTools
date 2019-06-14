@@ -5,15 +5,16 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import exopandora.kardexo.kardexotools.base.Home;
 import exopandora.kardexo.kardexotools.data.Config;
+import net.minecraft.block.Block;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.ServerWorld;
 import net.minecraft.world.dimension.DimensionType;
 
 public class CommandHome
@@ -40,7 +41,7 @@ public class CommandHome
 		return 1;
 	}
 	
-	private static BlockPos getPlayerSpawnPosition(WorldServer world, BlockPos pos) throws CommandSyntaxException
+	private static BlockPos getPlayerSpawnPosition(ServerWorld world, BlockPos pos) throws CommandSyntaxException
 	{
 		BlockPos spawn = pos;
 		
@@ -59,7 +60,7 @@ public class CommandHome
 	
 	protected static boolean hasRoomForPlayer(IBlockReader reader, BlockPos pos)
 	{
-		return reader.getBlockState(pos.down()).isTopSolid() && !reader.getBlockState(pos).getMaterial().isSolid() && !reader.getBlockState(pos.up()).getMaterial().isSolid();
+		return Block.func_220064_c(reader, pos.down()) && !reader.getBlockState(pos).getMaterial().isSolid() && !reader.getBlockState(pos.up()).getMaterial().isSolid();
 	}
 	
 	public static void doTeleport(MinecraftServer server, Entity entity, BlockPos pos, int dimension)
@@ -68,9 +69,9 @@ public class CommandHome
 		double y = pos.getY() + 0.5D;
 		double z = pos.getZ() + 0.5D;
 		
-		if(entity instanceof EntityPlayerMP)
+		if(entity instanceof ServerPlayerEntity)
 		{
-			EntityPlayerMP player = (EntityPlayerMP) entity;
+			ServerPlayerEntity player = (ServerPlayerEntity) entity;
 			
 			player.stopRiding();
 			player.removePassengers();
@@ -83,9 +84,9 @@ public class CommandHome
 			entity.setPosition(x, y, z);
 		}
 		
-		if(!(entity instanceof EntityLivingBase) || !((EntityLivingBase) entity).isElytraFlying())
+		if(!(entity instanceof LivingEntity) || !((LivingEntity) entity).isElytraFlying())
 		{
-			entity.motionY = 0.0D;
+			entity.setMotion(entity.getMotion().mul(1.0D, 0.0D, 1.0D));
 			entity.onGround = true;
 		}
 	}

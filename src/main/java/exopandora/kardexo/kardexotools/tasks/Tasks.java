@@ -8,7 +8,7 @@ import exopandora.kardexo.kardexotools.data.Config;
 
 public class Tasks
 {	
-	public static final Runnable SAVE = KardExo::saveWorld;
+	public static final Runnable SAVE = KardExo::saveWorlds;
 	public static final Runnable BACKUP = new RunnableBackup();
 	
 	private static final ScheduledTask SCHEDULED_SAVE = new ScheduledTask("save", Config.OFFSET_SAVE, Config.INTERVAL_SAVE, false, SAVE, Config.WARNING_MESSAGE_SAVE, Config.WARNING_TIMES_SAVE);

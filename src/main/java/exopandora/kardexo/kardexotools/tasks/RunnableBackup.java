@@ -9,9 +9,9 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 import exopandora.kardexo.kardexotools.KardExo;
 import exopandora.kardexo.kardexotools.data.Config;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.util.text.event.HoverEvent.Action;;
 
@@ -24,13 +24,13 @@ public class RunnableBackup implements Runnable
 	{
 		if(RunnableBackup.RUNNING)
 		{
-			KardExo.notifyPlayers(KardExo.getServer(), new TextComponentString("Backup already in progress"));
+			KardExo.notifyPlayers(KardExo.getServer(), new StringTextComponent("Backup already in progress"));
 		}
 		else
 		{
 			RunnableBackup.RUNNING = true;
-			KardExo.notifyPlayers(KardExo.getServer(), new TextComponentString("Starting backup..."));
-			KardExo.saveWorld(false);
+			KardExo.notifyPlayers(KardExo.getServer(), new StringTextComponent("Starting backup..."));
+			KardExo.saveWorlds(false);
 			
 			LocalDateTime date = LocalDateTime.now();
 			String folderName = KardExo.getServer().getFolderName();
@@ -67,13 +67,13 @@ public class RunnableBackup implements Runnable
 				if(bytes > 0)
 				{
 					long duration = System.currentTimeMillis() - start;
-					ITextComponent size = new TextComponentString(FileUtils.byteCountToDisplaySize(bytes));
-					size.setStyle(new Style().setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new TextComponentTranslation("%s\n%s bytes\n%s", fileName, String.format("%,d", bytes), DurationFormatUtils.formatDuration(duration, "HH:mm:ss")))));
-					KardExo.notifyPlayers(KardExo.getServer(), new TextComponentTranslation("Backup Complete (%s)", size));
+					ITextComponent size = new StringTextComponent(FileUtils.byteCountToDisplaySize(bytes));
+					size.setStyle(new Style().setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new TranslationTextComponent("%s\n%s bytes\n%s", fileName, String.format("%,d", bytes), DurationFormatUtils.formatDuration(duration, "HH:mm:ss")))));
+					KardExo.notifyPlayers(KardExo.getServer(), new TranslationTextComponent("Backup Complete (%s)", size));
 				}
 				else
 				{
-					KardExo.notifyPlayers(KardExo.getServer(), new TextComponentString("Backup Failed"));
+					KardExo.notifyPlayers(KardExo.getServer(), new StringTextComponent("Backup Failed"));
 				}
 				
 				RunnableBackup.RUNNING = false;

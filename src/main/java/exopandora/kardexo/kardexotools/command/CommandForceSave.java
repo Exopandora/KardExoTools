@@ -18,7 +18,7 @@ public class CommandForceSave
 	
 	private static int save(CommandSource source) throws CommandSyntaxException
 	{
-		source.getServer().addScheduledTask(Tasks.SAVE);
+		source.getServer().execute(Tasks.SAVE);
 		return 1;
 	}
 }

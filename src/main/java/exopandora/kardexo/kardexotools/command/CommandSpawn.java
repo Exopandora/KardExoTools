@@ -6,7 +6,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.ServerWorld;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.Heightmap;
 
@@ -21,7 +21,7 @@ public class CommandSpawn
 	private static int execute(CommandSource source) throws CommandSyntaxException
 	{
 		MinecraftServer server = source.getServer();
-		WorldServer overworld = server.getWorld(DimensionType.OVERWORLD);
+		ServerWorld overworld = server.getWorld(DimensionType.OVERWORLD);
 		
 		if(overworld != null)
 		{

@@ -18,7 +18,7 @@ public class CommandBackup
 	
 	private static int backup(CommandSource source) throws CommandSyntaxException
 	{
-		source.getServer().addScheduledTask(Tasks.BACKUP);
+		source.getServer().execute(Tasks.BACKUP);
 		return 1;
 	}
 }

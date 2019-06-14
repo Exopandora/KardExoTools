@@ -6,7 +6,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 
 public class CommandWorldTime
 {
@@ -18,7 +18,7 @@ public class CommandWorldTime
 	
 	private static int worldtime(CommandSource source) throws CommandSyntaxException
 	{
-		source.sendFeedback(new TextComponentString("World time: " + getWorldTime(source.getWorld().getDayTime())), false);
+		source.sendFeedback(new StringTextComponent("World time: " + getWorldTime(source.getWorld().getDayTime())), false);
 		return 1;
 	}
 	

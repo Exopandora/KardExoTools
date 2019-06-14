@@ -3,13 +3,12 @@ package exopandora.kardexo.kardexotools.tasks;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 
-public class TickableDeathListener implements ITickable
+public class TickableDeathListener implements Runnable
 {
 	private final MinecraftServer server;
 	private final List<String> cache = new ArrayList<String>();
@@ -20,15 +19,15 @@ public class TickableDeathListener implements ITickable
 	}
 	
 	@Override
-	public void tick()
+	public void run()
 	{
-		for(EntityPlayerMP player : this.server.getPlayerList().getPlayers())
+		for(ServerPlayerEntity player : this.server.getPlayerList().getPlayers())
 		{
 			if(player.getHealth() == 0)
 			{
 				if(!this.cache.contains(player.getName().getString()))
 				{
-					player.sendMessage(new TextComponentString("You died at " + MathHelper.floor(player.posX) + " " + MathHelper.floor(player.posY) + " " + MathHelper.floor(player.posZ)));
+					player.sendMessage(new StringTextComponent("You died at " + MathHelper.floor(player.posX) + " " + MathHelper.floor(player.posY) + " " + MathHelper.floor(player.posZ)));
 					this.cache.add(player.getName().getString());
 				}
 			}

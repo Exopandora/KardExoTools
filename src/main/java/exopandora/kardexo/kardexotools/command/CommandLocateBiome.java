@@ -15,9 +15,9 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.IRegistry;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.provider.BiomeProvider;
 
@@ -42,7 +42,7 @@ public class CommandLocateBiome
 		{
 			Thread thread = new Thread(() ->
 			{
-				ResourceLocation resource = IRegistry.BIOME.getKey(biome);
+				ResourceLocation resource = Registry.BIOME.getKey(biome);
 				BiomeProvider provider = source.getWorld().getChunkProvider().getChunkGenerator().getBiomeProvider();
 				
 				boolean result = spiral(Config.LOCATE_BIOME_RADIUS, 16, new BlockPos(source.getPos()), (blockpos, x, z) -> blockpos.add(x, 0, z), blockpos ->
@@ -51,7 +51,7 @@ public class CommandLocateBiome
 					
 					if(contains)
 					{
-						source.sendFeedback(new TextComponentTranslation("commands.locate.success", new Object[]{resource, blockpos.getX(), blockpos.getZ()}), false);
+						source.sendFeedback(new TranslationTextComponent("commands.locate.success", new Object[]{resource, blockpos.getX(), blockpos.getZ()}), false);
 					}
 					
 					return contains;
@@ -59,7 +59,7 @@ public class CommandLocateBiome
 				
 				if(!result)
 				{
-					source.sendFeedback(new TextComponentTranslation("commands.locate.failure", new Object[]{resource}), false);
+					source.sendFeedback(new TranslationTextComponent("commands.locate.failure", new Object[]{resource}), false);
 				}
 				
 				LOCATORS.remove(source.getName());
@@ -67,7 +67,7 @@ public class CommandLocateBiome
 			
 			LOCATORS.put(source.getName(), thread);
 			thread.start();
-			source.sendFeedback(new TextComponentString("Searching..."), false);
+			source.sendFeedback(new StringTextComponent("Searching..."), false);
 		}
 		
 		return 1;

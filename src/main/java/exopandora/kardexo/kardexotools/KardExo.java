@@ -1,16 +1,12 @@
 package exopandora.kardexo.kardexotools;
 
-import java.util.function.Supplier;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.ArgumentType;
 
 import exopandora.kardexo.kardexotools.command.arguments.BiomeArgument;
 import exopandora.kardexo.kardexotools.data.Config;
-import exopandora.kardexo.kardexotools.tasks.ShutdownHook;
 import exopandora.kardexo.kardexotools.tasks.Tasks;
 import exopandora.kardexo.kardexotools.tasks.TickableBases;
 import exopandora.kardexo.kardexotools.tasks.TickableDeathListener;
@@ -18,14 +14,10 @@ import exopandora.kardexo.kardexotools.tasks.TickableSleep;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.arguments.ArgumentSerializer;
 import net.minecraft.command.arguments.ArgumentTypes;
-import net.minecraft.command.arguments.SuggestionProviders;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.IProgressUpdate;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.storage.SessionLockException;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.ServerWorld;
 
 public class KardExo
 {
@@ -41,7 +33,7 @@ public class KardExo
 		
 		if(Config.DISABLE_AUTO_SAVING)
 		{
-			for(WorldServer worldserver : server.getWorlds())
+			for(ServerWorld worldserver : server.getWorlds())
 			{
 				if(worldserver != null && !worldserver.disableLevelSaving)
 				{
@@ -63,7 +55,6 @@ public class KardExo
 		KardExo.registerArguments();
 		KardExo.registerCommands(server.getCommandManager().getDispatcher());
 		
-		Runtime.getRuntime().addShutdownHook(new ShutdownHook());
 		Tasks.start();
 	}
 	
@@ -76,13 +67,7 @@ public class KardExo
 	
 	private static void registerArguments()
 	{
-		registerArgumentType(new ResourceLocation("kardexo:biome"), BiomeArgument::biome, BiomeArgument.class);
-	}
-	
-	private static <T extends ArgumentType<?>> void registerArgumentType(ResourceLocation location, Supplier<T> supplier, Class<T> klass)
-	{
-		ArgumentTypes.register(location, klass, new ArgumentSerializer<T>(supplier));
-		SuggestionProviders.register(location, supplier.get()::listSuggestions);
+		ArgumentTypes.register("biome", BiomeArgument.class, new ArgumentSerializer<BiomeArgument>(BiomeArgument::biome));
 	}
 	
 	public static void registerCommands(CommandDispatcher<CommandSource> dispatcher)
@@ -98,55 +83,45 @@ public class KardExo
 		}
 	}
 	
-	public static synchronized void saveWorld()
+	public static synchronized void saveWorlds()
 	{
-		KardExo.saveWorld(true);
+		KardExo.saveWorlds(true);
 	}
 	
-	public static synchronized void saveWorld(boolean displayMessages)
+	public static synchronized void saveWorlds(boolean displayMessages)
 	{
 		MinecraftServer server = KardExo.getServer();
 		
 		if(displayMessages)
 		{
-			KardExo.notifyPlayers(server, new TextComponentTranslation("commands.save.saving", new Object[0]));
+			KardExo.notifyPlayers(server, new TranslationTextComponent("commands.save.saving", new Object[0]));
 		}
 		
 		if(server.getPlayerList() != null)
 		{
-			server.getPlayerList().saveAllPlayerData();;
+			server.getPlayerList().saveAllPlayerData();
 		}
 		
-		try
-		{
-			for(WorldServer worldserver : server.getWorlds())
-			{
-				if(worldserver != null)
-				{
-					boolean flag = worldserver.disableLevelSaving;
-					worldserver.disableLevelSaving = false;
-					worldserver.saveAllChunks(true, (IProgressUpdate) null);
-					worldserver.flushToDisk();
-					worldserver.disableLevelSaving = flag;
-				}
-			}
-		}
-		catch(SessionLockException e)
+		if(server.func_213211_a(true, true, false))
 		{
 			if(displayMessages)
 			{
-				KardExo.notifyPlayers(server, new TextComponentTranslation("commands.save.failed", new Object[]{e.getMessage()}));
+				KardExo.notifyPlayers(server, new TranslationTextComponent("commands.save.success", new Object[0]));
 			}
-			
-			e.printStackTrace();
-			
-			return;
 		}
-		
-		if(displayMessages)
+		else
 		{
-			KardExo.notifyPlayers(server, new TextComponentTranslation("commands.save.success", new Object[0]));
+			if(displayMessages)
+			{
+				KardExo.notifyPlayers(server, new TranslationTextComponent("commands.save.failed"));
+			}
 		}
+	}
+	
+	public static void stop()
+	{
+		Tasks.stop();
+		Config.saveAllFiles();
 	}
 	
 	public static MinecraftServer getServer()

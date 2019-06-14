@@ -17,10 +17,10 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.ColumnPosArgument;
-import net.minecraft.command.arguments.ColumnPosArgument.ColumnPos;
 import net.minecraft.command.arguments.DimensionArgument;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.ColumnPos;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.dimension.DimensionType;
 
 public class CommandPlaces
@@ -34,9 +34,9 @@ public class CommandPlaces
 						.then(Commands.argument("dimension", DimensionArgument.getDimension())
 							.then(Commands.argument("from", ColumnPosArgument.columnPos())
 								.then(Commands.argument("to", ColumnPosArgument.columnPos())
-									.executes(context -> add(context.getSource(), StringArgumentType.getString(context, "id"), DimensionArgument.func_212592_a(context, "dimension"), ColumnPosArgument.getColumnPos(context, "from"), ColumnPosArgument.getColumnPos(context, "to"), null))
+									.executes(context -> add(context.getSource(), StringArgumentType.getString(context, "id"), DimensionArgument.func_212592_a(context, "dimension"), ColumnPosArgument.func_218101_a(context, "from"), ColumnPosArgument.func_218101_a(context, "to"), null))
 									.then(Commands.argument("title", StringArgumentType.greedyString())
-										.executes(context -> add(context.getSource(), StringArgumentType.getString(context, "id"), DimensionArgument.func_212592_a(context, "dimension"), ColumnPosArgument.getColumnPos(context, "from"), ColumnPosArgument.getColumnPos(context, "to"), StringArgumentType.getString(context, "title")))))))))
+										.executes(context -> add(context.getSource(), StringArgumentType.getString(context, "id"), DimensionArgument.func_212592_a(context, "dimension"), ColumnPosArgument.func_218101_a(context, "from"), ColumnPosArgument.func_218101_a(context, "to"), StringArgumentType.getString(context, "title")))))))))
 				.then(Commands.literal("remove")
 					.requires(source -> source.hasPermissionLevel(4))
 					.then(Commands.argument("id", StringArgumentType.word())
@@ -55,9 +55,9 @@ public class CommandPlaces
 								.then(Commands.argument("dimension", DimensionArgument.getDimension())
 									.then(Commands.argument("from", ColumnPosArgument.columnPos())
 										.then(Commands.argument("to", ColumnPosArgument.columnPos())
-											.executes(context -> addChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child"), DimensionArgument.func_212592_a(context, "dimension"), ColumnPosArgument.getColumnPos(context, "from"), ColumnPosArgument.getColumnPos(context, "to"), null)))))))
+											.executes(context -> addChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child"), DimensionArgument.func_212592_a(context, "dimension"), ColumnPosArgument.func_218101_a(context, "from"), ColumnPosArgument.func_218101_a(context, "to"), null)))))))
 											.then(Commands.argument("title", StringArgumentType.greedyString())
-												.executes(context -> addChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child"), DimensionArgument.func_212592_a(context, "dimension"), ColumnPosArgument.getColumnPos(context, "from"), ColumnPosArgument.getColumnPos(context, "to"), StringArgumentType.getString(context, "title"))))
+												.executes(context -> addChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child"), DimensionArgument.func_212592_a(context, "dimension"), ColumnPosArgument.func_218101_a(context, "from"), ColumnPosArgument.func_218101_a(context, "to"), StringArgumentType.getString(context, "title"))))
 						.then(Commands.literal("remove")
 							.then(Commands.argument("child", StringArgumentType.word())
 								.suggests(CommandPlaces::getChildSuggestions)
@@ -69,7 +69,7 @@ public class CommandPlaces
 		try
 		{
 			CommandProperty.add(id, dimension, from, to, source.getName(), title, Config.PLACES);
-			source.sendFeedback(new TextComponentString("Added base with id " + id), false);
+			source.sendFeedback(new StringTextComponent("Added base with id " + id), false);
 		}
 		catch(IllegalStateException e)
 		{
@@ -86,7 +86,7 @@ public class CommandPlaces
 		try
 		{
 			CommandProperty.remove(id, Config.PLACES);
-			source.sendFeedback(new TextComponentString("Removed base with id " + id), false);
+			source.sendFeedback(new StringTextComponent("Removed base with id " + id), false);
 		}
 		catch(NoSuchElementException e)
 		{
@@ -115,7 +115,7 @@ public class CommandPlaces
 		try
 		{
 			Config.PLACES.read();
-			source.sendFeedback(new TextComponentString("Successfully reloaded places"), false);
+			source.sendFeedback(new StringTextComponent("Successfully reloaded places"), false);
 		}
 		catch(Exception e)
 		{
@@ -133,7 +133,7 @@ public class CommandPlaces
 		try
 		{
 			CommandProperty.addChild(parent, child, dimension, from, to, title, Config.PLACES);
-			source.sendFeedback(new TextComponentString("Added child with id " + child + " to place with id " + id), false);
+			source.sendFeedback(new StringTextComponent("Added child with id " + child + " to place with id " + id), false);
 		}
 		catch(IllegalStateException e)
 		{
@@ -151,7 +151,7 @@ public class CommandPlaces
 		try
 		{
 			CommandProperty.removeChild(parent, child, Config.PLACES);
-			source.sendFeedback(new TextComponentString("Removed child with id " + child + " from place with id " + id), false);
+			source.sendFeedback(new StringTextComponent("Removed child with id " + child + " from place with id " + id), false);
 		}
 		catch(NoSuchElementException e)
 		{
@@ -161,7 +161,7 @@ public class CommandPlaces
 		return 1;
 	}
 	
-	private static void ensurePermission(CommandSource source, String id, EntityPlayer target) throws CommandSyntaxException
+	private static void ensurePermission(CommandSource source, String id, PlayerEntity target) throws CommandSyntaxException
 	{
 		if(!CommandProperty.hasPermission(source, id, target, Config.PLACES))
 		{

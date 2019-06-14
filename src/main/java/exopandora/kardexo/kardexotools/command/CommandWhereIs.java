@@ -15,10 +15,10 @@ import exopandora.kardexo.kardexotools.tasks.TickableBases;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.EntityArgument;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.dimension.DimensionType;
 
 public class CommandWhereIs
@@ -30,7 +30,7 @@ public class CommandWhereIs
 					.executes(context -> whereIs(context.getSource(), EntityArgument.getPlayer(context, "target")))));
 	}
 	
-	private static int whereIs(CommandSource source, EntityPlayer target) throws CommandSyntaxException
+	private static int whereIs(CommandSource source, PlayerEntity target) throws CommandSyntaxException
 	{
 		BlockPos pos = target.getPosition();
 		String dimension = "Unknown Dimension";
@@ -76,13 +76,13 @@ public class CommandWhereIs
 			}
 			else
 			{
-				textComponent = new TextComponentTranslation("%s, %s", textComponent, place.getDisplayName());
+				textComponent = new TranslationTextComponent("%s, %s", textComponent, place.getDisplayName());
 			}
 		}
 		
 		String result = "%s: d: " + dimension + " x: " + pos.getX() + " y: " + pos.getY() + " z: " + pos.getZ() + (textComponent != null ? " (%s)" : "");
 		source.getServer().logInfo("Query: " + String.format(result, target.getName().getString(), String.join(", ", bases.parallelStream().map(Property::getName).collect(Collectors.toList()))));
-		source.sendFeedback(new TextComponentTranslation(result, target.getDisplayName(), textComponent), false);
+		source.sendFeedback(new TranslationTextComponent(result, target.getDisplayName(), textComponent), false);
 		
 		return 1;
 	}

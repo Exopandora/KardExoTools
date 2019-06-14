@@ -17,32 +17,33 @@ import com.google.common.collect.Lists;
 
 import exopandora.kardexo.kardexotools.data.Config;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.stats.StatList;
+import net.minecraft.stats.Stats;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.world.ServerWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraft.world.dimension.DimensionType;
 
 public class Veinminer
 {
-	private static final Map<String, Stack<Entry<Integer, Map<IBlockState, List<BlockPos>>>>> HISTORY = new HashMap<String, Stack<Entry<Integer,Map<IBlockState, List<BlockPos>>>>>();
+	private static final Map<String, Stack<Entry<Integer, Map<BlockState, List<BlockPos>>>>> HISTORY = new HashMap<String, Stack<Entry<Integer,Map<BlockState, List<BlockPos>>>>>();
 	
-	public static boolean mine(BlockPos pos, EntityPlayerMP player, World world, BiFunction<BlockPos, Boolean, Boolean> harvestBlock)
+	public static boolean mine(BlockPos pos, ServerPlayerEntity player, World world, BiFunction<BlockPos, Boolean, Boolean> harvestBlock)
 	{
 		String name = player.getName().getString();
 		
 		if(Config.PLAYERS.getData().containsKey(name) && Config.PLAYERS.getData().get(name).isVeinminerEnabled() && player.isSneaking())
 		{
-			IBlockState state = world.getBlockState(pos);
+			BlockState state = world.getBlockState(pos);
 			
 			for(Block block : Config.VEINMINER.getData().keySet())
 			{
@@ -54,13 +55,13 @@ public class Veinminer
 					
 					queue.stream().peek(BlockPos::toString);
 					
-					Map<IBlockState, List<BlockPos>> statemap = new HashMap<IBlockState, List<BlockPos>>();
-					Entry<Integer, Map<IBlockState, List<BlockPos>>> undo = new SimpleEntry<Integer, Map<IBlockState, List<BlockPos>>>(player.dimension.getId(), statemap);
+					Map<BlockState, List<BlockPos>> statemap = new HashMap<BlockState, List<BlockPos>>();
+					Entry<Integer, Map<BlockState, List<BlockPos>>> undo = new SimpleEntry<Integer, Map<BlockState, List<BlockPos>>>(player.dimension.getId(), statemap);
 					queue.poll();
 					
 					if(!queue.isEmpty())
 					{
-						IBlockState next = state;
+						BlockState next = state;
 						boolean harvest = harvestBlock.apply(pos, true);
 						
 						if(harvest)
@@ -100,7 +101,7 @@ public class Veinminer
 							
 							if(getFlatMapSize(statemap.values()) > 1)
 							{
-								Stack<Entry<Integer, Map<IBlockState, List<BlockPos>>>> history = Veinminer.HISTORY.get(name);
+								Stack<Entry<Integer, Map<BlockState, List<BlockPos>>>> history = Veinminer.HISTORY.get(name);
 								
 								if(history != null)
 								{
@@ -113,7 +114,7 @@ public class Veinminer
 								}
 								else
 								{
-									history = new Stack<Entry<Integer, Map<IBlockState, List<BlockPos>>>>();
+									history = new Stack<Entry<Integer, Map<BlockState, List<BlockPos>>>>();
 									history.add(undo);
 									Veinminer.HISTORY.put(name, history);
 								}
@@ -129,7 +130,7 @@ public class Veinminer
 		return harvestBlock.apply(pos, false);
 	}
 	
-	private static PriorityQueue<BlockPos> calculateVein(int limit, int radius, IBlockState state, BlockPos pos, World world)
+	private static PriorityQueue<BlockPos> calculateVein(int limit, int radius, BlockState state, BlockPos pos, World world)
 	{
 		PriorityQueue<BlockPos> queue = new PriorityQueue<BlockPos>(getComparator(pos));
 		Collection<BlockPos> pending = Collections.singleton(pos);
@@ -194,7 +195,7 @@ public class Veinminer
 		return queue;
 	}
 	
-	private static boolean isEqual(IBlockState a, IBlockState b)
+	private static boolean isEqual(BlockState a, BlockState b)
 	{
 		return a.getBlock().equals(b.getBlock());
 	}
@@ -204,24 +205,24 @@ public class Veinminer
 		return (a, b) -> (int) (a.distanceSq(origin) - b.distanceSq(origin));
 	}
 	
-	public static int undo(EntityPlayerMP player, MinecraftServer server) throws Exception
+	public static int undo(ServerPlayerEntity player, MinecraftServer server) throws Exception
 	{
-		Stack<Entry<Integer, Map<IBlockState, List<BlockPos>>>> history = Veinminer.HISTORY.get(player.getName().getString());
-		Entry<Integer, Map<IBlockState, List<BlockPos>>> undo = history.peek();
-		Map<IBlockState, List<BlockPos>> statemap = undo.getValue();
-		WorldServer world = server.getWorld(DimensionType.getById(undo.getKey()));
-		IBlockState state = statemap.keySet().iterator().next();
-		Item item = state.getBlock().getItemDropped(state, null, null, 1).asItem();
+		Stack<Entry<Integer, Map<BlockState, List<BlockPos>>>> history = Veinminer.HISTORY.get(player.getName().getString());
+		Entry<Integer, Map<BlockState, List<BlockPos>>> undo = history.peek();
+		Map<BlockState, List<BlockPos>> statemap = undo.getValue();
+		ServerWorld world = server.getWorld(DimensionType.getById(undo.getKey()));
+		BlockState state = statemap.keySet().iterator().next();
+		Item item = state.getBlock().asItem();
 		int count = getFlatMapSize(statemap.values());
 		
 		if(playerHasItems(player, item, count) && hasSpace(world, statemap) && hasNoCollidingEntities(world, statemap))
 		{
-			for(Entry<IBlockState, List<BlockPos>> entry : statemap.entrySet())
+			for(Entry<BlockState, List<BlockPos>> entry : statemap.entrySet())
 			{
 				for(BlockPos pos : entry.getValue())
 				{
 					world.setBlockState(pos, entry.getKey());
-					player.addStat(StatList.BLOCK_MINED.get(state.getBlock()));
+					player.addStat(Stats.BLOCK_MINED.get(state.getBlock()));
 				}
 			}
 			
@@ -243,14 +244,14 @@ public class Veinminer
 		return 0;
 	}
 	
-	private static boolean playerHasItems(EntityPlayerMP player, Item item, int amount) throws Exception
+	private static boolean playerHasItems(ServerPlayerEntity player, Item item, int amount) throws Exception
 	{
 		if(player.interactionManager.isCreative())
 		{
 			return true;
 		}
 		
-		InventoryPlayer inventory = player.inventory;
+		PlayerInventory inventory = player.inventory;
 		List<NonNullList<ItemStack>> inventories = Arrays.<NonNullList<ItemStack>>asList(inventory.mainInventory, inventory.armorInventory, inventory.offHandInventory);
 		
 		int count = 0;
@@ -274,9 +275,9 @@ public class Veinminer
 		throw new Exception("You do not have enough items");
 	}
 	
-	private static boolean hasSpace(World world, Map<IBlockState, List<BlockPos>> statemap) throws Exception
+	private static boolean hasSpace(World world, Map<BlockState, List<BlockPos>> statemap) throws Exception
 	{
-		for(Entry<IBlockState, List<BlockPos>> entry : statemap.entrySet())
+		for(Entry<BlockState, List<BlockPos>> entry : statemap.entrySet())
 		{
 			for(BlockPos pos : entry.getValue())
 			{
@@ -297,13 +298,13 @@ public class Veinminer
 		return (int) collection.parallelStream().flatMap(List::stream).count();
 	}
 	
-	private static boolean hasNoCollidingEntities(World world, Map<IBlockState, List<BlockPos>> statemap) throws Exception
+	private static boolean hasNoCollidingEntities(World world, Map<BlockState, List<BlockPos>> statemap) throws Exception
 	{
-		for(Entry<IBlockState, List<BlockPos>> entry : statemap.entrySet())
+		for(Entry<BlockState, List<BlockPos>> entry : statemap.entrySet())
 		{
 			for(BlockPos pos : entry.getValue())
 			{
-				if(!world.checkNoEntityCollision(null, new AxisAlignedBB(pos)))
+				if(!world.checkNoEntityCollision(null, VoxelShapes.create(new AxisAlignedBB(pos))))
 				{
 					throw new Exception("Space is being occupied by other entities");
 				}

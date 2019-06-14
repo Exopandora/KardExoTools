@@ -11,13 +11,12 @@ import exopandora.kardexo.kardexotools.base.EnumBaseAccess;
 import exopandora.kardexo.kardexotools.base.Property;
 import exopandora.kardexo.kardexotools.base.PropertyOwner;
 import exopandora.kardexo.kardexotools.data.Config;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 
-public class TickableBases implements ITickable
+public class TickableBases implements Runnable
 {
 	private final MinecraftServer server;
 	public static final Map<Property, Set<String>> BASE_VISITORS = new HashMap<Property, Set<String>>();
@@ -28,7 +27,7 @@ public class TickableBases implements ITickable
 	}
 	
 	@Override
-	public void tick()
+	public void run()
 	{
 		for(Property base : Config.BASES.getData().values())
 		{
@@ -42,7 +41,7 @@ public class TickableBases implements ITickable
 				}
 			}
 			
-			for(EntityPlayerMP player : this.server.getPlayerList().getPlayers())
+			for(ServerPlayerEntity player : this.server.getPlayerList().getPlayers())
 			{
 				boolean inside = base.isInside(player);
 				
@@ -75,7 +74,7 @@ public class TickableBases implements ITickable
 		}
 	}
 	
-	private void notifyOwners(Property base, List<PropertyOwner> notify, EntityPlayerMP player, EnumBaseAccess access)
+	private void notifyOwners(Property base, List<PropertyOwner> notify, ServerPlayerEntity player, EnumBaseAccess access)
 	{
 		if(!base.isOwner(player.getName().getString()))
 		{
@@ -91,7 +90,7 @@ public class TickableBases implements ITickable
 			
 			for(PropertyOwner owner : notify)
 			{
-				EntityPlayerMP playerOwner = this.server.getPlayerList().getPlayerByUsername(owner.getName());
+				ServerPlayerEntity playerOwner = this.server.getPlayerList().getPlayerByUsername(owner.getName());
 				
 				if(playerOwner != null)
 				{
@@ -101,7 +100,7 @@ public class TickableBases implements ITickable
 		}
 	}
 	
-	private ITextComponent getFormattedMessage(EntityPlayerMP player, Property base, PropertyOwner owner, EnumBaseAccess access)
+	private ITextComponent getFormattedMessage(ServerPlayerEntity player, Property base, PropertyOwner owner, EnumBaseAccess access)
 	{
 		String format = null;
 		
@@ -117,15 +116,15 @@ public class TickableBases implements ITickable
 		
 		if(format != null)
 		{
-			return new TextComponentTranslation(format.replace("&name", "%1$s").replace("&base", "%2$s"), new Object[]{player.getDisplayName(), base.getDisplayName()});
+			return new TranslationTextComponent(format.replace("&name", "%1$s").replace("&base", "%2$s"), new Object[]{player.getDisplayName(), base.getDisplayName()});
 		}
 		
 		switch(access)
 		{
 			case ENTER:
-				return new TextComponentTranslation(PropertyOwner.getDefaultEnterMessage(), new Object[]{player.getDisplayName(), base.getDisplayName()});
+				return new TranslationTextComponent(PropertyOwner.getDefaultEnterMessage(), new Object[]{player.getDisplayName(), base.getDisplayName()});
 			case LEAVE:
-				return new TextComponentTranslation(PropertyOwner.getDefaultExitMessage(), new Object[]{player.getDisplayName(), base.getDisplayName()});
+				return new TranslationTextComponent(PropertyOwner.getDefaultExitMessage(), new Object[]{player.getDisplayName(), base.getDisplayName()});
 		}
 		
 		return null;

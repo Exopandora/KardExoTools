@@ -14,7 +14,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 
 public class CommandCalculate
 {
@@ -106,7 +106,7 @@ public class CommandCalculate
 		try
 		{
 			String solution = SCRIPT_ENGINE.eval(script).toString();
-			source.sendFeedback(new TextComponentString(term + " = " + solution), false);
+			source.sendFeedback(new StringTextComponent(term + " = " + solution), false);
 			
 			HISTORY.put(source.getName(), solution);
 			

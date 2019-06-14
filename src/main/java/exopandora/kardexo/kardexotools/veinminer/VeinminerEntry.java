@@ -3,9 +3,9 @@ package exopandora.kardexo.kardexotools.veinminer;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Blocks;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.IRegistry;
+import net.minecraft.util.registry.Registry;
 
 public class VeinminerEntry
 {
@@ -20,7 +20,7 @@ public class VeinminerEntry
 	
 	public VeinminerEntry(Block block, int radius)
 	{
-		this(IRegistry.BLOCK.getKey(block), radius);
+		this(Registry.BLOCK.getKey(block), radius);
 	}
 	
 	public ResourceLocation getBlock()
@@ -43,7 +43,7 @@ public class VeinminerEntry
 	{
 		if(option != null)
 		{
-			return IRegistry.BLOCK.get(option.getBlock());
+			return Registry.BLOCK.getOrDefault(option.getBlock());
 		}
 		
 		return Blocks.AIR;

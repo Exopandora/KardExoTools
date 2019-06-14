@@ -30,12 +30,12 @@ import exopandora.kardexo.kardexotools.command.CommandWhereIs;
 import exopandora.kardexo.kardexotools.command.CommandWorldTime;
 import exopandora.kardexo.kardexotools.veinminer.VeinminerEntry;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.command.CommandSource;
-import net.minecraft.init.Blocks;
 
 public class Config
 {
-	public static final String VERSION = "1.13.2-2.36";
+	public static final String VERSION = "1.14.2-2.36";
 	
 	//** CONFIGURABLE VALUES **//
 	

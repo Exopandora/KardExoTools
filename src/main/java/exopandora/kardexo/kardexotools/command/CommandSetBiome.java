@@ -7,13 +7,13 @@ import exopandora.kardexo.kardexotools.command.arguments.BiomeArgument;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.ColumnPosArgument;
-import net.minecraft.command.arguments.ColumnPosArgument.ColumnPos;
-import net.minecraft.network.play.server.SPacketChunkData;
-import net.minecraft.server.management.PlayerChunkMapEntry;
+import net.minecraft.network.play.server.SChunkDataPacket;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.registry.IRegistry;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.world.WorldServer;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.ServerWorld;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 
@@ -26,17 +26,19 @@ public class CommandSetBiome
 					.then(Commands.argument("from", ColumnPosArgument.columnPos())
 						.then(Commands.argument("to", ColumnPosArgument.columnPos())
 							.then(Commands.argument("biome", BiomeArgument.biome())
-								.executes(context -> CommandSetBiome.setBiome(context.getSource(), ColumnPosArgument.getColumnPos(context, "from"), ColumnPosArgument.getColumnPos(context, "to"), BiomeArgument.getBiome(context, "biome")))))));
+								.executes(context -> CommandSetBiome.setBiome(context.getSource(), ColumnPosArgument.func_218101_a(context, "from"), ColumnPosArgument.func_218101_a(context, "to"), BiomeArgument.getBiome(context, "biome")))))));
 	}
 	
 	private static int setBiome(CommandSource source, ColumnPos from, ColumnPos to, Biome biome) throws CommandSyntaxException
 	{
-		WorldServer world = source.getWorld();
+		ServerWorld world = source.getWorld();
 		
-		int minX = Math.min(from.field_212600_a, to.field_212600_a);
-		int maxX = Math.max(from.field_212600_a, to.field_212600_a);
-		int minZ = Math.min(from.field_212601_b, to.field_212601_b);
-		int maxZ = Math.max(from.field_212601_b, to.field_212601_b);
+		int minX = Math.min(from.x, to.x);
+		int maxX = Math.max(from.x, to.x);
+		int minZ = Math.min(from.z, to.z);
+		int maxZ = Math.max(from.z, to.z);
+		
+		System.out.println(minX + " " + minZ + " " + maxX + " " + maxZ);
 		
 		int chunkMinX = MathHelper.floor(minX / 16F);
 		int chunkMaxX = MathHelper.floor(maxX / 16F);
@@ -74,22 +76,15 @@ public class CommandSetBiome
 				if(flag)
 				{
 					chunk.markDirty();
-					PlayerChunkMapEntry entry = world.getPlayerChunkMap().getEntry(chunkX, chunkZ);
-					
-					if(entry != null)
+					world.getChunkProvider().chunkManager.func_219097_a(new ChunkPos(chunkX, chunkZ), false).forEach(player ->
 					{
-						entry.hasPlayerMatching(entityPlayerMP ->
-						{
-							entityPlayerMP.connection.sendPacket(new SPacketChunkData(chunk, 65535));
-							world.getEntityTracker().sendLeashedEntitiesInChunk(entityPlayerMP, chunk);
-							return false;
-						});
-					}
+						player.connection.sendPacket(new SChunkDataPacket(chunk, 65535));
+					});
 				}
 			}
 		}
 		
-		source.sendFeedback(new TextComponentString("Set biome to " + IRegistry.BIOME.getKey(biome)), false);
+		source.sendFeedback(new StringTextComponent("Set biome to " + Registry.BIOME.getKey(biome)), false);
 		return (maxX - minX) * (maxZ - minZ);
 	}
 	

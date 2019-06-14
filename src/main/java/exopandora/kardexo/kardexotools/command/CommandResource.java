@@ -7,13 +7,13 @@ import java.util.Map.Entry;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import net.minecraft.block.Blocks;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.BlockPosArgument;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MutableBoundingBox;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 
 public class CommandResource
 {
@@ -29,7 +29,7 @@ public class CommandResource
 	{
 		Map<String, Integer> map = new HashMap<String, Integer>();
 		
-        for(BlockPos blockpos : BlockPos.MutableBlockPos.getAllInBox(area.minX, area.minY, area.minZ, area.maxX, area.maxY, area.maxZ))
+        for(BlockPos blockpos : BlockPos.MutableBlockPos.getAllInBoxMutable(area.minX, area.minY, area.minZ, area.maxX, area.maxY, area.maxZ))
         {
         	String location = source.getWorld().getBlockState(blockpos).getBlock().getTranslationKey();
 			
@@ -48,7 +48,7 @@ public class CommandResource
 		
 		for(Entry<String, Integer> entry : map.entrySet())
 		{
-			source.sendFeedback(new TextComponentTranslation("x" + entry.getValue() + " %s", new TextComponentTranslation(entry.getKey())), false);
+			source.sendFeedback(new TranslationTextComponent("x" + entry.getValue() + " %s", new TranslationTextComponent(entry.getKey())), false);
 		}
 		
 		return map.values().stream().reduce(Integer::sum).orElse(0);

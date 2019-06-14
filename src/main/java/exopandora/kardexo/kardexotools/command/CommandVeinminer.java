@@ -15,8 +15,8 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 
 public class CommandVeinminer
 {
@@ -37,11 +37,11 @@ public class CommandVeinminer
 		
 		if(enabled)
 		{
-			source.sendFeedback(new TextComponentString("Veinminer enabled"), false);
+			source.sendFeedback(new StringTextComponent("Veinminer enabled"), false);
 		}
 		else
 		{
-			source.sendFeedback(new TextComponentString("Veinminer disabled"), false);
+			source.sendFeedback(new StringTextComponent("Veinminer disabled"), false);
 		}
 		
 		return 1;
@@ -54,7 +54,7 @@ public class CommandVeinminer
 		for(Entry<Block, VeinminerEntry> entry : Config.VEINMINER.getData().entrySet())
 		{
 			ItemStack stack = new ItemStack(entry.getKey().asItem(), 1);
-			list.add(new TextComponentTranslation("%s = %s", stack.getDisplayName(), entry.getValue().getRadius()));
+			list.add(new TranslationTextComponent("%s = %s", stack.getDisplayName(), entry.getValue().getRadius()));
 		}
 		
 		list.sort((a, b) -> a.toString().compareTo(b.toString()));
