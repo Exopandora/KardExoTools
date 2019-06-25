@@ -77,9 +77,9 @@ public class KardExo
 	
 	public static void notifyPlayers(MinecraftServer server, ITextComponent message)
 	{
-		if(server.getPlayerList() != null)
+		if(server.func_184103_al() != null)
 		{
-			server.getPlayerList().sendMessage(message);
+			server.func_184103_al().sendMessage(message);
 		}
 	}
 	
@@ -97,12 +97,12 @@ public class KardExo
 			KardExo.notifyPlayers(server, new TranslationTextComponent("commands.save.saving", new Object[0]));
 		}
 		
-		if(server.getPlayerList() != null)
+		if(server.func_184103_al() != null)
 		{
-			server.getPlayerList().saveAllPlayerData();
+			server.func_184103_al().saveAllPlayerData();
 		}
 		
-		if(server.func_213211_a(true, true, false))
+		if(server.save(true, true, false))
 		{
 			if(displayMessages)
 			{

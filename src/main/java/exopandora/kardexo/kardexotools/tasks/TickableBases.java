@@ -41,7 +41,7 @@ public class TickableBases implements Runnable
 				}
 			}
 			
-			for(ServerPlayerEntity player : this.server.getPlayerList().getPlayers())
+			for(ServerPlayerEntity player : this.server.func_184103_al().getPlayers())
 			{
 				boolean inside = base.isInside(player);
 				
@@ -90,7 +90,7 @@ public class TickableBases implements Runnable
 			
 			for(PropertyOwner owner : notify)
 			{
-				ServerPlayerEntity playerOwner = this.server.getPlayerList().getPlayerByUsername(owner.getName());
+				ServerPlayerEntity playerOwner = this.server.func_184103_al().getPlayerByUsername(owner.getName());
 				
 				if(playerOwner != null)
 				{

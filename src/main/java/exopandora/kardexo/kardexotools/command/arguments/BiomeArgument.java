@@ -36,7 +36,7 @@ public class BiomeArgument implements ArgumentType<Biome>
 	public Biome parse(StringReader reader) throws CommandSyntaxException
 	{
 		ResourceLocation resourcelocation = ResourceLocation.read(reader);
-		Optional<Biome> biome = Registry.BIOME.func_218349_b(resourcelocation);
+		Optional<Biome> biome = Registry.BIOME.getValue(resourcelocation);
 		
 		if(!biome.isPresent())
 		{

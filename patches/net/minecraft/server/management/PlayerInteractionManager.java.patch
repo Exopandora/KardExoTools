@@ -1,17 +1,10 @@
 --- a/net/minecraft/server/management/PlayerInteractionManager.java
 +++ b/net/minecraft/server/management/PlayerInteractionManager.java
-@@ -1,5 +1,6 @@
- package net.minecraft.server.management;
- 
-+import exopandora.kardexo.kardexotools.veinminer.Veinminer;
- import net.minecraft.block.Block;
- import net.minecraft.block.BlockState;
- import net.minecraft.block.CommandBlockBlock;
-@@ -246,6 +247,11 @@
+@@ -246,6 +246,11 @@
  
      public boolean tryHarvestBlock(BlockPos pos)
      {
-+    	return Veinminer.mine(pos, this.player, this.world, this::tryHarvestBlock);
++    	return exopandora.kardexo.kardexotools.veinminer.Veinminer.mine(pos, this.player, this.world, this::tryHarvestBlock);
 +    }
 +
 +    public boolean tryHarvestBlock(BlockPos pos, boolean dropAtPlayer)
@@ -19,12 +12,3 @@
          BlockState blockstate = this.world.getBlockState(pos);
  
          if (!this.player.getHeldItemMainhand().getItem().canPlayerBreakBlockWhileHolding(blockstate, this.world, pos, this.player))
-@@ -300,7 +306,7 @@
-                     if (flag1 && flag)
-                     {
-                         ItemStack itemstack1 = itemstack2.isEmpty() ? ItemStack.EMPTY : itemstack2.copy();
--                        blockstate.getBlock().harvestBlock(this.world, this.player, pos, blockstate, tileentity, itemstack1);
-+                        blockstate.getBlock().harvestBlock(this.world, this.player, dropAtPlayer ? this.player.getPosition() : pos, blockstate, tileentity, itemstack1);
-                     }
-                 }
- 

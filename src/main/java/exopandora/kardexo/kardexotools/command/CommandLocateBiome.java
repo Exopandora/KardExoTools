@@ -43,7 +43,7 @@ public class CommandLocateBiome
 			Thread thread = new Thread(() ->
 			{
 				ResourceLocation resource = Registry.BIOME.getKey(biome);
-				BiomeProvider provider = source.getWorld().getChunkProvider().getChunkGenerator().getBiomeProvider();
+				BiomeProvider provider = source.getWorld().func_72863_F().getChunkGenerator().getBiomeProvider();
 				
 				boolean result = spiral(Config.LOCATE_BIOME_RADIUS, 16, new BlockPos(source.getPos()), (blockpos, x, z) -> blockpos.add(x, 0, z), blockpos ->
 				{

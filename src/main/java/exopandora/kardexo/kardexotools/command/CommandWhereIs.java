@@ -39,7 +39,7 @@ public class CommandWhereIs
 		{
 			dimension = "Overworld";
 		}
-		else if(DimensionType.NETHER.equals(target.dimension))
+		else if(DimensionType.THE_NETHER.equals(target.dimension))
 		{
 			dimension = "Nether";
 		}

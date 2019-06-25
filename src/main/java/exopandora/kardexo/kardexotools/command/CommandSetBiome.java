@@ -49,7 +49,7 @@ public class CommandSetBiome
 		{
 			for(int chunkZ = chunkMinZ; chunkZ <= chunkMaxZ; chunkZ++)
 			{
-				Chunk chunk = world.getChunk(chunkX, chunkZ);
+				Chunk chunk = world.func_212866_a_(chunkX, chunkZ);
 				Biome[] biomes = chunk.getBiomes();
 				int xStart = getMinChunkOffset(chunkX, chunkMinX, minX);
 				int zStart = getMinChunkOffset(chunkZ, chunkMinZ, minZ);
@@ -76,7 +76,7 @@ public class CommandSetBiome
 				if(flag)
 				{
 					chunk.markDirty();
-					world.getChunkProvider().chunkManager.func_219097_a(new ChunkPos(chunkX, chunkZ), false).forEach(player ->
+					world.func_72863_F().chunkManager.getTrackingPlayers(new ChunkPos(chunkX, chunkZ), false).forEach(player ->
 					{
 						player.connection.sendPacket(new SChunkDataPacket(chunk, 65535));
 					});
