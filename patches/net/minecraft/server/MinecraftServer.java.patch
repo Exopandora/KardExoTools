@@ -4,7 +4,7 @@
          {
              this.snooper.stop();
          }
-+
++        
 +        exopandora.kardexo.kardexotools.KardExo.stop();
      }
  
