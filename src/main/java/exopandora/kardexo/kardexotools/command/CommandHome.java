@@ -11,6 +11,7 @@ import net.minecraft.command.Commands;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.play.server.SSetExperiencePacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
@@ -73,11 +74,11 @@ public class CommandHome
 		{
 			ServerPlayerEntity player = (ServerPlayerEntity) entity;
 			
-			player.stopRiding();
 			player.removePassengers();
-			
 			player.teleport(server.getWorld(DimensionType.getById(dimension)), x, y, z, entity.rotationYaw, entity.rotationPitch);
 			player.setRotationYawHead(entity.rotationYaw);
+			
+			player.connection.sendPacket(new SSetExperiencePacket(player.experience, player.experienceTotal, player.experienceLevel));
 		}
 		else
 		{

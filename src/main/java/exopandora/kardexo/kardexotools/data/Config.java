@@ -35,7 +35,7 @@ import net.minecraft.command.CommandSource;
 
 public class Config
 {
-	public static final String VERSION = "1.14.3-2.36";
+	public static final String VERSION = "1.14.3-2.37";
 	
 	//** CONFIGURABLE VALUES **//
 	
@@ -159,7 +159,7 @@ public class Config
 		return commands;
 	}
 	
-	//** DOT EDIT BELOW THIS LINE **//
+	//** DO NOT EDIT BELOW THIS LINE **//
 	
 	static
 	{
