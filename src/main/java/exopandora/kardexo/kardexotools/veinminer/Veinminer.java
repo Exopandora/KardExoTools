@@ -16,7 +16,6 @@ import java.util.stream.Stream;
 import com.google.common.collect.Sets;
 
 import exopandora.kardexo.kardexotools.config.Config;
-import exopandora.kardexo.kardexotools.history.History;
 import exopandora.kardexo.kardexotools.history.PlayerHistory;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -192,8 +191,7 @@ public class Veinminer
 	
 	public static int undo(ServerPlayerEntity player, MinecraftServer server) throws Exception
 	{
-		History<VeinminerHistoryEntry> history = Veinminer.HISTORY.getHistory(player.getName().getString());
-		VeinminerHistoryEntry undo = history.peek();
+		VeinminerHistoryEntry undo = Veinminer.HISTORY.peek(player.getName().getString());
 		Set<BlockPos> positions = undo.getAllPositions();
 		ServerWorld world = server.getWorld(undo.getDimension());
 		Block block = undo.getBlock();
@@ -215,12 +213,7 @@ public class Veinminer
 				player.inventory.clearMatchingItems(stack -> stack.getItem().equals(block.asItem()), count);
 			}
 			
-			history.pop();
-			
-			if(history.empty())
-			{
-				Veinminer.HISTORY.remove(player.getName().getString());
-			}
+			Veinminer.HISTORY.pop(player.getName().getString());
 			
 			return count;
 		}

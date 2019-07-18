@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class PlayerHistory<T>
 {
-	private final Map<String, History<T>> history = new HashMap<String, History<T>>();
+	private final Map<String, LimitedStack<T>> history = new HashMap<String, LimitedStack<T>>();
 	private final int size;
 	
 	public PlayerHistory(int size)
@@ -13,9 +13,22 @@ public class PlayerHistory<T>
 		this.size = size;
 	}
 	
-	public History<T> getHistory(String player)
+	public T peek(String player)
 	{
-		return this.history.get(player);
+		return this.history.get(player).peek();
+	}
+	
+	public T pop(String player)
+	{
+		LimitedStack<T> stack = this.history.get(player);
+		T result = stack.pop();
+		
+		if(stack.isEmpty())
+		{
+			this.history.remove(player);
+		}
+		
+		return result;
 	}
 	
 	public void add(String player, T entry)
@@ -26,11 +39,11 @@ public class PlayerHistory<T>
 		}
 		else
 		{
-			this.history.put(player, new History<T>(this.size, entry));
+			this.history.put(player, new LimitedStack<T>(this.size, entry));
 		}
 	}
 	
-	public History<T> remove(String player)
+	public LimitedStack<T> remove(String player)
 	{
 		return this.history.remove(player);
 	}
