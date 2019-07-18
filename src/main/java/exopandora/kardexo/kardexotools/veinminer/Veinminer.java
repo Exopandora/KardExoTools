@@ -49,12 +49,9 @@ public class Veinminer
 			{
 				ItemStack item = player.getHeldItemMainhand();
 				
-				if(isEqual(state, block.getDefaultState()) && (item.getDestroySpeed(state) > 1.0F || block.getDefaultState().getMaterial().isToolNotRequired()))
+				if(Veinminer.isEqual(state, block.getDefaultState()) && (item.getDestroySpeed(state) > 1.0F || block.getDefaultState().getMaterial().isToolNotRequired()))
 				{
 					PriorityQueue<BlockPos> queue = calculateVein(Config.BLOCK_LIMIT, Config.VEINMINER.getData().get(block).getRadius(), state, pos, world);
-					
-					queue.stream().peek(BlockPos::toString);
-					
 					Map<BlockState, Set<BlockPos>> stateMap = new HashMap<BlockState, Set<BlockPos>>();
 					VeinminerHistoryEntry undo = new VeinminerHistoryEntry(player.dimension, stateMap);
 					queue.poll();
