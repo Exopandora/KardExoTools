@@ -9,9 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.PriorityQueue;
+import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.stream.Stream;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import exopandora.kardexo.kardexotools.data.Config;
 import net.minecraft.block.Block;
@@ -52,7 +54,7 @@ public class Veinminer
 					
 					queue.stream().peek(BlockPos::toString);
 					
-					Map<BlockState, List<BlockPos>> stateMap = new HashMap<BlockState, List<BlockPos>>();
+					Map<BlockState, Set<BlockPos>> stateMap = new HashMap<BlockState, Set<BlockPos>>();
 					VeinminerHistoryEntry undo = new VeinminerHistoryEntry(player.dimension, stateMap);
 					queue.poll();
 					
@@ -63,7 +65,7 @@ public class Veinminer
 						
 						if(harvest)
 						{
-							stateMap.put(next, Lists.newArrayList(pos));
+							stateMap.put(next, Sets.newHashSet(pos));
 							
 							for(int x = 0; x < Config.BLOCK_LIMIT; x++)
 							{
@@ -84,7 +86,7 @@ public class Veinminer
 									break;
 								}
 								
-								List<BlockPos> list = stateMap.get(next);
+								Set<BlockPos> list = stateMap.get(next);
 								
 								if(list != null)
 								{
@@ -92,11 +94,11 @@ public class Veinminer
 								}
 								else
 								{
-									stateMap.put(next, Lists.newArrayList(queue.poll()));
+									stateMap.put(next, Sets.newHashSet(queue.poll()));
 								}
 							}
 							
-							if(getFlatMapSize(stateMap.values()) > 1)
+							if(Veinminer.count(stateMap.values()) > 1)
 							{
 								Veinminer.HISTORY.add(name, undo);
 							}
@@ -113,7 +115,7 @@ public class Veinminer
 	
 	private static PriorityQueue<BlockPos> calculateVein(int limit, int radius, BlockState state, BlockPos pos, World world)
 	{
-		PriorityQueue<BlockPos> queue = new PriorityQueue<BlockPos>(getComparator(pos));
+		PriorityQueue<BlockPos> queue = new PriorityQueue<BlockPos>(Veinminer.getComparator(pos));
 		Collection<BlockPos> pending = Collections.singleton(pos);
 		
 		while(!pending.isEmpty())
@@ -130,7 +132,7 @@ public class Veinminer
 				}
 			}
 			
-			PriorityQueue<BlockPos> next = new PriorityQueue<BlockPos>(getComparator(pos));
+			PriorityQueue<BlockPos> next = new PriorityQueue<BlockPos>(Veinminer.getComparator(pos));
 			
 			for(BlockPos block : pending)
 			{
@@ -149,12 +151,12 @@ public class Veinminer
 							
 							BlockPos nextBlock = block.add(x, y, z);
 							
-							if(Math.sqrt(nextBlock.distanceSq(pos)) >= radius)
+							if(nextBlock.distanceSq(pos) >= radius * radius)
 							{
 								continue;
 							}
 							
-							if(!isEqual(state, world.getBlockState(nextBlock)))
+							if(!Veinminer.isEqual(state, world.getBlockState(nextBlock)))
 							{
 								continue;
 							}
@@ -190,26 +192,25 @@ public class Veinminer
 	{
 		History<VeinminerHistoryEntry> history = Veinminer.HISTORY.getHistory(player.getName().getString());
 		VeinminerHistoryEntry undo = history.peek();
-		Map<BlockState, List<BlockPos>> stateMap = undo.getStateMap();
+		Set<BlockPos> positions = undo.getAllPositions();
 		ServerWorld world = server.getWorld(undo.getDimension());
-		BlockState state = stateMap.keySet().iterator().next();
-		Item item = state.getBlock().asItem();
-		int count = getFlatMapSize(stateMap.values());
+		Block block = undo.getBlock();
+		int count = positions.size();
 		
-		if(playerHasItems(player, item, count) && hasSpace(world, stateMap) && hasNoCollidingEntities(world, stateMap))
+		if(Veinminer.playerHasItems(player, block.asItem(), count) && Veinminer.hasSpace(world, positions) && Veinminer.hasNoCollidingEntities(world, positions))
 		{
-			for(Entry<BlockState, List<BlockPos>> entry : stateMap.entrySet())
+			for(Entry<BlockState, Set<BlockPos>> entry : undo.getStateMap().entrySet())
 			{
 				for(BlockPos pos : entry.getValue())
 				{
 					world.setBlockState(pos, entry.getKey());
-					player.addStat(Stats.BLOCK_MINED.get(state.getBlock()));
+					player.addStat(Stats.BLOCK_MINED.get(block));
 				}
 			}
 			
 			if(!player.interactionManager.isCreative())
 			{
-				player.inventory.clearMatchingItems(stack -> stack.getItem().equals(item), count);
+				player.inventory.clearMatchingItems(stack -> stack.getItem().equals(block.asItem()), count);
 			}
 			
 			history.pop();
@@ -256,39 +257,38 @@ public class Veinminer
 		throw new Exception("You do not have enough items");
 	}
 	
-	private static boolean hasSpace(World world, Map<BlockState, List<BlockPos>> stateMap) throws Exception
+	private static boolean hasSpace(World world, Set<BlockPos> positions) throws Exception
 	{
-		for(Entry<BlockState, List<BlockPos>> entry : stateMap.entrySet())
+		for(BlockPos pos : positions)
 		{
-			for(BlockPos pos : entry.getValue())
+			Block block = world.getBlockState(pos).getBlock();
+			
+			if(!block.equals(Blocks.AIR) && !block.equals(Blocks.WATER) && !block.equals(Blocks.LAVA) && !block.equals(Blocks.VOID_AIR) && !block.equals(Blocks.CAVE_AIR))
 			{
-				Block block = world.getBlockState(pos).getBlock();
-				
-				if(!block.equals(Blocks.AIR) && !block.equals(Blocks.WATER)  && !block.equals(Blocks.LAVA) && !block.equals(Blocks.VOID_AIR) && !block.equals(Blocks.CAVE_AIR))
-				{
-					throw new Exception("Space is being occupied by other blocks");
-				}
+				throw new Exception("Space is being occupied by other blocks");
 			}
 		}
 		
 		return true;
 	}
 	
-	private static <T> int getFlatMapSize(Collection<List<T>> collection)
+	private static <T> int count(Collection<Set<T>> collection)
 	{
-		return (int) collection.parallelStream().flatMap(List::stream).count();
+		return (int) Veinminer.flatten(collection).count();
 	}
 	
-	private static boolean hasNoCollidingEntities(World world, Map<BlockState, List<BlockPos>> statemap) throws Exception
+	public static <T> Stream<T> flatten(Collection<Set<T>> collection)
 	{
-		for(Entry<BlockState, List<BlockPos>> entry : statemap.entrySet())
+		return collection.parallelStream().flatMap(Set::stream);
+	}
+	
+	private static boolean hasNoCollidingEntities(World world, Set<BlockPos> positions) throws Exception
+	{
+		for(BlockPos pos : positions)
 		{
-			for(BlockPos pos : entry.getValue())
+			if(!world.checkNoEntityCollision(null, VoxelShapes.create(new AxisAlignedBB(pos))))
 			{
-				if(!world.checkNoEntityCollision(null, VoxelShapes.create(new AxisAlignedBB(pos))))
-				{
-					throw new Exception("Space is being occupied by other entities");
-				}
+				throw new Exception("Space is being occupied by other entities");
 			}
 		}
 		

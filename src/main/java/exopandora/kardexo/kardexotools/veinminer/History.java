@@ -10,6 +10,7 @@ public class History<T> extends Stack<T>
 	public History(int size, T entry)
 	{
 		this.size = size;
+		this.push(entry);
 	}
 	
 	@Override
@@ -20,6 +21,6 @@ public class History<T> extends Stack<T>
 			this.remove(0);
 		}
 		
-		return this.push(entry);
+		return super.push(entry);
 	}
 }
