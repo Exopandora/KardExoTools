@@ -1,4 +1,4 @@
-package exopandora.kardexo.kardexotools.data;
+package exopandora.kardexo.kardexotools.config;
 
 import java.io.File;
 import java.io.FileNotFoundException;

@@ -10,7 +10,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import exopandora.kardexo.kardexotools.base.Property;
-import exopandora.kardexo.kardexotools.data.Config;
+import exopandora.kardexo.kardexotools.config.Config;
 import exopandora.kardexo.kardexotools.tasks.TickableBases;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;

@@ -1,4 +1,4 @@
-package exopandora.kardexo.kardexotools.data;
+package exopandora.kardexo.kardexotools.config;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -90,7 +90,7 @@ public class Config
 	public static final DataFile<Property, String> BASES = new DataFile<Property, String>(new File(CONFIG_DIRECTORY, "bases.json"), Property[].class, Property::getName);
 	public static final DataFile<Property, String> PLACES = new DataFile<Property, String>(new File(CONFIG_DIRECTORY, "places.json"), Property[].class, Property::getName);
 	public static final DataFile<Home, String> HOME = new DataFile<Home, String>(new File(CONFIG_DIRECTORY, "home.json"), Home[].class, Home::getPlayer);
-	public static final DataFile<PlayerData, String> PLAYERS = new DataFile<PlayerData, String>(new File(CONFIG_DIRECTORY, "playerdata.json"), PlayerData[].class, PlayerData::getPlayer);
+	public static final DataFile<PlayerConfig, String> PLAYERS = new DataFile<PlayerConfig, String>(new File(CONFIG_DIRECTORY, "playerdata.json"), PlayerConfig[].class, PlayerConfig::getPlayer);
 	public static final DataFile<VeinminerConfigEntry, Block> VEINMINER = new DataFile<VeinminerConfigEntry, Block>(new File(CONFIG_DIRECTORY, "veinminer.json"), VeinminerConfigEntry[].class, VeinminerConfigEntry::toBlock, () -> 
 	{
 		//Default veinminer configuration

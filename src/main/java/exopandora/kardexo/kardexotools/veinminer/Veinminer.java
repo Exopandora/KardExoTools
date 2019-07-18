@@ -15,7 +15,9 @@ import java.util.stream.Stream;
 
 import com.google.common.collect.Sets;
 
-import exopandora.kardexo.kardexotools.data.Config;
+import exopandora.kardexo.kardexotools.config.Config;
+import exopandora.kardexo.kardexotools.history.History;
+import exopandora.kardexo.kardexotools.history.PlayerHistory;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;

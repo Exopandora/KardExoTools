@@ -14,7 +14,7 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
 import exopandora.kardexo.kardexotools.base.Property;
 import exopandora.kardexo.kardexotools.base.PropertyOwner;
-import exopandora.kardexo.kardexotools.data.DataFile;
+import exopandora.kardexo.kardexotools.config.DataFile;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.entity.player.PlayerEntity;

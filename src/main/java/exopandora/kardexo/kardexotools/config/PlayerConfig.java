@@ -1,11 +1,11 @@
-package exopandora.kardexo.kardexotools.data;
+package exopandora.kardexo.kardexotools.config;
 
-public class PlayerData
+public class PlayerConfig
 {
 	private final String player;
 	private boolean veinminer;
 	
-	public PlayerData(String player, boolean veinminer)
+	public PlayerConfig(String player, boolean veinminer)
 	{
 		this.player = player;
 		this.veinminer = veinminer;

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import exopandora.kardexo.kardexotools.KardExo;
-import exopandora.kardexo.kardexotools.data.Config;
+import exopandora.kardexo.kardexotools.config.Config;
 
 public class Tasks
 {	

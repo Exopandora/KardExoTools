@@ -7,7 +7,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
 import exopandora.kardexo.kardexotools.KardExo;
-import exopandora.kardexo.kardexotools.data.Config;
+import exopandora.kardexo.kardexotools.config.Config;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;

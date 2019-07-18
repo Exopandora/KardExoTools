@@ -7,8 +7,8 @@ import java.util.Map.Entry;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import exopandora.kardexo.kardexotools.data.Config;
-import exopandora.kardexo.kardexotools.data.PlayerData;
+import exopandora.kardexo.kardexotools.config.Config;
+import exopandora.kardexo.kardexotools.config.PlayerConfig;
 import exopandora.kardexo.kardexotools.veinminer.VeinminerConfigEntry;
 import net.minecraft.block.Block;
 import net.minecraft.command.CommandSource;
@@ -33,7 +33,7 @@ public class CommandVeinminer
 	
 	private static int setVeinminer(CommandSource source, boolean enabled) throws CommandSyntaxException
 	{
-		Config.PLAYERS.getData().put(source.getName(), new PlayerData(source.getName(), enabled));
+		Config.PLAYERS.getData().put(source.getName(), new PlayerConfig(source.getName(), enabled));
 		
 		if(enabled)
 		{

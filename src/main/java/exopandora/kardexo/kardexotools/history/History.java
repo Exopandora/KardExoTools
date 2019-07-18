@@ -1,4 +1,4 @@
-package exopandora.kardexo.kardexotools.veinminer;
+package exopandora.kardexo.kardexotools.history;
 
 import java.util.Stack;
 

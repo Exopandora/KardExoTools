@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import com.mojang.brigadier.CommandDispatcher;
 
 import exopandora.kardexo.kardexotools.command.arguments.BiomeArgument;
-import exopandora.kardexo.kardexotools.data.Config;
+import exopandora.kardexo.kardexotools.config.Config;
 import exopandora.kardexo.kardexotools.tasks.Tasks;
 import exopandora.kardexo.kardexotools.tasks.TickableBases;
 import exopandora.kardexo.kardexotools.tasks.TickableDeathListener;

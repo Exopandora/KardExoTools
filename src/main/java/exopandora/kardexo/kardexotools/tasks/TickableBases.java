@@ -10,7 +10,7 @@ import java.util.Set;
 import exopandora.kardexo.kardexotools.base.EnumBaseAccess;
 import exopandora.kardexo.kardexotools.base.Property;
 import exopandora.kardexo.kardexotools.base.PropertyOwner;
-import exopandora.kardexo.kardexotools.data.Config;
+import exopandora.kardexo.kardexotools.config.Config;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
