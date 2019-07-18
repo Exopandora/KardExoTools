@@ -1,6 +1,5 @@
 package exopandora.kardexo.kardexotools.veinminer;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -10,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.PriorityQueue;
-import java.util.Stack;
 import java.util.function.BiFunction;
 
 import com.google.common.collect.Lists;
@@ -31,11 +29,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.ServerWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 
 public class Veinminer
 {
-	private static final Map<String, Stack<Entry<Integer, Map<BlockState, List<BlockPos>>>>> HISTORY = new HashMap<String, Stack<Entry<Integer,Map<BlockState, List<BlockPos>>>>>();
+	private static final PlayerHistory<VeinminerHistoryEntry> HISTORY = new PlayerHistory<VeinminerHistoryEntry>(Config.HISTORY_SIZE);
 	
 	public static boolean mine(BlockPos pos, ServerPlayerEntity player, World world, BiFunction<BlockPos, Boolean, Boolean> harvestBlock)
 	{
@@ -48,15 +45,15 @@ public class Veinminer
 			for(Block block : Config.VEINMINER.getData().keySet())
 			{
 				ItemStack item = player.getHeldItemMainhand();
-
+				
 				if(isEqual(state, block.getDefaultState()) && (item.getDestroySpeed(state) > 1.0F || block.getDefaultState().getMaterial().isToolNotRequired()))
 				{
 					PriorityQueue<BlockPos> queue = calculateVein(Config.BLOCK_LIMIT, Config.VEINMINER.getData().get(block).getRadius(), state, pos, world);
 					
 					queue.stream().peek(BlockPos::toString);
 					
-					Map<BlockState, List<BlockPos>> statemap = new HashMap<BlockState, List<BlockPos>>();
-					Entry<Integer, Map<BlockState, List<BlockPos>>> undo = new SimpleEntry<Integer, Map<BlockState, List<BlockPos>>>(player.dimension.getId(), statemap);
+					Map<BlockState, List<BlockPos>> stateMap = new HashMap<BlockState, List<BlockPos>>();
+					VeinminerHistoryEntry undo = new VeinminerHistoryEntry(player.dimension, stateMap);
 					queue.poll();
 					
 					if(!queue.isEmpty())
@@ -66,7 +63,7 @@ public class Veinminer
 						
 						if(harvest)
 						{
-							statemap.put(next, Lists.newArrayList(pos));
+							stateMap.put(next, Lists.newArrayList(pos));
 							
 							for(int x = 0; x < Config.BLOCK_LIMIT; x++)
 							{
@@ -87,7 +84,7 @@ public class Veinminer
 									break;
 								}
 								
-								List<BlockPos> list = statemap.get(next);
+								List<BlockPos> list = stateMap.get(next);
 								
 								if(list != null)
 								{
@@ -95,29 +92,13 @@ public class Veinminer
 								}
 								else
 								{
-									statemap.put(next, Lists.newArrayList(queue.poll()));
+									stateMap.put(next, Lists.newArrayList(queue.poll()));
 								}
 							}
 							
-							if(getFlatMapSize(statemap.values()) > 1)
+							if(getFlatMapSize(stateMap.values()) > 1)
 							{
-								Stack<Entry<Integer, Map<BlockState, List<BlockPos>>>> history = Veinminer.HISTORY.get(name);
-								
-								if(history != null)
-								{
-									if(history.size() == Config.HISTORY_SIZE)
-									{
-										history.remove(0);
-									}
-									
-									history.push(undo);
-								}
-								else
-								{
-									history = new Stack<Entry<Integer, Map<BlockState, List<BlockPos>>>>();
-									history.add(undo);
-									Veinminer.HISTORY.put(name, history);
-								}
+								Veinminer.HISTORY.add(name, undo);
 							}
 						}
 						
@@ -207,17 +188,17 @@ public class Veinminer
 	
 	public static int undo(ServerPlayerEntity player, MinecraftServer server) throws Exception
 	{
-		Stack<Entry<Integer, Map<BlockState, List<BlockPos>>>> history = Veinminer.HISTORY.get(player.getName().getString());
-		Entry<Integer, Map<BlockState, List<BlockPos>>> undo = history.peek();
-		Map<BlockState, List<BlockPos>> statemap = undo.getValue();
-		ServerWorld world = server.getWorld(DimensionType.getById(undo.getKey()));
-		BlockState state = statemap.keySet().iterator().next();
+		History<VeinminerHistoryEntry> history = Veinminer.HISTORY.getHistory(player.getName().getString());
+		VeinminerHistoryEntry undo = history.peek();
+		Map<BlockState, List<BlockPos>> stateMap = undo.getStateMap();
+		ServerWorld world = server.getWorld(undo.getDimension());
+		BlockState state = stateMap.keySet().iterator().next();
 		Item item = state.getBlock().asItem();
-		int count = getFlatMapSize(statemap.values());
+		int count = getFlatMapSize(stateMap.values());
 		
-		if(playerHasItems(player, item, count) && hasSpace(world, statemap) && hasNoCollidingEntities(world, statemap))
+		if(playerHasItems(player, item, count) && hasSpace(world, stateMap) && hasNoCollidingEntities(world, stateMap))
 		{
-			for(Entry<BlockState, List<BlockPos>> entry : statemap.entrySet())
+			for(Entry<BlockState, List<BlockPos>> entry : stateMap.entrySet())
 			{
 				for(BlockPos pos : entry.getValue())
 				{
@@ -275,9 +256,9 @@ public class Veinminer
 		throw new Exception("You do not have enough items");
 	}
 	
-	private static boolean hasSpace(World world, Map<BlockState, List<BlockPos>> statemap) throws Exception
+	private static boolean hasSpace(World world, Map<BlockState, List<BlockPos>> stateMap) throws Exception
 	{
-		for(Entry<BlockState, List<BlockPos>> entry : statemap.entrySet())
+		for(Entry<BlockState, List<BlockPos>> entry : stateMap.entrySet())
 		{
 			for(BlockPos pos : entry.getValue())
 			{
@@ -316,6 +297,6 @@ public class Veinminer
 	
 	public static boolean hasUndo(String player)
 	{
-		return Veinminer.HISTORY.containsKey(player);
+		return Veinminer.HISTORY.hasUndo(player);
 	}
 }
