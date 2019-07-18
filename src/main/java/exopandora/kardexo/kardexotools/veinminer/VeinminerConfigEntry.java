@@ -7,18 +7,18 @@ import net.minecraft.block.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 
-public class VeinminerEntry
+public class VeinminerConfigEntry
 {
 	private final ResourceLocation block;
 	private int radius;
 	
-	public VeinminerEntry(ResourceLocation block, int radius)
+	public VeinminerConfigEntry(ResourceLocation block, int radius)
 	{
 		this.block = block;
 		this.radius = radius;
 	}
 	
-	public VeinminerEntry(Block block, int radius)
+	public VeinminerConfigEntry(Block block, int radius)
 	{
 		this(Registry.BLOCK.getKey(block), radius);
 	}
@@ -39,7 +39,7 @@ public class VeinminerEntry
 	}
 	
 	@Nullable
-	public static Block toBlock(VeinminerEntry option)
+	public static Block toBlock(VeinminerConfigEntry option)
 	{
 		if(option != null)
 		{

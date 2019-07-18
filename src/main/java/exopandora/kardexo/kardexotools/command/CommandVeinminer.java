@@ -9,7 +9,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import exopandora.kardexo.kardexotools.data.Config;
 import exopandora.kardexo.kardexotools.data.PlayerData;
-import exopandora.kardexo.kardexotools.veinminer.VeinminerEntry;
+import exopandora.kardexo.kardexotools.veinminer.VeinminerConfigEntry;
 import net.minecraft.block.Block;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
@@ -51,7 +51,7 @@ public class CommandVeinminer
 	{
 		List<ITextComponent> list = new ArrayList<ITextComponent>(Config.VEINMINER.getData().size());
 		
-		for(Entry<Block, VeinminerEntry> entry : Config.VEINMINER.getData().entrySet())
+		for(Entry<Block, VeinminerConfigEntry> entry : Config.VEINMINER.getData().entrySet())
 		{
 			ItemStack stack = new ItemStack(entry.getKey().asItem(), 1);
 			list.add(new TranslationTextComponent("%s = %s", stack.getDisplayName(), entry.getValue().getRadius()));

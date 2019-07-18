@@ -28,7 +28,7 @@ import exopandora.kardexo.kardexotools.command.CommandUndo;
 import exopandora.kardexo.kardexotools.command.CommandVeinminer;
 import exopandora.kardexo.kardexotools.command.CommandWhereIs;
 import exopandora.kardexo.kardexotools.command.CommandWorldTime;
-import exopandora.kardexo.kardexotools.veinminer.VeinminerEntry;
+import exopandora.kardexo.kardexotools.veinminer.VeinminerConfigEntry;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.command.CommandSource;
@@ -91,43 +91,43 @@ public class Config
 	public static final DataFile<Property, String> PLACES = new DataFile<Property, String>(new File(CONFIG_DIRECTORY, "places.json"), Property[].class, Property::getName);
 	public static final DataFile<Home, String> HOME = new DataFile<Home, String>(new File(CONFIG_DIRECTORY, "home.json"), Home[].class, Home::getPlayer);
 	public static final DataFile<PlayerData, String> PLAYERS = new DataFile<PlayerData, String>(new File(CONFIG_DIRECTORY, "playerdata.json"), PlayerData[].class, PlayerData::getPlayer);
-	public static final DataFile<VeinminerEntry, Block> VEINMINER = new DataFile<VeinminerEntry, Block>(new File(CONFIG_DIRECTORY, "veinminer.json"), VeinminerEntry[].class, VeinminerEntry::toBlock, () -> 
+	public static final DataFile<VeinminerConfigEntry, Block> VEINMINER = new DataFile<VeinminerConfigEntry, Block>(new File(CONFIG_DIRECTORY, "veinminer.json"), VeinminerConfigEntry[].class, VeinminerConfigEntry::toBlock, () -> 
 	{
 		//Default veinminer configuration
 		
-		Set<VeinminerEntry> initial = new HashSet<VeinminerEntry>();
+		Set<VeinminerConfigEntry> initial = new HashSet<VeinminerConfigEntry>();
 		
-		initial.add(new VeinminerEntry(Blocks.OAK_LOG, 12));
-		initial.add(new VeinminerEntry(Blocks.SPRUCE_LOG, 26));
-		initial.add(new VeinminerEntry(Blocks.JUNGLE_LOG, 26));
-		initial.add(new VeinminerEntry(Blocks.BIRCH_LOG, 15));
-		initial.add(new VeinminerEntry(Blocks.DARK_OAK_LOG, 10));
-		initial.add(new VeinminerEntry(Blocks.ACACIA_LOG, 10));
+		initial.add(new VeinminerConfigEntry(Blocks.OAK_LOG, 12));
+		initial.add(new VeinminerConfigEntry(Blocks.SPRUCE_LOG, 26));
+		initial.add(new VeinminerConfigEntry(Blocks.JUNGLE_LOG, 26));
+		initial.add(new VeinminerConfigEntry(Blocks.BIRCH_LOG, 15));
+		initial.add(new VeinminerConfigEntry(Blocks.DARK_OAK_LOG, 10));
+		initial.add(new VeinminerConfigEntry(Blocks.ACACIA_LOG, 10));
 		
-		initial.add(new VeinminerEntry(Blocks.ANDESITE, 15));
-		initial.add(new VeinminerEntry(Blocks.DIORITE, 15));
-		initial.add(new VeinminerEntry(Blocks.GRANITE, 15));
+		initial.add(new VeinminerConfigEntry(Blocks.ANDESITE, 15));
+		initial.add(new VeinminerConfigEntry(Blocks.DIORITE, 15));
+		initial.add(new VeinminerConfigEntry(Blocks.GRANITE, 15));
 		
-		initial.add(new VeinminerEntry(Blocks.GRAVEL, 10));
-		initial.add(new VeinminerEntry(Blocks.GLOWSTONE, 10));
-		initial.add(new VeinminerEntry(Blocks.SOUL_SAND, 5));
-		initial.add(new VeinminerEntry(Blocks.OBSIDIAN, 5));
-		initial.add(new VeinminerEntry(Blocks.SAND, 5));
-		initial.add(new VeinminerEntry(Blocks.RED_SAND, 5));
-		initial.add(new VeinminerEntry(Blocks.CLAY, 5));
+		initial.add(new VeinminerConfigEntry(Blocks.GRAVEL, 10));
+		initial.add(new VeinminerConfigEntry(Blocks.GLOWSTONE, 10));
+		initial.add(new VeinminerConfigEntry(Blocks.SOUL_SAND, 5));
+		initial.add(new VeinminerConfigEntry(Blocks.OBSIDIAN, 5));
+		initial.add(new VeinminerConfigEntry(Blocks.SAND, 5));
+		initial.add(new VeinminerConfigEntry(Blocks.RED_SAND, 5));
+		initial.add(new VeinminerConfigEntry(Blocks.CLAY, 5));
 		
-		initial.add(new VeinminerEntry(Blocks.COAL_ORE, 17));
-		initial.add(new VeinminerEntry(Blocks.IRON_ORE, 9));
-		initial.add(new VeinminerEntry(Blocks.GOLD_ORE, 9));
-		initial.add(new VeinminerEntry(Blocks.DIAMOND_ORE, 9));
-		initial.add(new VeinminerEntry(Blocks.LAPIS_ORE, 7));
-		initial.add(new VeinminerEntry(Blocks.REDSTONE_ORE, 8));
-		initial.add(new VeinminerEntry(Blocks.NETHER_QUARTZ_ORE, 14));
+		initial.add(new VeinminerConfigEntry(Blocks.COAL_ORE, 17));
+		initial.add(new VeinminerConfigEntry(Blocks.IRON_ORE, 9));
+		initial.add(new VeinminerConfigEntry(Blocks.GOLD_ORE, 9));
+		initial.add(new VeinminerConfigEntry(Blocks.DIAMOND_ORE, 9));
+		initial.add(new VeinminerConfigEntry(Blocks.LAPIS_ORE, 7));
+		initial.add(new VeinminerConfigEntry(Blocks.REDSTONE_ORE, 8));
+		initial.add(new VeinminerConfigEntry(Blocks.NETHER_QUARTZ_ORE, 14));
 		
-		initial.add(new VeinminerEntry(Blocks.ICE, 10));
-		initial.add(new VeinminerEntry(Blocks.PACKED_ICE, 10));
-		initial.add(new VeinminerEntry(Blocks.BLUE_ICE, 10));
-		initial.add(new VeinminerEntry(Blocks.BONE_BLOCK, 10));
+		initial.add(new VeinminerConfigEntry(Blocks.ICE, 10));
+		initial.add(new VeinminerConfigEntry(Blocks.PACKED_ICE, 10));
+		initial.add(new VeinminerConfigEntry(Blocks.BLUE_ICE, 10));
+		initial.add(new VeinminerConfigEntry(Blocks.BONE_BLOCK, 10));
 		
 		return initial;
 	});
