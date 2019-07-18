@@ -29,9 +29,9 @@ public class CommandResource
 	{
 		Map<String, Integer> map = new HashMap<String, Integer>();
 		
-        for(BlockPos blockpos : BlockPos.MutableBlockPos.getAllInBoxMutable(area.minX, area.minY, area.minZ, area.maxX, area.maxY, area.maxZ))
-        {
-        	String location = source.getWorld().getBlockState(blockpos).getBlock().getTranslationKey();
+		for(BlockPos blockpos : BlockPos.MutableBlockPos.getAllInBoxMutable(area.minX, area.minY, area.minZ, area.maxX, area.maxY, area.maxZ))
+		{
+			String location = source.getWorld().getBlockState(blockpos).getBlock().getTranslationKey();
 			
 			if(!location.equals(Blocks.AIR.getTranslationKey()))
 			{
@@ -44,7 +44,7 @@ public class CommandResource
 					map.put(location, map.get(location) + 1);
 				}
 			}
-        }
+		}
 		
 		for(Entry<String, Integer> entry : map.entrySet())
 		{
