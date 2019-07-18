@@ -63,7 +63,7 @@ Once activated you can mine veins of blocks (configurable) by sneaking. It only 
 
 ## Configure (Optional) ##
 
-General config file: `src/main/java/exopandora/kardexo/kardexotools/data/Config.java`
+General config file: `src/main/java/exopandora/kardexo/kardexotools/config/Config.java`
 
 ## Build ##
 
