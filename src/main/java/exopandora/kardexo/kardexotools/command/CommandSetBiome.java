@@ -38,8 +38,6 @@ public class CommandSetBiome
 		int minZ = Math.min(from.z, to.z);
 		int maxZ = Math.max(from.z, to.z);
 		
-		System.out.println(minX + " " + minZ + " " + maxX + " " + maxZ);
-		
 		int chunkMinX = MathHelper.floor(minX / 16F);
 		int chunkMaxX = MathHelper.floor(maxX / 16F);
 		int chunkMinZ = MathHelper.floor(minZ / 16F);
