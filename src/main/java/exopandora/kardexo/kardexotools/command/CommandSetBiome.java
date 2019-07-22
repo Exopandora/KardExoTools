@@ -13,9 +13,9 @@ import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.ServerWorld;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.server.ServerWorld;
 
 public class CommandSetBiome
 {
@@ -47,7 +47,7 @@ public class CommandSetBiome
 		{
 			for(int chunkZ = chunkMinZ; chunkZ <= chunkMaxZ; chunkZ++)
 			{
-				Chunk chunk = world.func_212866_a_(chunkX, chunkZ);
+				Chunk chunk = world.getChunk(chunkX, chunkZ);
 				Biome[] biomes = chunk.getBiomes();
 				int xStart = getMinChunkOffset(chunkX, chunkMinX, minX);
 				int zStart = getMinChunkOffset(chunkZ, chunkMinZ, minZ);
@@ -74,7 +74,7 @@ public class CommandSetBiome
 				if(flag)
 				{
 					chunk.markDirty();
-					world.func_72863_F().chunkManager.getTrackingPlayers(new ChunkPos(chunkX, chunkZ), false).forEach(player ->
+					world.getChunkProvider().chunkManager.getTrackingPlayers(new ChunkPos(chunkX, chunkZ), false).forEach(player ->
 					{
 						player.connection.sendPacket(new SChunkDataPacket(chunk, 65535));
 					});

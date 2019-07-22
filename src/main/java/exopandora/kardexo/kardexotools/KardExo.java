@@ -17,7 +17,7 @@ import net.minecraft.command.arguments.ArgumentTypes;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.ServerWorld;
+import net.minecraft.world.server.ServerWorld;
 
 public class KardExo
 {
@@ -77,9 +77,9 @@ public class KardExo
 	
 	public static void notifyPlayers(MinecraftServer server, ITextComponent message)
 	{
-		if(server.func_184103_al() != null)
+		if(server.getPlayerList() != null)
 		{
-			server.func_184103_al().sendMessage(message);
+			server.getPlayerList().sendMessage(message);
 		}
 	}
 	
@@ -97,9 +97,9 @@ public class KardExo
 			KardExo.notifyPlayers(server, new TranslationTextComponent("commands.save.saving", new Object[0]));
 		}
 		
-		if(server.func_184103_al() != null)
+		if(server.getPlayerList() != null)
 		{
-			server.func_184103_al().saveAllPlayerData();
+			server.getPlayerList().saveAllPlayerData();
 		}
 		
 		if(server.save(true, true, false))

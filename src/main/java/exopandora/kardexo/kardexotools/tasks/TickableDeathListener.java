@@ -21,7 +21,7 @@ public class TickableDeathListener implements Runnable
 	@Override
 	public void run()
 	{
-		for(ServerPlayerEntity player : this.server.func_184103_al().getPlayers())
+		for(ServerPlayerEntity player : this.server.getPlayerList().getPlayers())
 		{
 			if(player.getHealth() == 0)
 			{

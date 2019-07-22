@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -633,6 +633,8 @@
+@@ -645,6 +645,8 @@
          {
              this.snooper.stop();
          }
@@ -9,7 +9,7 @@
      }
  
      public String getServerHostname()
-@@ -1166,7 +1168,7 @@
+@@ -1178,7 +1180,7 @@
  
      public String getServerModName()
      {
