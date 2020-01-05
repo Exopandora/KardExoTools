@@ -34,9 +34,9 @@ public class CommandPlaces
 						.then(Commands.argument("dimension", DimensionArgument.getDimension())
 							.then(Commands.argument("from", ColumnPosArgument.columnPos())
 								.then(Commands.argument("to", ColumnPosArgument.columnPos())
-									.executes(context -> add(context.getSource(), StringArgumentType.getString(context, "id"), DimensionArgument.func_212592_a(context, "dimension"), ColumnPosArgument.func_218101_a(context, "from"), ColumnPosArgument.func_218101_a(context, "to"), null))
+									.executes(context -> add(context.getSource(), StringArgumentType.getString(context, "id"), DimensionArgument.getDimensionArgument(context, "dimension"), ColumnPosArgument.func_218101_a(context, "from"), ColumnPosArgument.func_218101_a(context, "to"), null))
 									.then(Commands.argument("title", StringArgumentType.greedyString())
-										.executes(context -> add(context.getSource(), StringArgumentType.getString(context, "id"), DimensionArgument.func_212592_a(context, "dimension"), ColumnPosArgument.func_218101_a(context, "from"), ColumnPosArgument.func_218101_a(context, "to"), StringArgumentType.getString(context, "title")))))))))
+										.executes(context -> add(context.getSource(), StringArgumentType.getString(context, "id"), DimensionArgument.getDimensionArgument(context, "dimension"), ColumnPosArgument.func_218101_a(context, "from"), ColumnPosArgument.func_218101_a(context, "to"), StringArgumentType.getString(context, "title")))))))))
 				.then(Commands.literal("remove")
 					.requires(source -> source.hasPermissionLevel(4))
 					.then(Commands.argument("id", StringArgumentType.word())
@@ -55,9 +55,9 @@ public class CommandPlaces
 								.then(Commands.argument("dimension", DimensionArgument.getDimension())
 									.then(Commands.argument("from", ColumnPosArgument.columnPos())
 										.then(Commands.argument("to", ColumnPosArgument.columnPos())
-											.executes(context -> addChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child"), DimensionArgument.func_212592_a(context, "dimension"), ColumnPosArgument.func_218101_a(context, "from"), ColumnPosArgument.func_218101_a(context, "to"), null)))))))
+											.executes(context -> addChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child"), DimensionArgument.getDimensionArgument(context, "dimension"), ColumnPosArgument.func_218101_a(context, "from"), ColumnPosArgument.func_218101_a(context, "to"), null)))))))
 											.then(Commands.argument("title", StringArgumentType.greedyString())
-												.executes(context -> addChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child"), DimensionArgument.func_212592_a(context, "dimension"), ColumnPosArgument.func_218101_a(context, "from"), ColumnPosArgument.func_218101_a(context, "to"), StringArgumentType.getString(context, "title"))))
+												.executes(context -> addChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child"), DimensionArgument.getDimensionArgument(context, "dimension"), ColumnPosArgument.func_218101_a(context, "from"), ColumnPosArgument.func_218101_a(context, "to"), StringArgumentType.getString(context, "title"))))
 						.then(Commands.literal("remove")
 							.then(Commands.argument("child", StringArgumentType.word())
 								.suggests(CommandPlaces::getChildSuggestions)
@@ -73,7 +73,7 @@ public class CommandPlaces
 		}
 		catch(IllegalStateException e)
 		{
-			CommandBase.createException("Place with id " + id + " already exists");
+			CommandBase.exception("Place with id " + id + " already exists");
 		}
 		
 		return 1;
@@ -90,7 +90,7 @@ public class CommandPlaces
 		}
 		catch(NoSuchElementException e)
 		{
-			throw CommandBase.createException("No such place with id " + id);
+			throw CommandBase.exception("No such place with id " + id);
 		}
 		
 		return 1;
@@ -104,7 +104,7 @@ public class CommandPlaces
 		}
 		catch(NoSuchElementException e)
 		{
-			throw CommandBase.createException("There are no places");
+			throw CommandBase.exception("There are no places");
 		}
 	}
 	
@@ -119,7 +119,7 @@ public class CommandPlaces
 		}
 		catch(Exception e)
 		{
-			throw CommandBase.createException("Could not reload places");
+			throw CommandBase.exception("Could not reload places");
 		}
 		
 		return Config.PLACES.getData().size();
@@ -137,7 +137,7 @@ public class CommandPlaces
 		}
 		catch(IllegalStateException e)
 		{
-			throw CommandBase.createException("Child with id " + child + " already exists for place with id " + id);
+			throw CommandBase.exception("Child with id " + child + " already exists for place with id " + id);
 		}
 		
 		return 1;
@@ -155,7 +155,7 @@ public class CommandPlaces
 		}
 		catch(NoSuchElementException e)
 		{
-			throw CommandBase.createException("No child with id " + child + " for place with id " + id);
+			throw CommandBase.exception("No child with id " + child + " for place with id " + id);
 		}
 		
 		return 1;
@@ -165,7 +165,7 @@ public class CommandPlaces
 	{
 		if(!CommandProperty.hasPermission(source, id, target, Config.PLACES))
 		{
-			throw CommandBase.createException("You must be a creator of place with id " + id);
+			throw CommandBase.exception("You must be a creator of place with id " + id);
 		}
 	}
 	
@@ -177,7 +177,7 @@ public class CommandPlaces
 		}
 		catch(NoSuchElementException e)
 		{
-			throw CommandBase.createException("No such place with id " + id);
+			throw CommandBase.exception("No such place with id " + id);
 		}
 	}
 	

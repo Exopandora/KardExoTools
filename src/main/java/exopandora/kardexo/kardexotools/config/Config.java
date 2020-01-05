@@ -1,10 +1,7 @@
 package exopandora.kardexo.kardexotools.config;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import com.mojang.brigadier.CommandDispatcher;
@@ -35,7 +32,7 @@ import net.minecraft.command.CommandSource;
 
 public class Config
 {
-	public static final String VERSION = "1.14.4-2.38";
+	public static final String VERSION = "1.15.1-2.38";
 	
 	//** CONFIGURABLE VALUES **//
 	
@@ -91,12 +88,8 @@ public class Config
 	public static final DataFile<Property, String> PLACES = new DataFile<Property, String>(new File(CONFIG_DIRECTORY, "places.json"), Property[].class, Property::getName);
 	public static final DataFile<Home, String> HOME = new DataFile<Home, String>(new File(CONFIG_DIRECTORY, "home.json"), Home[].class, Home::getPlayer);
 	public static final DataFile<PlayerConfig, String> PLAYERS = new DataFile<PlayerConfig, String>(new File(CONFIG_DIRECTORY, "playerdata.json"), PlayerConfig[].class, PlayerConfig::getPlayer);
-	public static final DataFile<VeinminerConfigEntry, Block> VEINMINER = new DataFile<VeinminerConfigEntry, Block>(new File(CONFIG_DIRECTORY, "veinminer.json"), VeinminerConfigEntry[].class, VeinminerConfigEntry::toBlock, () -> 
+	public static final DataFile<VeinminerConfigEntry, Block> VEINMINER = new DataFile<VeinminerConfigEntry, Block>(new File(CONFIG_DIRECTORY, "veinminer.json"), VeinminerConfigEntry[].class, VeinminerConfigEntry::toBlock, initial -> 
 	{
-		//Default veinminer configuration
-		
-		Set<VeinminerConfigEntry> initial = new HashSet<VeinminerConfigEntry>();
-		
 		initial.add(new VeinminerConfigEntry(Blocks.OAK_LOG, 12));
 		initial.add(new VeinminerConfigEntry(Blocks.SPRUCE_LOG, 26));
 		initial.add(new VeinminerConfigEntry(Blocks.JUNGLE_LOG, 26));
@@ -128,16 +121,11 @@ public class Config
 		initial.add(new VeinminerConfigEntry(Blocks.PACKED_ICE, 10));
 		initial.add(new VeinminerConfigEntry(Blocks.BLUE_ICE, 10));
 		initial.add(new VeinminerConfigEntry(Blocks.BONE_BLOCK, 10));
-		
-		return initial;
 	});
 	
-	public static List<Consumer<CommandDispatcher<CommandSource>>> getCommands()
+	public static void commands(List<Consumer<CommandDispatcher<CommandSource>>> commands)
 	{
 		//List of all available commands
-		
-		List<Consumer<CommandDispatcher<CommandSource>>> commands = new ArrayList<Consumer<CommandDispatcher<CommandSource>>>();
-		
 		commands.add(CommandMoonPhase::register);
 		commands.add(CommandWhereIs::register);
 		commands.add(CommandBackup::register);
@@ -155,8 +143,6 @@ public class Config
 		commands.add(CommandLocateBiome::register);
 		commands.add(CommandKardExo::register);
 		commands.add(CommandSetBiome::register);
-		
-		return commands;
 	}
 	
 	//** DO NOT EDIT BELOW THIS LINE **//

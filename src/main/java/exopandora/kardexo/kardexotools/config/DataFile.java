@@ -7,9 +7,11 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Formatter;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -30,14 +32,14 @@ public class DataFile<T, K>
 	private final Map<K, T> data = new HashMap<K, T>();
 	private final Class<T[]> klass;
 	private final Function<T, K> mapper;
-	private final Supplier<Collection<T>> initial; 
+	private final Consumer<Collection<T>> initial; 
 	
 	public DataFile(String fileName, Class<T[]> klass, Function<T, K> mapper)
 	{
 		this(fileName, klass, mapper, null);
 	}
 	
-	public DataFile(String fileName, Class<T[]> klass, Function<T, K> mapper, Supplier<Collection<T>> initial)
+	public DataFile(String fileName, Class<T[]> klass, Function<T, K> mapper, Consumer<Collection<T>> initial)
 	{
 		this(new File(fileName), klass, mapper, initial);
 	}
@@ -47,7 +49,7 @@ public class DataFile<T, K>
 		this(file, klass, mapper, null);
 	}
 	
-	public DataFile(File file, Class<T[]> klass, Function<T, K> mapper, Supplier<Collection<T>> initial)
+	public DataFile(File file, Class<T[]> klass, Function<T, K> mapper, Consumer<Collection<T>> initial)
 	{
 		this.file = file;
 		this.klass = klass;
@@ -95,7 +97,8 @@ public class DataFile<T, K>
 		{
 			if(this.initial != null)
 			{
-				Collection<T> initial = this.initial.get();
+				Set<T> initial = new HashSet<T>();
+				this.initial.accept(initial);
 				
 				if(initial != null)
 				{

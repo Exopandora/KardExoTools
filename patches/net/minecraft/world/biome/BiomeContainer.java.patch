@@ -1,0 +1,12 @@
+--- a/net/minecraft/world/biome/BiomeContainer.java
++++ b/net/minecraft/world/biome/BiomeContainer.java
+@@ -130,4 +130,9 @@
+         int k = p_225526_3_ & field_227050_b_;
+         return this.field_227054_f_[j << field_227052_d_ + field_227052_d_ | k << field_227052_d_ | i];
+     }
++    
++    public Biome[] getBiomeArray()
++    {
++    	return this.field_227054_f_;
++    }
+ }

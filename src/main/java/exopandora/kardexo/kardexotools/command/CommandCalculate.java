@@ -83,7 +83,7 @@ public class CommandCalculate
 		
 		if(script.contains("ans") && !HISTORY.containsKey(source.getName()))
 		{
-			throw CommandBase.createException("No previous value stored for ans in " + term);
+			throw CommandBase.exception("No previous value stored for ans in " + term);
 		}
 		
 		script = script.replaceAll("ans", HISTORY.get(source.getName()));
@@ -114,7 +114,7 @@ public class CommandCalculate
 		}
 		catch(ScriptException e)
 		{
-			throw CommandBase.createException("Invalid expression");
+			throw CommandBase.exception("Invalid expression");
 		}
 	}
 	

@@ -8,7 +8,6 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.ColumnPosArgument;
 import net.minecraft.network.play.server.SChunkDataPacket;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
@@ -48,25 +47,29 @@ public class CommandSetBiome
 			for(int chunkZ = chunkMinZ; chunkZ <= chunkMaxZ; chunkZ++)
 			{
 				Chunk chunk = world.getChunk(chunkX, chunkZ);
-				Biome[] biomes = chunk.getBiomes();
-				int xStart = getMinChunkOffset(chunkX, chunkMinX, minX);
-				int zStart = getMinChunkOffset(chunkZ, chunkMinZ, minZ);
-				int xEnd = getMaxChunkOffset(chunkX, chunkMaxX, maxX);
-				int zEnd = getMaxChunkOffset(chunkZ, chunkMaxZ, maxZ);
+				Biome[] biomes = chunk.func_225549_i_().getBiomeArray();
+				
+				int subChunkMinX = MathHelper.floor(minChunkOffset(chunkX, chunkMinX, minX) / 4);
+				int subChunkMinZ = MathHelper.floor(minChunkOffset(chunkZ, chunkMinZ, minZ) / 4);
+				
+				int subChunkMaxX = MathHelper.floor(maxChunkOffset(chunkX, chunkMaxX, maxX) / 4);
+				int subChunkMaxZ = MathHelper.floor(maxChunkOffset(chunkZ, chunkMaxZ, maxZ) / 4);
+				
 				boolean flag = false;
 				
-				for(int x = xStart; x <= xEnd; x++)
+				for(int y = 0; y < 64; y++)
 				{
-					for(int z = zStart; z <= zEnd; z++)
+					for(int z = subChunkMinZ; z <= subChunkMaxZ; z++)
 					{
-						int posX = toCoord(chunkX, x);
-						int posZ = toCoord(chunkZ, z);								
-						int index = (posZ & 0xF) << 4 | posX & 0xF;
-						
-						if(!biomes[index].equals(biome))
+						for(int x = subChunkMinX; x <= subChunkMaxX; x++)
 						{
-							biomes[index] = biome;
-							flag = true;
+							int index = (y << 4) + (z << 2) + x;
+							
+							if(!biomes[index].equals(biome))
+							{
+								biomes[index] = biome;
+								flag = true;
+							}
 						}
 					}
 				}
@@ -74,7 +77,7 @@ public class CommandSetBiome
 				if(flag)
 				{
 					chunk.markDirty();
-					world.getChunkProvider().chunkManager.getTrackingPlayers(new ChunkPos(chunkX, chunkZ), false).forEach(player ->
+					world.getChunkProvider().chunkManager.getTrackingPlayers(chunk.getPos(), false).forEach(player ->
 					{
 						player.connection.sendPacket(new SChunkDataPacket(chunk, 65535));
 					});
@@ -86,12 +89,7 @@ public class CommandSetBiome
 		return (maxX - minX) * (maxZ - minZ);
 	}
 	
-	private static int toCoord(int chunk, int pos)
-	{
-		return (chunk * 16) + (pos % 16);
-	}
-	
-	private static int getChunkOffset(int chunk, int borderChunk, int position, int def)
+	private static int chunkOffset(int chunk, int borderChunk, int position, int def)
 	{
 		if(chunk == borderChunk)
 		{
@@ -101,13 +99,13 @@ public class CommandSetBiome
 		return def;
 	}
 	
-	private static int getMinChunkOffset(int chunk, int borderChunk, int position)
+	private static int minChunkOffset(int chunk, int borderChunk, int position)
 	{
-		return getChunkOffset(chunk, borderChunk, position, 0);
+		return chunkOffset(chunk, borderChunk, position, 0);
 	}
 	
-	private static int getMaxChunkOffset(int chunk, int borderChunk, int position)
+	private static int maxChunkOffset(int chunk, int borderChunk, int position)
 	{
-		return getChunkOffset(chunk, borderChunk, position, 15);
+		return chunkOffset(chunk, borderChunk, position, 15);
 	}
 }

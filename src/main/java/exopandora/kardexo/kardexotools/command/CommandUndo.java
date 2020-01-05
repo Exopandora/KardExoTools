@@ -26,17 +26,17 @@ public class CommandUndo
 				
 				if(result == 0)
 				{
-					throw CommandBase.createException("Cannot be undone");
+					throw CommandBase.exception("Cannot be undone");
 				}
 				
 				return result;
 			}
 			catch(Exception e)
 			{
-				throw CommandBase.createException(e.getMessage());
+				throw CommandBase.exception(e.getMessage());
 			}
 		}
 		
-		throw CommandBase.createException("Nothing to undo");
+		throw CommandBase.exception("Nothing to undo");
 	}
 }

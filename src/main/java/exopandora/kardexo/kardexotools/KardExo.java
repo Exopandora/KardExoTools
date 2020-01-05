@@ -1,5 +1,9 @@
 package exopandora.kardexo.kardexotools;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -72,7 +76,9 @@ public class KardExo
 	
 	public static void registerCommands(CommandDispatcher<CommandSource> dispatcher)
 	{
-		Config.getCommands().forEach(command -> command.accept(dispatcher));
+		List<Consumer<CommandDispatcher<CommandSource>>> commands = new ArrayList<Consumer<CommandDispatcher<CommandSource>>>();
+		Config.commands(commands);
+		commands.forEach(command -> command.accept(dispatcher));
 	}
 	
 	public static void notifyPlayers(MinecraftServer server, ITextComponent message)

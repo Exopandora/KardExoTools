@@ -38,9 +38,9 @@ public class CommandBases
 							.then(Commands.argument("from", ColumnPosArgument.columnPos())
 								.then(Commands.argument("to", ColumnPosArgument.columnPos())
 									.then(Commands.argument("owner", EntityArgument.player())
-										.executes(context -> add(context.getSource(), StringArgumentType.getString(context, "id"), DimensionArgument.func_212592_a(context, "dimension"), ColumnPosArgument.func_218101_a(context, "from"), ColumnPosArgument.func_218101_a(context, "to"), EntityArgument.getPlayer(context, "owner"), null))
+										.executes(context -> add(context.getSource(), StringArgumentType.getString(context, "id"), DimensionArgument.getDimensionArgument(context, "dimension"), ColumnPosArgument.func_218101_a(context, "from"), ColumnPosArgument.func_218101_a(context, "to"), EntityArgument.getPlayer(context, "owner"), null))
 										.then(Commands.argument("title", StringArgumentType.greedyString())
-											.executes(context -> add(context.getSource(), StringArgumentType.getString(context, "id"), DimensionArgument.func_212592_a(context, "dimension"), ColumnPosArgument.func_218101_a(context, "from"), ColumnPosArgument.func_218101_a(context, "to"), EntityArgument.getPlayer(context, "owner"), StringArgumentType.getString(context, "title"))))))))))
+											.executes(context -> add(context.getSource(), StringArgumentType.getString(context, "id"), DimensionArgument.getDimensionArgument(context, "dimension"), ColumnPosArgument.func_218101_a(context, "from"), ColumnPosArgument.func_218101_a(context, "to"), EntityArgument.getPlayer(context, "owner"), StringArgumentType.getString(context, "title"))))))))))
 				.then(Commands.literal("remove")
 					.then(Commands.argument("id", StringArgumentType.word())
 						.suggests(CommandBases::getSuggestions)
@@ -101,9 +101,9 @@ public class CommandBases
 								.then(Commands.argument("dimension", DimensionArgument.getDimension())
 									.then(Commands.argument("from", ColumnPosArgument.columnPos())
 										.then(Commands.argument("to", ColumnPosArgument.columnPos())
-											.executes(context -> addChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child"), DimensionArgument.func_212592_a(context, "dimension"), ColumnPosArgument.func_218101_a(context, "from"), ColumnPosArgument.func_218101_a(context, "to"), null)))))))
+											.executes(context -> addChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child"), DimensionArgument.getDimensionArgument(context, "dimension"), ColumnPosArgument.func_218101_a(context, "from"), ColumnPosArgument.func_218101_a(context, "to"), null)))))))
 											.then(Commands.argument("title", StringArgumentType.greedyString())
-												.executes(context -> addChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child"), DimensionArgument.func_212592_a(context, "dimension"), ColumnPosArgument.func_218101_a(context, "from"), ColumnPosArgument.func_218101_a(context, "to"), StringArgumentType.getString(context, "title"))))
+												.executes(context -> addChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child"), DimensionArgument.getDimensionArgument(context, "dimension"), ColumnPosArgument.func_218101_a(context, "from"), ColumnPosArgument.func_218101_a(context, "to"), StringArgumentType.getString(context, "title"))))
 						.then(Commands.literal("remove")
 							.then(Commands.argument("child", StringArgumentType.word())
 								.suggests(CommandBases::getChildSuggestions)
@@ -119,7 +119,7 @@ public class CommandBases
 		}
 		catch(IllegalStateException e)
 		{
-			CommandBase.createException("Base with id " + id + " already exists");
+			CommandBase.exception("Base with id " + id + " already exists");
 		}
 		
 		return 1;
@@ -136,7 +136,7 @@ public class CommandBases
 		}
 		catch(NoSuchElementException e)
 		{
-			throw CommandBase.createException("No such base with id " + id);
+			throw CommandBase.exception("No such base with id " + id);
 		}
 		
 		return 1;
@@ -195,7 +195,7 @@ public class CommandBases
 		
 		if(CommandProperty.isOwner(name, id, Config.BASES))
 		{
-			throw CommandBase.createException(name + " already is an owner of base with id " + id);
+			throw CommandBase.exception(name + " already is an owner of base with id " + id);
 		}
 		
 		PropertyOwner owner = new PropertyOwner(player.getGameProfile().getName());
@@ -311,7 +311,7 @@ public class CommandBases
 		}
 		catch(IllegalStateException e)
 		{
-			throw CommandBase.createException("Child with id " + child + " already exists for base with id " + id);
+			throw CommandBase.exception("Child with id " + child + " already exists for base with id " + id);
 		}
 		
 		return 1;
@@ -329,7 +329,7 @@ public class CommandBases
 		}
 		catch(NoSuchElementException e)
 		{
-			throw CommandBase.createException("No child with id " + child + " for base with id " + id);
+			throw CommandBase.exception("No child with id " + child + " for base with id " + id);
 		}
 		
 		return 1;
@@ -343,7 +343,7 @@ public class CommandBases
 		}
 		catch(NoSuchElementException e)
 		{
-			throw CommandBase.createException("There are no bases");
+			throw CommandBase.exception("There are no bases");
 		}
 	}
 	
@@ -358,7 +358,7 @@ public class CommandBases
 		}
 		catch(Exception e)
 		{
-			throw CommandBase.createException("Could not reload bases");
+			throw CommandBase.exception("Could not reload bases");
 		}
 		
 		return Config.BASES.getData().size();
@@ -368,7 +368,7 @@ public class CommandBases
 	{
 		if(!CommandProperty.hasPermission(source, id, target, Config.BASES))
 		{
-			throw CommandBase.createException("You must be a creator of base with id " + id);
+			throw CommandBase.exception("You must be a creator of base with id " + id);
 		}
 	}
 	
@@ -376,7 +376,7 @@ public class CommandBases
 	{
 		if(!CommandProperty.isOwner(name, id, Config.BASES))
 		{
-			throw CommandBase.createException(name + " is not an owner of base with id " + id);
+			throw CommandBase.exception(name + " is not an owner of base with id " + id);
 		}
 	}
 	
@@ -384,7 +384,7 @@ public class CommandBases
 	{
 		if(condition && property.getCreators().size() == 1)
 		{
-			throw CommandBase.createException(player.getGameProfile().getName() + " is the only creator of base with id " + id + " and therefor cannot be removed");
+			throw CommandBase.exception(player.getGameProfile().getName() + " is the only creator of base with id " + id + " and therefor cannot be removed");
 		}
 	}
 	
@@ -396,7 +396,7 @@ public class CommandBases
 		}
 		catch(NoSuchElementException e)
 		{
-			throw CommandBase.createException("No such base with id " + id);
+			throw CommandBase.exception("No such base with id " + id);
 		}
 	}
 	

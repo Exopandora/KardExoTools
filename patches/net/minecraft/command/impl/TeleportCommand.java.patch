@@ -1,0 +1,11 @@
+--- a/net/minecraft/command/impl/TeleportCommand.java
++++ b/net/minecraft/command/impl/TeleportCommand.java
+@@ -149,7 +149,7 @@
+         return targets.size();
+     }
+ 
+-    private static void teleport(CommandSource source, Entity entityIn, ServerWorld worldIn, double x, double y, double z, Set<SPlayerPositionLookPacket.Flags> relativeList, float yaw, float pitch, @Nullable TeleportCommand.Facing facing)
++    public static void teleport(CommandSource source, Entity entityIn, ServerWorld worldIn, double x, double y, double z, Set<SPlayerPositionLookPacket.Flags> relativeList, float yaw, float pitch, @Nullable TeleportCommand.Facing facing)
+     {
+         if (entityIn instanceof ServerPlayerEntity)
+         {

@@ -41,7 +41,7 @@ public class Veinminer
 	{
 		String name = player.getName().getString();
 		
-		if(Config.PLAYERS.getData().containsKey(name) && Config.PLAYERS.getData().get(name).isVeinminerEnabled() && player.isSneaking())
+		if(Config.PLAYERS.getData().containsKey(name) && Config.PLAYERS.getData().get(name).isVeinminerEnabled() && player.func_226563_dT_())
 		{
 			BlockState state = world.getBlockState(pos);
 			

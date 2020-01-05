@@ -29,7 +29,7 @@ public class CommandResource
 	{
 		Map<String, Integer> map = new HashMap<String, Integer>();
 		
-		for(BlockPos blockpos : BlockPos.MutableBlockPos.getAllInBoxMutable(area.minX, area.minY, area.minZ, area.maxX, area.maxY, area.maxZ))
+		for(BlockPos blockpos : BlockPos.Mutable.getAllInBoxMutable(area.minX, area.minY, area.minZ, area.maxX, area.maxY, area.maxZ))
 		{
 			String location = source.getWorld().getBlockState(blockpos).getBlock().getTranslationKey();
 			

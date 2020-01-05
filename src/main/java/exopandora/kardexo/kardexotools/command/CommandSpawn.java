@@ -25,7 +25,7 @@ public class CommandSpawn
 		
 		if(overworld != null)
 		{
-			CommandHome.doTeleport(server, source.asPlayer(), overworld.getHeight(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, overworld.getSpawnPoint()), 0);
+			CommandBase.teleport(source, source.asPlayer(), overworld, overworld.getHeight(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, overworld.getSpawnPoint()));
 		}
 		
 		return 1;

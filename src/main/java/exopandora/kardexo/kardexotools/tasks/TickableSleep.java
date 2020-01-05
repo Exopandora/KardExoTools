@@ -49,7 +49,7 @@ public class TickableSleep implements Runnable
 							
 							for(PlayerEntity PlayerEntity : server.getPlayers().stream().filter(PlayerEntity::isSleeping).collect(Collectors.toList()))
 							{
-								PlayerEntity.wakeUpPlayer(false, false, true);
+								PlayerEntity.wakeUp();
 							}
 						}
 						

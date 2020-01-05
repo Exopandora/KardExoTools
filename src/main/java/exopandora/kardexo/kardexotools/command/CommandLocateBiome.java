@@ -15,11 +15,18 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentUtils;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.provider.BiomeProvider;
+import net.minecraft.world.biome.BiomeContainer;
 
 public class CommandLocateBiome
 {
@@ -36,30 +43,38 @@ public class CommandLocateBiome
 	{
 		if(LOCATORS.containsKey(source.getName()))
 		{
-			throw CommandBase.createException("Localization already in progress");
+			throw CommandBase.exception("Search already in progress");
 		}
 		else
 		{
 			Thread thread = new Thread(() ->
 			{
+				BlockPos start = new BlockPos(source.getPos());
 				ResourceLocation resource = Registry.BIOME.getKey(biome);
-				BiomeProvider provider = source.getWorld().getChunkProvider().getChunkGenerator().getBiomeProvider();
-				
-				boolean result = spiral(Config.LOCATE_BIOME_RADIUS, 16, new BlockPos(source.getPos()), (blockpos, x, z) -> blockpos.add(x, 0, z), blockpos ->
+				BlockPos result = CommandLocateBiome.spiral(Config.LOCATE_BIOME_RADIUS, 16, start, (blockpos, x, z) -> blockpos.add(x, 0, z), blockpos ->
 				{
-					boolean contains = ArrayUtils.contains(provider.getBiomes(blockpos.getX(), blockpos.getZ(), 1, 1, false), biome);
+					BiomeContainer biomeContainer = source.getWorld().getChunk(blockpos).func_225549_i_();
 					
-					if(contains)
+					if(biomeContainer != null && ArrayUtils.contains(biomeContainer.getBiomeArray(), biome))
 					{
-						source.sendFeedback(new TranslationTextComponent("commands.locate.success", new Object[]{resource, blockpos.getX(), blockpos.getZ()}), false);
+						return blockpos;
 					}
 					
-					return contains;
+					return null;
 				});
 				
-				if(!result)
+				if(result == null)
 				{
-					source.sendFeedback(new TranslationTextComponent("commands.locate.failure", new Object[]{resource}), false);
+					source.sendFeedback(new TranslationTextComponent("commands.locate.failure", resource), false);
+				}
+				else
+				{
+					int distance = MathHelper.floor(CommandLocateBiome.distance(start.getX(), start.getZ(), result.getX(), result.getZ()));
+					Style style = new Style().setColor(TextFormatting.GREEN)
+			                .setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/tp @s " + result.getX() + " ~ " + result.getZ()))
+			                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslationTextComponent("chat.coordinates.tooltip")));
+		            ITextComponent position = TextComponentUtils.wrapInSquareBrackets(new TranslationTextComponent("chat.coordinates", result.getX(), "~", result.getZ())).setStyle(style);
+					source.sendFeedback(new TranslationTextComponent("commands.locate.success", resource, position, distance), false);
 				}
 				
 				LOCATORS.remove(source.getName());
@@ -79,19 +94,21 @@ public class CommandLocateBiome
 		R apply(T t, U u, V v);
 	}
 	
-	private static <T> boolean spiral(int radius, int interval, T start, TriFunction<T, Integer, Integer, T> mapper, Function<T, Boolean> consumer)
+	private static <T> T spiral(int radius, int interval, T start, TriFunction<T, Integer, Integer, T> mapper, Function<T, T> consumer)
 	{
 		int x = 0;
 		int y = 0;
 		
-		if(consumer.apply(mapper.apply(start, x, y)))
+		T result = consumer.apply(mapper.apply(start, x, y));
+		
+		if(result != null)
 		{
-			return true;
+			return result;
 		}
 		
 		if(radius > 30000000)
 		{
-			return false;
+			return null;
 		}
 		
 		final int diameter = radius * 2;
@@ -103,24 +120,34 @@ public class CommandLocateBiome
 			for(int dx = 0; dx < delta; dx++)
 			{
 				x += direction;
+				result = consumer.apply(mapper.apply(start, x * interval, y * interval));
 				
-				if(consumer.apply(mapper.apply(start, x * interval, y * interval)))
+				if(result != null)
 				{
-					return true;
+					return result;
 				}
 			}
 			
 			for(int dy = 0; dy < delta; dy++)
 			{
 				y += direction;
+				result = consumer.apply(mapper.apply(start, x * interval, y * interval));
 				
-				if(consumer.apply(mapper.apply(start, x * interval, y * interval)))
+				if(result != null)
 				{
-					return true;
+					return result;
 				}
 			}
 		}
 		
-		return false;
+		return null;
 	}
+	
+    private static float distance(int minX, int minZ, int maxX, int maxZ)
+    {
+        int dx = maxX - minX;
+        int dy = maxZ - minZ;
+        
+        return MathHelper.sqrt((float)(dx * dx + dy * dy));
+    }
 }
