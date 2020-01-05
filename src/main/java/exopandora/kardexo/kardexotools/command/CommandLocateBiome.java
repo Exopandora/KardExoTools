@@ -71,9 +71,9 @@ public class CommandLocateBiome
 				{
 					int distance = MathHelper.floor(CommandLocateBiome.distance(start.getX(), start.getZ(), result.getX(), result.getZ()));
 					Style style = new Style().setColor(TextFormatting.GREEN)
-			                .setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/tp @s " + result.getX() + " ~ " + result.getZ()))
-			                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslationTextComponent("chat.coordinates.tooltip")));
-		            ITextComponent position = TextComponentUtils.wrapInSquareBrackets(new TranslationTextComponent("chat.coordinates", result.getX(), "~", result.getZ())).setStyle(style);
+							.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/tp @s " + result.getX() + " ~ " + result.getZ()))
+							.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslationTextComponent("chat.coordinates.tooltip")));
+					ITextComponent position = TextComponentUtils.wrapInSquareBrackets(new TranslationTextComponent("chat.coordinates", result.getX(), "~", result.getZ())).setStyle(style);
 					source.sendFeedback(new TranslationTextComponent("commands.locate.success", resource, position, distance), false);
 				}
 				
@@ -143,11 +143,11 @@ public class CommandLocateBiome
 		return null;
 	}
 	
-    private static float distance(int minX, int minZ, int maxX, int maxZ)
-    {
-        int dx = maxX - minX;
-        int dy = maxZ - minZ;
-        
-        return MathHelper.sqrt((float)(dx * dx + dy * dy));
-    }
+	private static float distance(int minX, int minZ, int maxX, int maxZ)
+	{
+		int dx = maxX - minX;
+		int dy = maxZ - minZ;
+		
+		return MathHelper.sqrt((float)(dx * dx + dy * dy));
+	}
 }
