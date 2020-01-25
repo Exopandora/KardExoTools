@@ -61,6 +61,6 @@ public class CommandHome
 	
 	protected static boolean hasRoomForPlayer(IBlockReader reader, BlockPos pos)
 	{
-		return Block.func_220064_c(reader, pos.down()) && !reader.getBlockState(pos).getMaterial().isSolid() && !reader.getBlockState(pos.up()).getMaterial().isSolid();
+		return Block.hasSolidSideOnTop(reader, pos.down()) && !reader.getBlockState(pos).getMaterial().isSolid() && !reader.getBlockState(pos.up()).getMaterial().isSolid();
 	}
 }

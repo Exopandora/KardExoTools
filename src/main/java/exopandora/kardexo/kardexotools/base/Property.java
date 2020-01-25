@@ -173,8 +173,8 @@ public class Property
 	
 	public boolean isInsideMain(PlayerEntity player)
 	{
-		float posX = MathHelper.floor(player.func_226277_ct_());
-		float posZ = MathHelper.floor(player.func_226281_cx_());
+		float posX = MathHelper.floor(player.getPosX());
+		float posZ = MathHelper.floor(player.getPosZ());
 		
 		return posX >= this.xMin && posX <= this.xMax && posZ >= this.zMin && posZ <= this.zMax && player.dimension.getId() == this.dimension;
 	}

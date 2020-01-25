@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -245,6 +245,7 @@
+@@ -246,6 +246,7 @@
              }
  
              this.loadAllWorlds(this.getFolderName(), this.getFolderName(), j, worldtype, jsonobject);

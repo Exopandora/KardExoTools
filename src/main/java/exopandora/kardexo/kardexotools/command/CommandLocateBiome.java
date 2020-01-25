@@ -53,9 +53,9 @@ public class CommandLocateBiome
 				ResourceLocation resource = Registry.BIOME.getKey(biome);
 				BlockPos result = CommandLocateBiome.spiral(Config.LOCATE_BIOME_RADIUS, 16, start, (blockpos, x, z) -> blockpos.add(x, 0, z), blockpos ->
 				{
-					BiomeContainer biomeContainer = source.getWorld().getChunk(blockpos).func_225549_i_();
+					BiomeContainer biomeContainer = source.getWorld().getChunk(blockpos).getBiomes();
 					
-					if(biomeContainer != null && ArrayUtils.contains(biomeContainer.getBiomeArray(), biome))
+					if(biomeContainer != null && ArrayUtils.contains(biomeContainer.getBiomes(), biome))
 					{
 						return blockpos;
 					}

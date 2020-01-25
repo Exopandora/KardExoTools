@@ -25,7 +25,7 @@ public class CommandSetBiome
 					.then(Commands.argument("from", ColumnPosArgument.columnPos())
 						.then(Commands.argument("to", ColumnPosArgument.columnPos())
 							.then(Commands.argument("biome", BiomeArgument.biome())
-								.executes(context -> CommandSetBiome.setBiome(context.getSource(), ColumnPosArgument.func_218101_a(context, "from"), ColumnPosArgument.func_218101_a(context, "to"), BiomeArgument.getBiome(context, "biome")))))));
+								.executes(context -> CommandSetBiome.setBiome(context.getSource(), ColumnPosArgument.fromBlockPos(context, "from"), ColumnPosArgument.fromBlockPos(context, "to"), BiomeArgument.getBiome(context, "biome")))))));
 	}
 	
 	private static int setBiome(CommandSource source, ColumnPos from, ColumnPos to, Biome biome) throws CommandSyntaxException
@@ -47,7 +47,7 @@ public class CommandSetBiome
 			for(int chunkZ = chunkMinZ; chunkZ <= chunkMaxZ; chunkZ++)
 			{
 				Chunk chunk = world.getChunk(chunkX, chunkZ);
-				Biome[] biomes = chunk.func_225549_i_().getBiomeArray();
+				Biome[] biomes = chunk.getBiomes().getBiomes();
 				
 				int subChunkMinX = MathHelper.floor(minChunkOffset(chunkX, chunkMinX, minX) / 4);
 				int subChunkMinZ = MathHelper.floor(minChunkOffset(chunkZ, chunkMinZ, minZ) / 4);

@@ -6,7 +6,7 @@
      {
 +    	return exopandora.kardexo.kardexotools.veinminer.Veinminer.mine(pos, this.player, this.world, this::tryHarvestBlock);
 +    }
-+
++    
 +    public boolean tryHarvestBlock(BlockPos pos, boolean dropAtPlayer)
 +    {
          BlockState blockstate = this.world.getBlockState(pos);
