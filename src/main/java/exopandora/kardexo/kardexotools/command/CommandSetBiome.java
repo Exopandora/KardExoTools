@@ -9,7 +9,6 @@ import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.ColumnPosArgument;
 import net.minecraft.network.play.server.SChunkDataPacket;
 import net.minecraft.util.math.ColumnPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.biome.Biome;
@@ -37,10 +36,10 @@ public class CommandSetBiome
 		int minZ = Math.min(from.z, to.z);
 		int maxZ = Math.max(from.z, to.z);
 		
-		int chunkMinX = MathHelper.floor(minX / 16F);
-		int chunkMaxX = MathHelper.floor(maxX / 16F);
-		int chunkMinZ = MathHelper.floor(minZ / 16F);
-		int chunkMaxZ = MathHelper.floor(maxZ / 16F);
+		int chunkMinX = minX >> 4;
+		int chunkMaxX = maxX >> 4;
+		int chunkMinZ = minZ >> 4;
+		int chunkMaxZ = maxZ >> 4;
 		
 		for(int chunkX = chunkMinX; chunkX <= chunkMaxX; chunkX++)
 		{
@@ -49,11 +48,11 @@ public class CommandSetBiome
 				Chunk chunk = world.getChunk(chunkX, chunkZ);
 				Biome[] biomes = chunk.getBiomes().getBiomes();
 				
-				int subChunkMinX = MathHelper.floor(minChunkOffset(chunkX, chunkMinX, minX) / 4);
-				int subChunkMinZ = MathHelper.floor(minChunkOffset(chunkZ, chunkMinZ, minZ) / 4);
+				int subChunkMinX = minChunkOffset(chunkX, chunkMinX, minX) >> 2;
+				int subChunkMinZ = minChunkOffset(chunkZ, chunkMinZ, minZ) >> 2;
 				
-				int subChunkMaxX = MathHelper.floor(maxChunkOffset(chunkX, chunkMaxX, maxX) / 4);
-				int subChunkMaxZ = MathHelper.floor(maxChunkOffset(chunkZ, chunkMaxZ, maxZ) / 4);
+				int subChunkMaxX = maxChunkOffset(chunkX, chunkMaxX, maxX) >> 2;
+				int subChunkMaxZ = maxChunkOffset(chunkZ, chunkMaxZ, maxZ) >> 2;
 				
 				boolean flag = false;
 				
