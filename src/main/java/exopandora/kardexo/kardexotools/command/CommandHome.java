@@ -37,9 +37,7 @@ public class CommandHome
 		ServerWorld world = server.getWorld(DimensionType.getById(home.getDimension()));
 		BlockPos position = CommandHome.spawnPosition(server.getWorld(home.getDimensionType()), home.getPosition());
 		
-		CommandBase.teleport(source, sender, world, position);
-		
-		return 1;
+		return CommandBase.teleport(source, sender, world, position);
 	}
 	
 	private static BlockPos spawnPosition(ServerWorld world, BlockPos pos) throws CommandSyntaxException
