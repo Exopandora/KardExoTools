@@ -97,6 +97,13 @@ public class Config
 		initial.add(new VeinminerConfigEntry(Blocks.DARK_OAK_LOG, 10));
 		initial.add(new VeinminerConfigEntry(Blocks.ACACIA_LOG, 10));
 		
+		initial.add(new VeinminerConfigEntry(Blocks.OAK_LEAVES, 5));
+		initial.add(new VeinminerConfigEntry(Blocks.SPRUCE_LEAVES, 5));
+		initial.add(new VeinminerConfigEntry(Blocks.JUNGLE_LEAVES, 5));
+		initial.add(new VeinminerConfigEntry(Blocks.BIRCH_LEAVES, 5));
+		initial.add(new VeinminerConfigEntry(Blocks.DARK_OAK_LEAVES, 5));
+		initial.add(new VeinminerConfigEntry(Blocks.ACACIA_LEAVES, 5));
+		
 		initial.add(new VeinminerConfigEntry(Blocks.ANDESITE, 15));
 		initial.add(new VeinminerConfigEntry(Blocks.DIORITE, 15));
 		initial.add(new VeinminerConfigEntry(Blocks.GRANITE, 15));
