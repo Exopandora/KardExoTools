@@ -39,19 +39,18 @@ public class Veinminer
 	
 	public static boolean mine(BlockPos pos, ServerPlayerEntity player, World world, BiFunction<BlockPos, Boolean, Boolean> harvestBlock)
 	{
+		ItemStack item = player.getHeldItemMainhand();
 		String name = player.getName().getString();
 		
-		if(Config.PLAYERS.getData().containsKey(name) && Config.PLAYERS.getData().get(name).isVeinminerEnabled() && player.func_226563_dT_())
+		if(item.getMaxDamage() - item.getDamage() > 1 && Config.PLAYERS.getData().containsKey(name) && Config.PLAYERS.getData().get(name).isVeinminerEnabled() && player.func_226563_dT_())
 		{
 			BlockState state = world.getBlockState(pos);
 			
 			for(Block block : Config.VEINMINER.getData().keySet())
 			{
-				ItemStack item = player.getHeldItemMainhand();
-				
 				if(Veinminer.isEqual(state, block.getDefaultState()) && (item.getDestroySpeed(state) > 1.0F || block.getDefaultState().getMaterial().isToolNotRequired()))
 				{
-					PriorityQueue<BlockPos> queue = calculateVein(Config.BLOCK_LIMIT, Config.VEINMINER.getData().get(block).getRadius(), state, pos, world);
+					PriorityQueue<BlockPos> queue = Veinminer.calculateVein(Config.BLOCK_LIMIT, Config.VEINMINER.getData().get(block).getRadius(), state, pos, world);
 					Map<BlockState, Set<BlockPos>> stateMap = new HashMap<BlockState, Set<BlockPos>>();
 					VeinminerHistoryEntry undo = new VeinminerHistoryEntry(player.dimension, stateMap);
 					queue.poll();
@@ -67,7 +66,7 @@ public class Veinminer
 							
 							for(int x = 0; x < Config.BLOCK_LIMIT; x++)
 							{
-								if(item.getMaxDamage() > 0 ? item.getMaxDamage() == item.getDamage() : false)
+								if(item.isDamageable() && item.getMaxDamage() > 0 && item.getMaxDamage() - item.getDamage() == 1)
 								{
 									break;
 								}
