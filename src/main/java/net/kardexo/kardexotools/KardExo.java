@@ -9,15 +9,12 @@ import org.apache.logging.log4j.Logger;
 
 import com.mojang.brigadier.CommandDispatcher;
 
-import net.kardexo.kardexotools.command.arguments.BiomeArgument;
 import net.kardexo.kardexotools.config.Config;
 import net.kardexo.kardexotools.tasks.Tasks;
 import net.kardexo.kardexotools.tasks.TickableBases;
 import net.kardexo.kardexotools.tasks.TickableDeathListener;
 import net.kardexo.kardexotools.tasks.TickableSleep;
 import net.minecraft.command.CommandSource;
-import net.minecraft.command.arguments.ArgumentSerializer;
-import net.minecraft.command.arguments.ArgumentTypes;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -56,7 +53,6 @@ public class KardExo
 		}
 		
 		KardExo.registerTickables(server);
-		KardExo.registerArguments();
 		KardExo.registerCommands(server.getCommandManager().getDispatcher());
 		
 		Tasks.start();
@@ -67,11 +63,6 @@ public class KardExo
 		server.registerTickable(new TickableSleep(server));
 		server.registerTickable(new TickableBases(server));
 		server.registerTickable(new TickableDeathListener(server));
-	}
-	
-	private static void registerArguments()
-	{
-		ArgumentTypes.register("biome", BiomeArgument.class, new ArgumentSerializer<BiomeArgument>(BiomeArgument::biome));
 	}
 	
 	public static void registerCommands(CommandDispatcher<CommandSource> dispatcher)

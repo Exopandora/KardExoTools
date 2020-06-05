@@ -9,10 +9,10 @@ import org.apache.commons.lang3.ArrayUtils;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import net.kardexo.kardexotools.command.arguments.BiomeArgument;
 import net.kardexo.kardexotools.config.Config;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
+import net.minecraft.command.arguments.ResourceLocationArgument;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -35,12 +35,15 @@ public class CommandLocateBiome
 	public static void register(CommandDispatcher<CommandSource> dispatcher)
 	{
 		dispatcher.register(Commands.literal("locatebiome")
-				.then(Commands.argument("biome", BiomeArgument.biome())
-					.executes(context -> locate(context.getSource(), BiomeArgument.getBiome(context, "biome")))));
+				.then(Commands.argument("biome", ResourceLocationArgument.resourceLocation())
+					.suggests(CommandBase.ALL_BIOMES)
+					.executes(context -> locate(context.getSource(), ResourceLocationArgument.getResourceLocation(context, "biome")))));
 	}
 	
-	private static int locate(CommandSource source, Biome biome) throws CommandSyntaxException
+	private static int locate(CommandSource source, ResourceLocation resource) throws CommandSyntaxException
 	{
+		Biome biome = Registry.BIOME.getValue(resource).orElseThrow(() -> CommandBase.BIOME_NOT_FOUND.create(resource));
+		
 		if(LOCATORS.containsKey(source.getName()))
 		{
 			throw CommandBase.exception("Search already in progress");
@@ -50,7 +53,6 @@ public class CommandLocateBiome
 			Thread thread = new Thread(() ->
 			{
 				BlockPos start = new BlockPos(source.getPos());
-				ResourceLocation resource = Registry.BIOME.getKey(biome);
 				BlockPos result = CommandLocateBiome.spiral(Config.LOCATE_BIOME_RADIUS, 16, start, (blockpos, x, z) -> blockpos.add(x, 0, z), blockpos ->
 				{
 					BiomeContainer biomeContainer = source.getWorld().getChunk(blockpos).getBiomes();
@@ -81,6 +83,7 @@ public class CommandLocateBiome
 			});
 			
 			LOCATORS.put(source.getName(), thread);
+			thread.setDaemon(true);
 			thread.start();
 			source.sendFeedback(new StringTextComponent("Searching..."), false);
 		}
@@ -148,6 +151,6 @@ public class CommandLocateBiome
 		int dx = maxX - minX;
 		int dy = maxZ - minZ;
 		
-		return MathHelper.sqrt((float)(dx * dx + dy * dy));
+		return MathHelper.sqrt((float) (dx * dx + dy * dy));
 	}
 }

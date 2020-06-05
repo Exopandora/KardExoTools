@@ -3,11 +3,12 @@ package net.kardexo.kardexotools.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import net.kardexo.kardexotools.command.arguments.BiomeArgument;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.ColumnPosArgument;
+import net.minecraft.command.arguments.ResourceLocationArgument;
 import net.minecraft.network.play.server.SChunkDataPacket;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.StringTextComponent;
@@ -23,13 +24,15 @@ public class CommandSetBiome
 				.requires(source -> source.hasPermissionLevel(4))
 					.then(Commands.argument("from", ColumnPosArgument.columnPos())
 						.then(Commands.argument("to", ColumnPosArgument.columnPos())
-							.then(Commands.argument("biome", BiomeArgument.biome())
-								.executes(context -> CommandSetBiome.setBiome(context.getSource(), ColumnPosArgument.fromBlockPos(context, "from"), ColumnPosArgument.fromBlockPos(context, "to"), BiomeArgument.getBiome(context, "biome")))))));
+							.then(Commands.argument("biome", ResourceLocationArgument.resourceLocation())
+								.suggests(CommandBase.ALL_BIOMES)
+								.executes(context -> CommandSetBiome.setBiome(context.getSource(), ColumnPosArgument.fromBlockPos(context, "from"), ColumnPosArgument.fromBlockPos(context, "to"), ResourceLocationArgument.getResourceLocation(context, "biome")))))));
 	}
 	
-	private static int setBiome(CommandSource source, ColumnPos from, ColumnPos to, Biome biome) throws CommandSyntaxException
+	private static int setBiome(CommandSource source, ColumnPos from, ColumnPos to, ResourceLocation resource) throws CommandSyntaxException
 	{
 		ServerWorld world = source.getWorld();
+		Biome biome = Registry.BIOME.getValue(resource).orElseThrow(() -> CommandBase.BIOME_NOT_FOUND.create(resource));
 		
 		int minX = Math.min(from.x, to.x);
 		int maxX = Math.max(from.x, to.x);
