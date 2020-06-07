@@ -4,11 +4,11 @@ public class PlayerConfig
 {
 	private final String player;
 	private boolean veinminer;
+	private PlayerHome home;
 	
-	public PlayerConfig(String player, boolean veinminer)
+	public PlayerConfig(String player)
 	{
 		this.player = player;
-		this.veinminer = veinminer;
 	}
 	
 	public String getPlayer()
@@ -24,5 +24,15 @@ public class PlayerConfig
 	public void setVeinminerEnabled(boolean enabled)
 	{
 		this.veinminer = enabled;
+	}
+	
+	public PlayerHome getHome()
+	{
+		return home;
+	}
+	
+	public void setHome(PlayerHome home)
+	{
+		this.home = home;
 	}
 }

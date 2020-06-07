@@ -1,0 +1,11 @@
+--- a/net/minecraft/network/play/ServerPlayNetHandler.java
++++ b/net/minecraft/network/play/ServerPlayNetHandler.java
+@@ -1327,7 +1327,7 @@
+                 d0 = 9.0D;
+             }
+ 
+-            if (this.player.getDistanceSq(entity) < d0)
++            if (this.player.getDistanceSq(entity) < d0 && net.kardexo.kardexotools.property.PropertyHelper.canInteractWithEntity(this.player, entity, packetIn.getAction()))
+             {
+                 if (packetIn.getAction() == CUseEntityPacket.Action.INTERACT)
+                 {

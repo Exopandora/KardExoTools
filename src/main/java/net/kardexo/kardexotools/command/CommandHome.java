@@ -3,8 +3,8 @@ package net.kardexo.kardexotools.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import net.kardexo.kardexotools.base.Home;
 import net.kardexo.kardexotools.config.Config;
+import net.kardexo.kardexotools.config.PlayerConfig;
 import net.minecraft.block.Block;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
@@ -26,16 +26,17 @@ public class CommandHome
 	private static int execute(CommandSource source) throws CommandSyntaxException
 	{
 		ServerPlayerEntity sender = source.asPlayer();
-		Home home = Config.HOME.getData().get(source.getName());
+		PlayerConfig config = Config.PLAYERS.getData().get(source.getName());
 		
-		if(home == null || sender.world == null)
+		if(config == null || sender.world == null || config != null && config.getHome() == null || config != null && config.getHome() != null && config.getHome().getPosition() == null)
 		{
 			throw CommandBase.exception("No home set");
 		}
 		
 		MinecraftServer server = source.getServer();
-		ServerWorld world = server.getWorld(DimensionType.getById(home.getDimension()));
-		BlockPos position = CommandHome.spawnPosition(server.getWorld(home.getDimensionType()), home.getPosition());
+		DimensionType type = config.getHome().getDimensionType();
+		ServerWorld world = server.getWorld(type);
+		BlockPos position = CommandHome.spawnPosition(world, config.getHome().getPosition());
 		
 		return CommandBase.teleport(source, sender, world, position);
 	}

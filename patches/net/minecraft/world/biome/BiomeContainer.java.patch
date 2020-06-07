@@ -1,12 +1,11 @@
 --- a/net/minecraft/world/biome/BiomeContainer.java
 +++ b/net/minecraft/world/biome/BiomeContainer.java
-@@ -130,4 +130,9 @@
-         int k = z & HORIZONTAL_MASK;
-         return this.biomes[j << WIDTH_BITS + WIDTH_BITS | k << WIDTH_BITS | i];
-     }
-+    
-+    public Biome[] getBiomes()
-+    {
-+    	return this.biomes;
-+    }
- }
+@@ -17,7 +17,7 @@
+     public static final int BIOMES_SIZE = 1 << WIDTH_BITS + WIDTH_BITS + HEIGHT_BITS;
+     public static final int HORIZONTAL_MASK = (1 << WIDTH_BITS) - 1;
+     public static final int VERTICAL_MASK = (1 << HEIGHT_BITS) - 1;
+-    private final Biome[] biomes;
++    public final Biome[] biomes;
+ 
+     public BiomeContainer(Biome[] biomesIn)
+     {

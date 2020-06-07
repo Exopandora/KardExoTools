@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import net.kardexo.kardexotools.base.Property;
 import net.kardexo.kardexotools.config.Config;
+import net.kardexo.kardexotools.property.Property;
 import net.kardexo.kardexotools.tasks.TickableBases;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;

@@ -3,8 +3,9 @@ package net.kardexo.kardexotools.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import net.kardexo.kardexotools.base.Home;
 import net.kardexo.kardexotools.config.Config;
+import net.kardexo.kardexotools.config.PlayerConfig;
+import net.kardexo.kardexotools.config.PlayerHome;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -24,8 +25,8 @@ public class CommandSetHome
 		ServerPlayerEntity sender = source.asPlayer();
 		BlockPos pos = sender.getPosition();
 		
-		Config.HOME.getData().put(source.getName(), new Home(pos, source.getName(), sender.dimension.getId()));
-		Config.HOME.save();
+		Config.PLAYERS.getData().computeIfAbsent(source.getName(), PlayerConfig::new).setHome(new PlayerHome(pos, sender.dimension.getId()));
+		Config.PLAYERS.save();
 		
 		source.sendFeedback(new StringTextComponent("Home set to " + pos.getX() + " " + pos.getY() + " " + pos.getZ()), false);
 		return 1;

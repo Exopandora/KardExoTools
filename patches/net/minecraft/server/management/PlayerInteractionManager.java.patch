@@ -1,18 +1,15 @@
 --- a/net/minecraft/server/management/PlayerInteractionManager.java
 +++ b/net/minecraft/server/management/PlayerInteractionManager.java
-@@ -273,6 +273,11 @@
+@@ -271,7 +271,7 @@
+         }
+     }
  
-     public boolean tryHarvestBlock(BlockPos pos)
+-    public boolean tryHarvestBlock(BlockPos pos)
++    public boolean tryHarvestBlock(BlockPos pos) {return net.kardexo.kardexotools.property.PropertyHelper.canHarvestBlock(this.player, pos) && net.kardexo.kardexotools.veinminer.Veinminer.mine(pos, this.player, this.world, this::tryHarvestBlock);} public boolean tryHarvestBlock(BlockPos pos, boolean dropAtPlayer)
      {
-+    	return exopandora.kardexo.kardexotools.veinminer.Veinminer.mine(pos, this.player, this.world, this::tryHarvestBlock);
-+    }
-+    
-+    public boolean tryHarvestBlock(BlockPos pos, boolean dropAtPlayer)
-+    {
          BlockState blockstate = this.world.getBlockState(pos);
  
-         if (!this.player.getHeldItemMainhand().getItem().canPlayerBreakBlockWhileHolding(blockstate, this.world, pos, this.player))
-@@ -316,7 +321,7 @@
+@@ -316,7 +316,7 @@
  
                      if (flag && flag1)
                      {
@@ -21,3 +18,19 @@
                      }
  
                      return true;
+@@ -405,6 +405,7 @@
+ 
+             if (!flag1)
+             {
++            	if(!net.kardexo.kardexotools.property.PropertyHelper.canInteractWithBlock(playerIn, blockpos, blockstate)) {return net.kardexo.kardexotools.property.PropertyHelper.cancelBlockInteraction(this.player);}
+                 ActionResultType actionresulttype = blockstate.onBlockActivated(worldIn, playerIn, handIn, blockRaytraceResultIn);
+ 
+                 if (actionresulttype.isSuccessOrConsume())
+@@ -415,6 +416,7 @@
+ 
+             if (!stackIn.isEmpty() && !playerIn.getCooldownTracker().hasCooldown(stackIn.getItem()))
+             {
++            	if(!net.kardexo.kardexotools.property.PropertyHelper.canPlaceBlock(playerIn, blockpos, blockstate)) {return net.kardexo.kardexotools.property.PropertyHelper.cancelBlockInteraction(this.player);}
+                 ItemUseContext itemusecontext = new ItemUseContext(playerIn, handIn, blockRaytraceResultIn);
+ 
+                 if (this.isCreative())

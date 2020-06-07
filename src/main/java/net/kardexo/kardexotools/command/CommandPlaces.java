@@ -4,14 +4,16 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
-import net.kardexo.kardexotools.base.Property;
 import net.kardexo.kardexotools.config.Config;
+import net.kardexo.kardexotools.property.Property;
+import net.kardexo.kardexotools.property.PropertyHelper;
 import net.kardexo.kardexotools.tasks.TickableBases;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
@@ -61,14 +63,19 @@ public class CommandPlaces
 						.then(Commands.literal("remove")
 							.then(Commands.argument("child", StringArgumentType.word())
 								.suggests(CommandPlaces::getChildSuggestions)
-								.executes(context -> removeChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child"))))))));
+								.executes(context -> removeChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child")))))))
+				.then(Commands.literal("protection")
+					.then(Commands.argument("id", StringArgumentType.word())
+							.suggests(CommandPlaces::getSuggestions)
+							.then(Commands.argument("enabled", BoolArgumentType.bool())
+								.executes(context -> setProtection(context.getSource(), StringArgumentType.getString(context, "id"), BoolArgumentType.getBool(context, "enabled")))))));
 	}
 	
 	private static int add(CommandSource source, String id, DimensionType dimension, ColumnPos from, ColumnPos to, String title) throws CommandSyntaxException
 	{
 		try
 		{
-			CommandProperty.add(id, dimension, from, to, source.getName(), title, Config.PLACES);
+			PropertyHelper.add(id, dimension, from, to, source.getName(), title, Config.PLACES);
 			source.sendFeedback(new StringTextComponent("Added base with id " + id), false);
 		}
 		catch(IllegalStateException e)
@@ -85,7 +92,7 @@ public class CommandPlaces
 		
 		try
 		{
-			CommandProperty.remove(id, Config.PLACES);
+			PropertyHelper.remove(id, Config.PLACES);
 			source.sendFeedback(new StringTextComponent("Removed base with id " + id), false);
 		}
 		catch(NoSuchElementException e)
@@ -132,7 +139,7 @@ public class CommandPlaces
 		
 		try
 		{
-			CommandProperty.addChild(parent, child, dimension, from, to, title, Config.PLACES);
+			PropertyHelper.addChild(parent, child, dimension, from, to, title, Config.PLACES);
 			source.sendFeedback(new StringTextComponent("Added child with id " + child + " to place with id " + id), false);
 		}
 		catch(IllegalStateException e)
@@ -150,7 +157,7 @@ public class CommandPlaces
 		
 		try
 		{
-			CommandProperty.removeChild(parent, child, Config.PLACES);
+			PropertyHelper.removeChild(parent, child, Config.PLACES);
 			source.sendFeedback(new StringTextComponent("Removed child with id " + child + " from place with id " + id), false);
 		}
 		catch(NoSuchElementException e)
@@ -161,9 +168,17 @@ public class CommandPlaces
 		return 1;
 	}
 	
+	private static int setProtection(CommandSource source, String id, boolean enabled) throws CommandSyntaxException
+	{
+		ensurePermission(source, id, null);
+		getProperty(id).setProtected(enabled);
+		Config.PLACES.save();
+		return 1;
+	}
+	
 	private static void ensurePermission(CommandSource source, String id, PlayerEntity target) throws CommandSyntaxException
 	{
-		if(!CommandProperty.hasPermission(source, id, target, Config.PLACES))
+		if(!PropertyHelper.hasPermission(source, id, target, Config.PLACES))
 		{
 			throw CommandBase.exception("You must be a creator of place with id " + id);
 		}
@@ -173,7 +188,7 @@ public class CommandPlaces
 	{
 		try
 		{
-			return CommandProperty.getProperty(id, Config.PLACES);
+			return PropertyHelper.getProperty(id, Config.PLACES);
 		}
 		catch(NoSuchElementException e)
 		{

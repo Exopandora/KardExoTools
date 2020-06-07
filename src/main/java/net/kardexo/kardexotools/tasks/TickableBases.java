@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.kardexo.kardexotools.base.EnumBaseAccess;
-import net.kardexo.kardexotools.base.Property;
-import net.kardexo.kardexotools.base.PropertyOwner;
 import net.kardexo.kardexotools.config.Config;
+import net.kardexo.kardexotools.property.EnumBaseAccess;
+import net.kardexo.kardexotools.property.Property;
+import net.kardexo.kardexotools.property.PropertyOwner;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;

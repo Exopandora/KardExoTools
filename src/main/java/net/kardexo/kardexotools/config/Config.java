@@ -6,8 +6,6 @@ import java.util.function.Consumer;
 
 import com.mojang.brigadier.CommandDispatcher;
 
-import net.kardexo.kardexotools.base.Home;
-import net.kardexo.kardexotools.base.Property;
 import net.kardexo.kardexotools.command.CommandBackup;
 import net.kardexo.kardexotools.command.CommandBases;
 import net.kardexo.kardexotools.command.CommandCalculate;
@@ -25,6 +23,7 @@ import net.kardexo.kardexotools.command.CommandUndo;
 import net.kardexo.kardexotools.command.CommandVeinminer;
 import net.kardexo.kardexotools.command.CommandWhereIs;
 import net.kardexo.kardexotools.command.CommandWorldTime;
+import net.kardexo.kardexotools.property.Property;
 import net.kardexo.kardexotools.veinminer.VeinminerConfigEntry;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -86,7 +85,6 @@ public class Config
 	
 	public static final DataFile<Property, String> BASES = new DataFile<Property, String>(new File(CONFIG_DIRECTORY, "bases.json"), Property[].class, Property::getName);
 	public static final DataFile<Property, String> PLACES = new DataFile<Property, String>(new File(CONFIG_DIRECTORY, "places.json"), Property[].class, Property::getName);
-	public static final DataFile<Home, String> HOME = new DataFile<Home, String>(new File(CONFIG_DIRECTORY, "home.json"), Home[].class, Home::getPlayer);
 	public static final DataFile<PlayerConfig, String> PLAYERS = new DataFile<PlayerConfig, String>(new File(CONFIG_DIRECTORY, "playerdata.json"), PlayerConfig[].class, PlayerConfig::getPlayer);
 	public static final DataFile<VeinminerConfigEntry, Block> VEINMINER = new DataFile<VeinminerConfigEntry, Block>(new File(CONFIG_DIRECTORY, "veinminer.json"), VeinminerConfigEntry[].class, VeinminerConfigEntry::toBlock, initial -> 
 	{
@@ -171,7 +169,6 @@ public class Config
 	{
 		BASES.save();
 		PLACES.save();
-		HOME.save();
 		PLAYERS.save();
 		VEINMINER.save();
 	}
@@ -180,7 +177,6 @@ public class Config
 	{
 		BASES.read();
 		PLACES.read();
-		HOME.read();
 		PLAYERS.read();
 		VEINMINER.read();
 	}

@@ -57,7 +57,7 @@ public class CommandLocateBiome
 				{
 					BiomeContainer biomeContainer = source.getWorld().getChunk(blockpos).getBiomes();
 					
-					if(biomeContainer != null && ArrayUtils.contains(biomeContainer.getBiomes(), biome))
+					if(biomeContainer != null && ArrayUtils.contains(biomeContainer.biomes, biome))
 					{
 						return blockpos;
 					}

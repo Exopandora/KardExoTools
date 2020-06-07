@@ -4,7 +4,7 @@
              }
  
              this.loadAllWorlds(this.getFolderName(), this.getFolderName(), j, worldtype, jsonobject);
-+            exopandora.kardexo.kardexotools.KardExo.init(this);
++            net.kardexo.kardexotools.KardExo.init(this);
              long l = Util.nanoTime() - i;
              String s2 = String.format(Locale.ROOT, "%.3fs", (double)l / 1.0E9D);
              LOGGER.info("Done ({})! For help, type \"help\"", (Object)s2);

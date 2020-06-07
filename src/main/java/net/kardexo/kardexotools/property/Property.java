@@ -1,13 +1,14 @@
-package net.kardexo.kardexotools.base;
+package net.kardexo.kardexotools.property;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
+import com.google.gson.annotations.SerializedName;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.event.HoverEvent;
@@ -24,6 +25,8 @@ public class Property
 	private double zMin;
 	private double xMax;
 	private double zMax;
+	@SerializedName("protected")
+	private boolean isProtected;
 	
 	public Property(String name, String title, List<PropertyOwner> owners, int dimension, double xMin, double zMin, double xMax, double zMax)
 	{
@@ -107,6 +110,24 @@ public class Property
 		this.title = title;
 	}
 	
+	public boolean isProtected()
+	{
+		return isProtected;
+	}
+	
+	public void setProtected(boolean isProtected)
+	{
+		this.isProtected = isProtected;
+		
+		if(this.children != null)
+		{
+			for(Property child : this.children)
+			{
+				child.setProtected(isProtected);
+			}
+		}
+	}
+	
 	public void addChild(Property child)
 	{
 		if(this.children == null)
@@ -168,18 +189,30 @@ public class Property
 	
 	public boolean isInside(PlayerEntity player)
 	{
-		return this.isInsideMain(player) || this.isInsideChild(player);
+		return this.isInside(player.getPosition(), player.dimension.getId());
+	}
+	
+	public boolean isInside(BlockPos pos, int dimension)
+	{
+		return this.isInsideMain(pos, dimension) || this.isInsideChild(pos, dimension);
 	}
 	
 	public boolean isInsideMain(PlayerEntity player)
 	{
-		float posX = MathHelper.floor(player.getPosX());
-		float posZ = MathHelper.floor(player.getPosZ());
-		
-		return posX >= this.xMin && posX <= this.xMax && posZ >= this.zMin && posZ <= this.zMax && player.dimension.getId() == this.dimension;
+		return this.isInsideMain(player.getPosition(), player.dimension.getId());
+	}
+	
+	public boolean isInsideMain(BlockPos pos, int dimension)
+	{
+		return pos.getX() >= this.xMin && pos.getX() <= this.xMax && pos.getZ() >= this.zMin && pos.getZ() <= this.zMax && dimension == this.dimension;
 	}
 	
 	public boolean isInsideChild(PlayerEntity player)
+	{
+		return this.isInsideChild(player.getPosition(), player.dimension.getId());
+	}
+	
+	public boolean isInsideChild(BlockPos pos, int dimension)
 	{
 		if(this.children != null)
 		{
@@ -187,7 +220,7 @@ public class Property
 			{
 				if(child != null)
 				{
-					if(child.isInside(player))
+					if(child.isInside(pos, dimension))
 					{
 						return true;
 					}
@@ -234,7 +267,7 @@ public class Property
 	
 	public boolean isCreator(String username)
 	{
-		return this.owners.parallelStream().filter(PropertyOwner::isCreator).allMatch(owner -> owner.getName().equals(username));
+		return this.owners.parallelStream().filter(PropertyOwner::isCreator).anyMatch(owner -> owner.getName().equals(username));
 	}
 	
 	public String getOwners(String delimiter)
@@ -282,9 +315,36 @@ public class Property
 	
 	public ITextComponent getDisplayName()
 	{
+		StringBuilder builder = new StringBuilder(this.getTitle());
+		
+		if(this.title != null)
+		{
+			builder.append("\nName: " + this.name);
+		}
+		
+		builder.append("\nCreators: " + this.getCreators(", "));
+		
+		if(!this.getOwners().isEmpty())
+		{
+			builder.append("\nOwners: " + this.getOwners(", "));
+		}
+		
+		builder.append("\nDimension: " + DimensionType.getById(this.dimension).getSuffix());
+		
+		if(this.children != null)
+		{
+			builder.append("\nChildren: " + this.getChildren(","));
+		}
+		
+		builder.append("\nX: [" + this.xMin + ", " + this.xMax + "]");
+		builder.append("\nZ: [" + this.zMin + ", " + this.zMax + "]");
+		builder.append("\nSize: " + this.getSize());
+		builder.append("\nProtected: " + this.isProtected);
+		
 		ITextComponent basetextcomponent = new StringTextComponent(this.getTitle());
-		basetextcomponent.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent(this.getTitle() + (this.title != null ? "\nName: " + this.name : "") + "\nCreators: " + this.getCreators(", ") + "\n" + (!this.getOwners().isEmpty() ? ("Owners: " + this.getOwners(", ") + "\n") : "") + "Dimension: " + DimensionType.getById(this.dimension).getSuffix() + "\n" + (this.children != null ? ("Children: " + this.getChildren(",") + "\n") : "") +  "X: [" + this.xMin + ", " + this.xMax + "]\nZ: [" + this.zMin + ", " + this.zMax + "]\nSize: " + this.getSize())));
+		basetextcomponent.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent(builder.toString())));
 		basetextcomponent.getStyle().setInsertion(this.name);
+		
 		return basetextcomponent;
 	}
 }

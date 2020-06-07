@@ -1,4 +1,4 @@
-package net.kardexo.kardexotools.base;
+package net.kardexo.kardexotools.property;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -105,15 +105,11 @@ public class PropertyOwner
 	@Override
 	public boolean equals(Object obj)
 	{
-		if(obj != null)
+		if(obj != null && obj instanceof PropertyOwner)
 		{
-			if(obj instanceof PropertyOwner)
-			{
-				return this.name.equals(((PropertyOwner) obj).name);
-			}
+			return this.name.equals(((PropertyOwner) obj).name);
 		}
 		
 		return false;
 	}
 }
-

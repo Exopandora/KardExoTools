@@ -1,15 +1,14 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -658,6 +658,8 @@
+@@ -658,6 +658,7 @@
          {
              this.snooper.stop();
          }
-+        
-+        exopandora.kardexo.kardexotools.KardExo.stop();
++        net.kardexo.kardexotools.KardExo.stop();
      }
  
      public String getServerHostname()
-@@ -1204,7 +1206,7 @@
+@@ -1204,7 +1205,7 @@
  
      public String getServerModName()
      {

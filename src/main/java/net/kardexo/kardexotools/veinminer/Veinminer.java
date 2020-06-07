@@ -16,10 +16,11 @@ import java.util.stream.Stream;
 import com.google.common.collect.Sets;
 
 import net.kardexo.kardexotools.config.Config;
-import net.kardexo.kardexotools.history.PlayerHistory;
+import net.kardexo.kardexotools.property.PropertyHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
@@ -50,7 +51,7 @@ public class Veinminer
 			{
 				if(Veinminer.isEqual(state, block.getDefaultState()) && (item.getDestroySpeed(state) > 1.0F || block.getDefaultState().getMaterial().isToolNotRequired()))
 				{
-					PriorityQueue<BlockPos> queue = Veinminer.calculateVein(Config.BLOCK_LIMIT, Config.VEINMINER.getData().get(block).getRadius(), state, pos, world);
+					PriorityQueue<BlockPos> queue = Veinminer.calculateVein(player, Config.BLOCK_LIMIT, Config.VEINMINER.getData().get(block).getRadius(), state, pos, world);
 					Map<BlockState, Set<BlockPos>> stateMap = new HashMap<BlockState, Set<BlockPos>>();
 					VeinminerHistoryEntry undo = new VeinminerHistoryEntry(player.dimension, stateMap);
 					queue.poll();
@@ -110,7 +111,7 @@ public class Veinminer
 		return harvestBlock.apply(pos, false);
 	}
 	
-	private static PriorityQueue<BlockPos> calculateVein(int limit, int radius, BlockState state, BlockPos pos, World world)
+	private static PriorityQueue<BlockPos> calculateVein(PlayerEntity player, int limit, int radius, BlockState state, BlockPos pos, World world)
 	{
 		PriorityQueue<BlockPos> queue = new PriorityQueue<BlockPos>(Veinminer.getComparator(pos));
 		Collection<BlockPos> pending = Collections.singleton(pos);
@@ -159,6 +160,11 @@ public class Veinminer
 							}
 							
 							if(queue.contains(nextBlock) || pending.contains(nextBlock) || next.contains(nextBlock))
+							{
+								continue;
+							}
+							
+							if(!PropertyHelper.canHarvestBlock(player, nextBlock))
 							{
 								continue;
 							}

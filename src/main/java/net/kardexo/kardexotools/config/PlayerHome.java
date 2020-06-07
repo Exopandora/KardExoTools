@@ -1,29 +1,22 @@
-package net.kardexo.kardexotools.base;
+package net.kardexo.kardexotools.config;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.dimension.DimensionType;
 
-public class Home
+public class PlayerHome
 {
-	private final BlockPos home;
-	private final String player;
+	private final BlockPos position;
 	private final int dimension;
 	
-	public Home(BlockPos home, String player, int dimension)
+	public PlayerHome(BlockPos position, int dimension)
 	{
-		this.home = home;
-		this.player = player;
+		this.position = position;
 		this.dimension = dimension;
 	}
 	
 	public BlockPos getPosition()
 	{
-		return this.home;
-	}
-	
-	public String getPlayer()
-	{
-		return this.player;
+		return this.position;
 	}
 	
 	public int getDimension()

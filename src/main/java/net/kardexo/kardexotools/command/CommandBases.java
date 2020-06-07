@@ -12,9 +12,10 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
-import net.kardexo.kardexotools.base.Property;
-import net.kardexo.kardexotools.base.PropertyOwner;
 import net.kardexo.kardexotools.config.Config;
+import net.kardexo.kardexotools.property.Property;
+import net.kardexo.kardexotools.property.PropertyHelper;
+import net.kardexo.kardexotools.property.PropertyOwner;
 import net.kardexo.kardexotools.tasks.TickableBases;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
@@ -107,14 +108,19 @@ public class CommandBases
 						.then(Commands.literal("remove")
 							.then(Commands.argument("child", StringArgumentType.word())
 								.suggests(CommandBases::getChildSuggestions)
-								.executes(context -> removeChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child"))))))));
+								.executes(context -> removeChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child")))))))
+				.then(Commands.literal("protection")
+					.then(Commands.argument("id", StringArgumentType.word())
+							.suggests(CommandBases::getSuggestions)
+							.then(Commands.argument("enabled", BoolArgumentType.bool())
+								.executes(context -> setProtection(context.getSource(), StringArgumentType.getString(context, "id"), BoolArgumentType.getBool(context, "enabled")))))));
 	}
 	
 	private static int add(CommandSource source, String id, DimensionType dimension, ColumnPos from, ColumnPos to, PlayerEntity owner, String title) throws CommandSyntaxException
 	{
 		try
 		{
-			CommandProperty.add(id, dimension, from, to, owner.getGameProfile().getName(), title, Config.BASES);
+			PropertyHelper.add(id, dimension, from, to, owner.getGameProfile().getName(), title, Config.BASES);
 			source.sendFeedback(new StringTextComponent("Added base with id " + id), false);
 		}
 		catch(IllegalStateException e)
@@ -131,7 +137,7 @@ public class CommandBases
 		
 		try
 		{
-			CommandProperty.remove(id, Config.BASES);
+			PropertyHelper.remove(id, Config.BASES);
 			source.sendFeedback(new StringTextComponent("Removed base with id " + id), false);
 		}
 		catch(NoSuchElementException e)
@@ -181,7 +187,7 @@ public class CommandBases
 		ensurePermission(source, id, player);
 		ensureOwner(player.getGameProfile().getName(), id);
 		
-		CommandProperty.forOwner(id, player, Config.BASES, owner ->
+		PropertyHelper.forOwner(id, player, Config.BASES, owner ->
 		{
 			callback.accept(owner);
 			Config.BASES.save();
@@ -193,7 +199,7 @@ public class CommandBases
 		ensurePermission(source, id, null);
 		String name = player.getGameProfile().getName();
 		
-		if(CommandProperty.isOwner(name, id, Config.BASES))
+		if(PropertyHelper.isOwner(name, id, Config.BASES))
 		{
 			throw CommandBase.exception(name + " already is an owner of base with id " + id);
 		}
@@ -219,7 +225,7 @@ public class CommandBases
 		ensurePermission(source, id, player);
 		ensureOwner(player.getGameProfile().getName(), id);
 		Property property = getProperty(id);
-		ensureCreatorSize(id, player, property, CommandProperty.isCreator(player.getGameProfile().getName(), id, Config.BASES));
+		ensureCreatorSize(id, player, property, PropertyHelper.isCreator(player.getGameProfile().getName(), id, Config.BASES));
 		
 		PropertyOwner owner = new PropertyOwner(player.getGameProfile().getName());
 		property.removeOwner(owner);
@@ -306,7 +312,7 @@ public class CommandBases
 		
 		try
 		{
-			CommandProperty.addChild(parent, child, dimension, from, to, title, Config.BASES);
+			PropertyHelper.addChild(parent, child, dimension, from, to, title, Config.BASES);
 			source.sendFeedback(new StringTextComponent("Added child with id " + child + " to base with id " + id), false);
 		}
 		catch(IllegalStateException e)
@@ -324,7 +330,7 @@ public class CommandBases
 		
 		try
 		{
-			CommandProperty.removeChild(parent, child, Config.BASES);
+			PropertyHelper.removeChild(parent, child, Config.BASES);
 			source.sendFeedback(new StringTextComponent("Removed child with id " + child + " from base with id " + id), false);
 		}
 		catch(NoSuchElementException e)
@@ -332,6 +338,14 @@ public class CommandBases
 			throw CommandBase.exception("No child with id " + child + " for base with id " + id);
 		}
 		
+		return 1;
+	}
+	
+	private static int setProtection(CommandSource source, String id, boolean enabled) throws CommandSyntaxException
+	{
+		ensurePermission(source, id, null);
+		getProperty(id).setProtected(enabled);
+		Config.BASES.save();
 		return 1;
 	}
 	
@@ -366,7 +380,7 @@ public class CommandBases
 	
 	private static void ensurePermission(CommandSource source, String id, PlayerEntity target) throws CommandSyntaxException
 	{
-		if(!CommandProperty.hasPermission(source, id, target, Config.BASES))
+		if(!PropertyHelper.hasPermission(source, id, target, Config.BASES))
 		{
 			throw CommandBase.exception("You must be a creator of base with id " + id);
 		}
@@ -374,7 +388,7 @@ public class CommandBases
 	
 	private static void ensureOwner(String name, String id) throws CommandSyntaxException
 	{
-		if(!CommandProperty.isOwner(name, id, Config.BASES))
+		if(!PropertyHelper.isOwner(name, id, Config.BASES))
 		{
 			throw CommandBase.exception(name + " is not an owner of base with id " + id);
 		}
@@ -392,7 +406,7 @@ public class CommandBases
 	{
 		try
 		{
-			return CommandProperty.getProperty(id, Config.BASES);
+			return PropertyHelper.getProperty(id, Config.BASES);
 		}
 		catch(NoSuchElementException e)
 		{

@@ -1,4 +1,4 @@
-package net.kardexo.kardexotools.base;
+package net.kardexo.kardexotools.property;
 
 public enum EnumBaseAccess
 {
