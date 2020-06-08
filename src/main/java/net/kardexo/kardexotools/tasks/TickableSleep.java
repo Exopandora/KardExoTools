@@ -30,7 +30,7 @@ public class TickableSleep implements Runnable
 		{
 			for(PlayerEntity player : overworld.getPlayers())
 			{
-				String playername = player.getName().getString();
+				String playername = player.getGameProfile().getName();
 				
 				if(player.isSleeping())
 				{

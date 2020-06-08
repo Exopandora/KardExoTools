@@ -45,18 +45,19 @@ public class TickableBases implements Runnable
 			for(ServerPlayerEntity player : this.server.getPlayerList().getPlayers())
 			{
 				Set<String> visitors = BASE_VISITORS.computeIfAbsent(base, key -> new HashSet<String>());
+				String name = player.getGameProfile().getName();
 				
 				boolean inside = base.isInside(player);
-				boolean contains = visitors.contains(player.getName().getString());
+				boolean contains = visitors.contains(name);
 				
 				if(!inside && contains)
 				{
-					visitors.remove(player.getName().getString());
+					visitors.remove(name);
 					this.notifyOwners(base, notifyList, player, EnumBaseAccess.LEAVE);
 				}
 				else if(inside && !contains)
 				{
-					visitors.add(player.getName().getString());
+					visitors.add(name);
 					this.notifyOwners(base, notifyList, player, EnumBaseAccess.ENTER);
 				}
 			}
@@ -65,15 +66,17 @@ public class TickableBases implements Runnable
 	
 	private void notifyOwners(Property base, List<PropertyOwner> notify, ServerPlayerEntity player, EnumBaseAccess access)
 	{
-		if(!base.isOwner(player.getName().getString()))
+		String name = player.getGameProfile().getName();
+		
+		if(!base.isOwner(name))
 		{
 			switch(access)
 			{
 				case ENTER:
-					this.server.logInfo(player.getName().getString() + " has entered base with id " + base.getTitle());
+					this.server.logInfo(name + " has entered base with id " + base.getTitle());
 					break;
 				case LEAVE:
-					this.server.logInfo(player.getName().getString() + " has left base with id " + base.getTitle());
+					this.server.logInfo(name + " has left base with id " + base.getTitle());
 					break;
 			}
 			
