@@ -1,14 +1,15 @@
 package net.kardexo.kardexotools.property;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
+
+import com.google.common.collect.Lists;
 
 import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.config.Config;
 import net.kardexo.kardexotools.config.DataFile;
+import net.kardexo.kardexotools.tasks.TickableBases;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ContainerBlock;
 import net.minecraft.command.CommandSource;
@@ -26,35 +27,37 @@ public class PropertyHelper
 {
 	public static void add(String id, DimensionType dimension, ColumnPos from, ColumnPos to, String owner, String title, DataFile<Property, String> file) throws IllegalStateException
 	{
+		if(file.getData().containsKey(id))
+		{
+			throw new IllegalStateException();
+		}
+		
 		double xMin = Math.min(from.x, to.x);
 		double zMin = Math.min(from.z, to.z);
 		
 		double xMax = Math.max(from.x, to.x);
 		double zMax = Math.max(from.z, to.z);
 		
-		List<PropertyOwner> owners = new ArrayList<PropertyOwner>();
-		owners.add(new PropertyOwner(owner, true, true, null, null));
+		Property property = new Property(id, title, Lists.newArrayList(new PropertyOwner(owner, true, true, null, null)), dimension.getId(), xMin, zMin, xMax, zMax);
 		
-		Property property = new Property(id, title, owners, dimension.getId(), xMin, zMin, xMax, zMax);
-		
-		if(file.getData().containsKey(property.getName()))
-		{
-			throw new IllegalStateException();
-		}
-		
-		file.getData().put(property.getName(), property);
+		file.getData().put(id, property);
 		file.save();
 	}
 	
 	public static void remove(String id, DataFile<Property, String> file) throws NoSuchElementException
 	{
-		if(file.getData().containsKey(id))
+		Property property = file.getData().get(id);
+		
+		if(property != null)
 		{
+			TickableBases.remove(property);
 			file.getData().remove(id);
 			file.save();
 		}
-		
-		throw new NoSuchElementException();
+		else
+		{
+			throw new NoSuchElementException();
+		}
 	}
 	
 	public static void addChild(Property parent, String id, DimensionType dimension, ColumnPos from, ColumnPos to, String title, DataFile<Property, String> file) throws IllegalStateException

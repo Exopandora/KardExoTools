@@ -18,8 +18,9 @@ import net.minecraft.util.text.TranslationTextComponent;
 
 public class TickableBases implements Runnable
 {
+	private static final Map<Property, Set<String>> BASE_VISITORS = new HashMap<Property, Set<String>>();
+	
 	private final MinecraftServer server;
-	public static final Map<Property, Set<String>> BASE_VISITORS = new HashMap<Property, Set<String>>();
 	
 	public TickableBases(MinecraftServer dedicatedserver)
 	{
@@ -43,32 +44,20 @@ public class TickableBases implements Runnable
 			
 			for(ServerPlayerEntity player : this.server.getPlayerList().getPlayers())
 			{
+				Set<String> visitors = BASE_VISITORS.computeIfAbsent(base, key -> new HashSet<String>());
+				
 				boolean inside = base.isInside(player);
+				boolean contains = visitors.contains(player.getName().getString());
 				
-				Set<String> visitors = BASE_VISITORS.get(base);
-				
-				if(visitors == null)
+				if(!inside && contains)
 				{
-					visitors = new HashSet<String>();
+					visitors.remove(player.getName().getString());
+					this.notifyOwners(base, notifyList, player, EnumBaseAccess.LEAVE);
 				}
-				
-				if(visitors.contains(player.getName().getString()))
+				else if(inside && !contains)
 				{
-					if(!inside)
-					{
-						visitors.remove(player.getName().getString());
-						BASE_VISITORS.put(base, visitors);
-						this.notifyOwners(base, notifyList, player, EnumBaseAccess.LEAVE);
-					}
-				}
-				else
-				{
-					if(inside)
-					{
-						visitors.add(player.getName().getString());
-						BASE_VISITORS.put(base, visitors);
-						this.notifyOwners(base, notifyList, player, EnumBaseAccess.ENTER);
-					}
+					visitors.add(player.getName().getString());
+					this.notifyOwners(base, notifyList, player, EnumBaseAccess.ENTER);
 				}
 			}
 		}
@@ -128,5 +117,20 @@ public class TickableBases implements Runnable
 		}
 		
 		return null;
+	}
+	
+	public static void remove(Property base)
+	{
+		BASE_VISITORS.remove(base);
+	}
+	
+	public static Set<String> get(Property base)
+	{
+		return BASE_VISITORS.get(base);
+	}
+	
+	public static void reload()
+	{
+		BASE_VISITORS.clear();
 	}
 }
