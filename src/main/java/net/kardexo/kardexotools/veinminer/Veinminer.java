@@ -40,16 +40,15 @@ public class Veinminer
 	
 	public static boolean mine(BlockPos pos, ServerPlayerEntity player, World world, BiFunction<BlockPos, Boolean, Boolean> harvestBlock)
 	{
+		String name = player.getGameProfile().getName();
 		ItemStack item = player.getHeldItemMainhand();
-		String name = player.getName().getString();
+		BlockState state = world.getBlockState(pos);
 		
-		if(item.getMaxDamage() - item.getDamage() > 1 && Config.PLAYERS.getData().containsKey(name) && Config.PLAYERS.getData().get(name).isVeinminerEnabled() && player.func_226563_dT_())
+		if(Config.PLAYERS.getData().containsKey(name) && Config.PLAYERS.getData().get(name).isVeinminerEnabled() && player.func_226563_dT_() && item.getDestroySpeed(state) > 1.0F && item.getMaxDamage() - item.getDamage() > 1)
 		{
-			BlockState state = world.getBlockState(pos);
-			
 			for(Block block : Config.VEINMINER.getData().keySet())
 			{
-				if(Veinminer.isEqual(state, block.getDefaultState()) && (item.getDestroySpeed(state) > 1.0F || block.getDefaultState().getMaterial().isToolNotRequired()))
+				if(Veinminer.isEqual(state, block.getDefaultState()))
 				{
 					PriorityQueue<BlockPos> queue = Veinminer.calculateVein(player, Config.BLOCK_LIMIT, Config.VEINMINER.getData().get(block).getRadius(), state, pos, world);
 					Map<BlockState, Set<BlockPos>> stateMap = new HashMap<BlockState, Set<BlockPos>>();
@@ -193,7 +192,7 @@ public class Veinminer
 	
 	public static int undo(ServerPlayerEntity player, MinecraftServer server) throws Exception
 	{
-		VeinminerHistoryEntry undo = Veinminer.HISTORY.peek(player.getName().getString());
+		VeinminerHistoryEntry undo = Veinminer.HISTORY.peek(player.getGameProfile().getName());
 		Set<BlockPos> positions = undo.getAllPositions();
 		ServerWorld world = server.getWorld(undo.getDimension());
 		Block block = undo.getBlock();
