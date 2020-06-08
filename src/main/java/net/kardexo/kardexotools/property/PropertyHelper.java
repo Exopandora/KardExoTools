@@ -198,7 +198,7 @@ public class PropertyHelper
 	
 	public static boolean canInteractWithEntity(PlayerEntity player, Entity entity, Action action)
 	{
-		return entity instanceof MonsterEntity || action != Action.ATTACK || !isProtected(player, entity);
+		return entity instanceof MonsterEntity && !entity.hasCustomName() || action != Action.ATTACK || !isProtected(player, entity);
 	}
 	
 	public static ActionResultType cancelBlockInteraction(ServerPlayerEntity player)
