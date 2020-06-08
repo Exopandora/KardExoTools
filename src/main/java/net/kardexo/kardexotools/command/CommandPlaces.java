@@ -14,7 +14,6 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.kardexo.kardexotools.config.Config;
 import net.kardexo.kardexotools.property.Property;
 import net.kardexo.kardexotools.property.PropertyHelper;
-import net.kardexo.kardexotools.tasks.TickableBases;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
@@ -117,8 +116,6 @@ public class CommandPlaces
 	
 	private static int reload(CommandSource source) throws CommandSyntaxException
 	{
-		TickableBases.BASE_VISITORS.clear();
-		
 		try
 		{
 			Config.PLACES.read();
@@ -173,6 +170,16 @@ public class CommandPlaces
 		ensurePermission(source, id, null);
 		getProperty(id).setProtected(enabled);
 		Config.PLACES.save();
+		
+		if(enabled)
+		{
+			source.sendFeedback(new StringTextComponent("Enabled protection for place with id " + id), false);
+		}
+		else
+		{
+			source.sendFeedback(new StringTextComponent("Disabled protection for place with id " + id), false);
+		}
+		
 		return 1;
 	}
 	

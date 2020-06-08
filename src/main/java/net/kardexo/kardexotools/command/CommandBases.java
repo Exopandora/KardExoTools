@@ -346,6 +346,16 @@ public class CommandBases
 		ensurePermission(source, id, null);
 		getProperty(id).setProtected(enabled);
 		Config.BASES.save();
+		
+		if(enabled)
+		{
+			source.sendFeedback(new StringTextComponent("Enabled protection for base with id " + id), false);
+		}
+		else
+		{
+			source.sendFeedback(new StringTextComponent("Disabled protection for base with id " + id), false);
+		}
+		
 		return 1;
 	}
 	
@@ -363,7 +373,7 @@ public class CommandBases
 	
 	private static int reload(CommandSource source) throws CommandSyntaxException
 	{
-		TickableBases.BASE_VISITORS.clear();
+		TickableBases.reload();
 		
 		try
 		{
