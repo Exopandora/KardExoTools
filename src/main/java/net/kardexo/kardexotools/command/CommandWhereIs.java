@@ -1,8 +1,6 @@
 package net.kardexo.kardexotools.command;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -11,7 +9,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import net.kardexo.kardexotools.config.Config;
 import net.kardexo.kardexotools.property.Property;
-import net.kardexo.kardexotools.tasks.TickableBases;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.EntityArgument;
@@ -48,13 +45,13 @@ public class CommandWhereIs
 			dimension = "The End";
 		}
 		
-		List<Property> bases = new ArrayList<Property>();
+		Set<Property> bases = new HashSet<Property>();
 		
-		for(Entry<Property, Set<String>> entry : TickableBases.BASE_VISITORS.entrySet())
+		for(Property base : Config.BASES.getData().values())
 		{
-			if(entry.getValue().contains(target.getName().getString()))
+			if(base.isInside(target))
 			{
-				bases.add(entry.getKey());
+				bases.add(base);
 			}
 		}
 		
