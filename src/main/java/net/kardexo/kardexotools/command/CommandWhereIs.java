@@ -1,6 +1,7 @@
 package net.kardexo.kardexotools.command;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -14,9 +15,9 @@ import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.dimension.DimensionType;
 
 public class CommandWhereIs
 {
@@ -30,20 +31,7 @@ public class CommandWhereIs
 	private static int whereIs(CommandSource source, PlayerEntity target) throws CommandSyntaxException
 	{
 		BlockPos pos = target.getPosition();
-		String dimension = "Unknown Dimension";
-		
-		if(DimensionType.OVERWORLD.equals(target.dimension))
-		{
-			dimension = "Overworld";
-		}
-		else if(DimensionType.THE_NETHER.equals(target.dimension))
-		{
-			dimension = "Nether";
-		}
-		else if(DimensionType.THE_END.equals(target.dimension))
-		{
-			dimension = "The End";
-		}
+		String dimension = Objects.toString(Registry.DIMENSION_TYPE.getKey(target.dimension));
 		
 		Set<Property> bases = new HashSet<Property>();
 		
