@@ -74,9 +74,6 @@ public class Config
 	/** Maximum radius to search for a biome **/
 	public static final int LOCATE_BIOME_RADIUS = 10000;
 	
-	/** Factor of the in-game day length. Has to be greater than 0 **/
-	public static final float DAYTIME_FACTOR = 1.0F;
-	
 	/** Backup Directory **/
 	public static final File BACKUP_DIRECTORY = new File("backup");
 	
