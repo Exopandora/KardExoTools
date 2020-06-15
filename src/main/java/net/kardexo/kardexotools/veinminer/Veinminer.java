@@ -43,14 +43,18 @@ public class Veinminer
 		String name = player.getGameProfile().getName();
 		ItemStack item = player.getHeldItemMainhand();
 		BlockState state = world.getBlockState(pos);
+		boolean isEffectiveTool = item.getDestroySpeed(state) > 1.0F;
 		
-		if(Config.PLAYERS.getData().containsKey(name) && Config.PLAYERS.getData().get(name).isVeinminerEnabled() && player.func_226563_dT_() && item.getDestroySpeed(state) > 1.0F && item.getMaxDamage() - item.getDamage() > 1)
+		if(Config.PLAYERS.getData().containsKey(name) && Config.PLAYERS.getData().get(name).isVeinminerEnabled() && player.func_226563_dT_() && (!item.isDamageable() || item.getMaxDamage() - item.getDamage() > 1))
 		{
-			for(Block block : Config.VEINMINER.getData().keySet())
+			for(Entry<Block, VeinminerConfigEntry> entry : Config.VEINMINER.getData().entrySet())
 			{
-				if(Veinminer.isEqual(state, block.getDefaultState()))
+				Block block = entry.getKey();
+				VeinminerConfigEntry config = entry.getValue();
+				
+				if(Veinminer.isEqual(state, block.getDefaultState()) && (isEffectiveTool || !config.doesRequireTool()))
 				{
-					PriorityQueue<BlockPos> queue = Veinminer.calculateVein(player, Config.BLOCK_LIMIT, Config.VEINMINER.getData().get(block).getRadius(), state, pos, world);
+					PriorityQueue<BlockPos> queue = Veinminer.calculateVein(player, Config.BLOCK_LIMIT, config.getRadius(), state, pos, world);
 					Map<BlockState, Set<BlockPos>> stateMap = new HashMap<BlockState, Set<BlockPos>>();
 					VeinminerHistoryEntry undo = new VeinminerHistoryEntry(player.dimension, stateMap);
 					queue.poll();
