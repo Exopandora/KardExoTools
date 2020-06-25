@@ -10,9 +10,10 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 
 public class CommandHome
@@ -34,8 +35,7 @@ public class CommandHome
 		}
 		
 		MinecraftServer server = source.getServer();
-		DimensionType type = config.getHome().getDimensionType();
-		ServerWorld world = server.getWorld(type);
+		ServerWorld world = server.getWorld(RegistryKey.func_240903_a_(Registry.field_239699_ae_, config.getHome().getDimension()));
 		BlockPos position = CommandHome.spawnPosition(world, config.getHome().getPosition());
 		
 		return CommandBase.teleport(source, sender, world, position);

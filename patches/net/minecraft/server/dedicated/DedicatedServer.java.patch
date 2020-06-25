@@ -1,10 +1,10 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -246,6 +246,7 @@
-             }
- 
-             this.loadAllWorlds(this.getFolderName(), this.getFolderName(), j, worldtype, jsonobject);
+@@ -186,6 +186,7 @@
+             PlayerProfileCache.setOnlineMode(this.isServerInOnlineMode());
+             LOGGER.info("Preparing level \"{}\"", (Object)this.func_230542_k__());
+             this.func_240800_l__();
 +            net.kardexo.kardexotools.KardExo.init(this);
-             long l = Util.nanoTime() - i;
-             String s2 = String.format(Locale.ROOT, "%.3fs", (double)l / 1.0E9D);
-             LOGGER.info("Done ({})! For help, type \"help\"", (Object)s2);
+             long j = Util.nanoTime() - i;
+             String s = String.format(Locale.ROOT, "%.3fs", (double)j / 1.0E9D);
+             LOGGER.info("Done ({})! For help, type \"help\"", (Object)s);

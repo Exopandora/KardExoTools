@@ -45,7 +45,7 @@ public class Veinminer
 		BlockState state = world.getBlockState(pos);
 		boolean isEffectiveTool = item.getDestroySpeed(state) > 1.0F;
 		
-		if(Config.PLAYERS.getData().containsKey(name) && Config.PLAYERS.getData().get(name).isVeinminerEnabled() && player.func_226563_dT_() && (!item.isDamageable() || item.getMaxDamage() - item.getDamage() > 1))
+		if(Config.PLAYERS.getData().containsKey(name) && Config.PLAYERS.getData().get(name).isVeinminerEnabled() && player.isSneaking() && !player.isOnLadder() && (!item.isDamageable() || item.getMaxDamage() - item.getDamage() > 1))
 		{
 			for(Entry<Block, VeinminerConfigEntry> entry : Config.VEINMINER.getData().entrySet())
 			{
@@ -56,7 +56,7 @@ public class Veinminer
 				{
 					PriorityQueue<BlockPos> queue = Veinminer.calculateVein(player, Config.BLOCK_LIMIT, config.getRadius(), state, pos, world);
 					Map<BlockState, Set<BlockPos>> stateMap = new HashMap<BlockState, Set<BlockPos>>();
-					VeinminerHistoryEntry undo = new VeinminerHistoryEntry(player.dimension, stateMap);
+					VeinminerHistoryEntry undo = new VeinminerHistoryEntry(player.world.func_234923_W_(), stateMap);
 					queue.poll();
 					
 					if(!queue.isEmpty())
@@ -198,7 +198,7 @@ public class Veinminer
 	{
 		VeinminerHistoryEntry undo = Veinminer.HISTORY.peek(player.getGameProfile().getName());
 		Set<BlockPos> positions = undo.getAllPositions();
-		ServerWorld world = server.getWorld(undo.getDimension());
+		ServerWorld world = server.getWorld(undo.getWorld());
 		Block block = undo.getBlock();
 		int count = positions.size();
 		
@@ -215,7 +215,7 @@ public class Veinminer
 			
 			if(!player.interactionManager.isCreative())
 			{
-				player.inventory.clearMatchingItems(stack -> stack.getItem().equals(block.asItem()), count);
+				player.inventory.func_234564_a_(stack -> stack.getItem().equals(block.asItem()), count, player.container.func_234641_j_());
 			}
 			
 			Veinminer.HISTORY.pop(player.getName().getString());

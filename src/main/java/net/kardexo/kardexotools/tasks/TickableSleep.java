@@ -8,8 +8,10 @@ import net.kardexo.kardexotools.KardExo;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.GameRules;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.storage.IServerWorldInfo;
 
 public class TickableSleep implements Runnable
 {
@@ -24,7 +26,7 @@ public class TickableSleep implements Runnable
 	@Override
 	public void run()
 	{
-		ServerWorld overworld = this.server.getWorld(DimensionType.OVERWORLD);
+		ServerWorld overworld = this.server.getWorld(World.field_234918_g_);
 		
 		if(!overworld.getPlayers().isEmpty())
 		{
@@ -40,17 +42,26 @@ public class TickableSleep implements Runnable
 						this.sleep.put(playername, overworld.getDayTime());
 					}
 					
-					if((this.sleep.get(playername) + 100) <= overworld.getWorldInfo().getDayTime())
+					if(this.sleep.get(playername) + 100 <= overworld.getWorldInfo().getDayTime() && overworld.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE))
 					{
 						for(ServerWorld server : this.server.getWorlds())
 						{
-							long i = server.getWorldInfo().getDayTime() + 24000L;
-							server.getWorldInfo().setDayTime(i - i % 24000L);
+							long time = server.getWorldInfo().getDayTime() + 24000L;
+							server.func_241114_a_(time - time % 24000L);
 							
 							for(PlayerEntity PlayerEntity : server.getPlayers().stream().filter(PlayerEntity::isSleeping).collect(Collectors.toList()))
 							{
 								PlayerEntity.wakeUp();
 							}
+							
+							if(overworld.getGameRules().getBoolean(GameRules.DO_WEATHER_CYCLE))
+				            {
+								IServerWorldInfo info = (IServerWorldInfo) overworld.getWorldInfo();
+								info.setRainTime(0);
+								info.setRaining(false);
+								info.setThunderTime(0);
+								info.setThundering(false);
+				            }
 						}
 						
 						this.sleep.clear();

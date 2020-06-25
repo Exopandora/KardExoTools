@@ -1,9 +1,7 @@
 package net.kardexo.kardexotools.command;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -14,9 +12,10 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 public class CommandWhereIs
@@ -30,16 +29,16 @@ public class CommandWhereIs
 	
 	private static int whereIs(CommandSource source, PlayerEntity target) throws CommandSyntaxException
 	{
-		BlockPos pos = target.getPosition();
-		String dimension = Objects.toString(Registry.DIMENSION_TYPE.getKey(target.dimension));
+		BlockPos pos = target.func_233580_cy_();
+		String dimension = target.world.func_234923_W_().func_240901_a_().toString();
 		
-		Set<Property> bases = new HashSet<Property>();
+		Set<Property> properties = new HashSet<Property>();
 		
 		for(Property base : Config.BASES.getData().values())
 		{
 			if(base.isInside(target))
 			{
-				bases.add(base);
+				properties.add(base);
 			}
 		}
 		
@@ -47,27 +46,33 @@ public class CommandWhereIs
 		{
 			if(place.isInside(target))
 			{
-				bases.add(place);
+				properties.add(place);
 			}
 		}
 		
-		ITextComponent textComponent = null;
+		ITextComponent formattedProperties = null;
 		
-		for(Property place : bases)
+		for(Property place : properties)
 		{
-			if(textComponent == null)
+			if(formattedProperties == null)
 			{
-				textComponent = place.getDisplayName();
+				formattedProperties = place.getDisplayName();
 			}
 			else
 			{
-				textComponent = new TranslationTextComponent("%s, %s", textComponent, place.getDisplayName());
+				formattedProperties = new TranslationTextComponent("%s, %s", formattedProperties, place.getDisplayName());
 			}
 		}
 		
-		String result = "%s: d: " + dimension + " x: " + pos.getX() + " y: " + pos.getY() + " z: " + pos.getZ() + (textComponent != null ? " (%s)" : "");
-		source.getServer().logInfo("Query: " + String.format(result, target.getGameProfile().getName(), String.join(", ", bases.parallelStream().map(Property::getName).collect(Collectors.toList()))));
-		source.sendFeedback(new TranslationTextComponent(result, target.getDisplayName(), textComponent), false);
+		StringTextComponent result = new StringTextComponent(target.getGameProfile().getName() + ": d: " + dimension + " x: " + pos.getX() + " y: " + pos.getY() + " z: " + pos.getZ());
+		
+		if(formattedProperties != null)
+		{
+			result.func_240702_b_(" (").func_230529_a_(formattedProperties).func_240702_b_(")");
+		}
+		
+		source.getServer().sendMessage(new StringTextComponent("Query: ").func_230529_a_(result), Util.field_240973_b_);
+		source.sendFeedback(result, false);
 		
 		return 1;
 	}

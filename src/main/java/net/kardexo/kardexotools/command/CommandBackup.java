@@ -3,7 +3,7 @@ package net.kardexo.kardexotools.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import net.kardexo.kardexotools.tasks.Tasks;
+import net.kardexo.kardexotools.tasks.TaskBackup;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 
@@ -18,7 +18,7 @@ public class CommandBackup
 	
 	private static int backup(CommandSource source) throws CommandSyntaxException
 	{
-		source.getServer().execute(Tasks.BACKUP);
+		source.getServer().execute(new TaskBackup(source.getServer()));
 		return 1;
 	}
 }

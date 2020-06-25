@@ -81,7 +81,7 @@ public class CommandSetBiome
 					chunk.markDirty();
 					world.getChunkProvider().chunkManager.getTrackingPlayers(chunk.getPos(), false).forEach(player ->
 					{
-						player.connection.sendPacket(new SChunkDataPacket(chunk, 65535));
+						player.connection.sendPacket(new SChunkDataPacket(chunk, 65535, true));
 					});
 				}
 			}

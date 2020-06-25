@@ -1,11 +1,11 @@
 --- a/net/minecraft/command/impl/TeleportCommand.java
 +++ b/net/minecraft/command/impl/TeleportCommand.java
-@@ -149,7 +149,7 @@
+@@ -154,7 +154,7 @@
          return targets.size();
      }
  
--    private static void teleport(CommandSource source, Entity entityIn, ServerWorld worldIn, double x, double y, double z, Set<SPlayerPositionLookPacket.Flags> relativeList, float yaw, float pitch, @Nullable TeleportCommand.Facing facing)
-+    public static void teleport(CommandSource source, Entity entityIn, ServerWorld worldIn, double x, double y, double z, Set<SPlayerPositionLookPacket.Flags> relativeList, float yaw, float pitch, @Nullable TeleportCommand.Facing facing)
+-    private static void teleport(CommandSource source, Entity entityIn, ServerWorld worldIn, double x, double y, double z, Set<SPlayerPositionLookPacket.Flags> relativeList, float yaw, float pitch, @Nullable TeleportCommand.Facing facing) throws CommandSyntaxException
++    public static void teleport(CommandSource source, Entity entityIn, ServerWorld worldIn, double x, double y, double z, Set<SPlayerPositionLookPacket.Flags> relativeList, float yaw, float pitch, @Nullable TeleportCommand.Facing facing) throws CommandSyntaxException
      {
-         if (entityIn instanceof ServerPlayerEntity)
-         {
+         BlockPos blockpos = new BlockPos(x, y, z);
+ 

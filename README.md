@@ -15,10 +15,8 @@
 	backup      | Fource world backup                                           | Admin
 	bases       | Configure bases                                               | Everyone
 	calc        | Calculate mathematical expressions                            | Everyone
-	forcesave   | Force world save                                              | Admin
 	home        | Teleport to home location                                     | Everyone
 	kardexo     | Print version and commands depending on your permission level | Everyone
-	locatebiome | Locate biome                                                  | Everyone
 	moonphase   | Print current moon phase                                      | Everyone
 	places      | Configure places                                              | Everyone
 	resource    | Calculate resources needed for specified area                 | Everyone

@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/management/PlayerInteractionManager.java
 +++ b/net/minecraft/server/management/PlayerInteractionManager.java
-@@ -271,7 +271,7 @@
+@@ -274,7 +274,7 @@
          }
      }
  
@@ -9,16 +9,16 @@
      {
          BlockState blockstate = this.world.getBlockState(pos);
  
-@@ -316,7 +316,7 @@
+@@ -319,7 +319,7 @@
  
                      if (flag && flag1)
                      {
 -                        block.harvestBlock(this.world, this.player, pos, blockstate, tileentity, itemstack1);
-+                        block.harvestBlock(this.world, this.player, dropAtPlayer ? this.player.getPosition() : pos, blockstate, tileentity, itemstack1);
++                        block.harvestBlock(this.world, this.player, dropAtPlayer ? this.player.func_233580_cy_() : pos, blockstate, tileentity, itemstack1);
                      }
  
                      return true;
-@@ -405,6 +405,7 @@
+@@ -409,6 +409,7 @@
  
              if (!flag1)
              {
@@ -26,11 +26,11 @@
                  ActionResultType actionresulttype = blockstate.onBlockActivated(worldIn, playerIn, handIn, blockRaytraceResultIn);
  
                  if (actionresulttype.isSuccessOrConsume())
-@@ -415,6 +416,7 @@
+@@ -420,6 +421,7 @@
  
              if (!stackIn.isEmpty() && !playerIn.getCooldownTracker().hasCooldown(stackIn.getItem()))
              {
 +            	if(!net.kardexo.kardexotools.property.PropertyHelper.canPlaceBlock(playerIn, blockpos, blockstate)) {return net.kardexo.kardexotools.property.PropertyHelper.cancelBlockInteraction(this.player);}
                  ItemUseContext itemusecontext = new ItemUseContext(playerIn, handIn, blockRaytraceResultIn);
+                 ActionResultType actionresulttype1;
  
-                 if (this.isCreative())

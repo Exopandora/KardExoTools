@@ -23,9 +23,9 @@ public class CommandSetHome
 	private static int setHome(CommandSource source) throws CommandSyntaxException
 	{
 		ServerPlayerEntity sender = source.asPlayer();
-		BlockPos pos = sender.getPosition();
+		BlockPos pos = sender.func_233580_cy_();
 		
-		Config.PLAYERS.getData().computeIfAbsent(source.getName(), PlayerConfig::new).setHome(new PlayerHome(pos, sender.dimension.getId()));
+		Config.PLAYERS.getData().computeIfAbsent(source.getName(), PlayerConfig::new).setHome(new PlayerHome(pos, sender.world.func_234923_W_().func_240901_a_()));
 		Config.PLAYERS.save();
 		
 		source.sendFeedback(new StringTextComponent("Home set to " + pos.getX() + " " + pos.getY() + " " + pos.getZ()), false);

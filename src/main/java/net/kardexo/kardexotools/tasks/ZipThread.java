@@ -2,18 +2,24 @@ package net.kardexo.kardexotools.tasks;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.io.IOUtils;
+
 public class ZipThread extends Thread
 {
-	private final String srcFolder;
-	private final String destZipFile;
-	private final Consumer<Long> callback;
+	private final Path srcFolder;
+	private final Path destZipFile;
+	private final Consumer<File> callback;
 	
-	public ZipThread(String name, String srcFolder, String destZipFile, Consumer<Long> callback)
+	public ZipThread(String name, Path srcFolder, Path destZipFile, Consumer<File> callback)
 	{
 		super(name);
 		this.srcFolder = srcFolder;
@@ -25,72 +31,42 @@ public class ZipThread extends Thread
 	{
 		try
 		{
-			this.callback.accept(this.zipFolder(this.srcFolder, this.destZipFile));
+			this.callback.accept(ZipThread.zip(this.srcFolder, this.destZipFile));
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
-			this.callback.accept(0L);
+			this.callback.accept(null);
 		}
 	}
 	
-	private long zipFolder(String srcFolder, String destZipFile) throws Exception
+	private static File zip(Path sourceDir, Path outputFile) throws IOException, FileNotFoundException
 	{
-		FileOutputStream fileOut = new FileOutputStream(destZipFile);
-		ZipOutputStream zipOut = new ZipOutputStream(fileOut);
+		Files.createDirectories(outputFile.getParent());
+		ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(outputFile.toFile()));
+	    ZipThread.zip(sourceDir, zip);
+		IOUtils.closeQuietly(zip);
 		
-		this.addFolderToZip("", srcFolder, zipOut);
-
-		fileOut.flush();
-		zipOut.flush();
-		
-		long size = fileOut.getChannel().size();
-		
-		zipOut.close();
-		fileOut.close();
-		
-		return size;
+		return outputFile.toFile();
 	}
 	
-	private void addFolderToZip(String path, String srcFolder, ZipOutputStream zip) throws Exception
+	private static void zip(Path sourceDir, ZipOutputStream zip) throws IOException, FileNotFoundException
 	{
-		File folder = new File(srcFolder);
-		
-		for(String fileName : folder.list())
+		for(File file : sourceDir.toFile().listFiles())
 		{
-			if(path.equals(""))
+			if(file.isDirectory())
 			{
-				this.addFileToZip(folder.getName(), srcFolder + "/" + fileName, zip);
+				ZipThread.zip(file.toPath(), zip);
 			}
-			else
+			else if(!file.getName().equals("session.lock"))
 			{
-				this.addFileToZip(path + "/" + folder.getName(), srcFolder + "/" + fileName, zip);
+	            ZipEntry entry = new ZipEntry(file.getPath());
+	            zip.putNextEntry(entry);
+	            
+	            FileInputStream input = new FileInputStream(file);
+	            IOUtils.copy(input, zip);
+				IOUtils.closeQuietly(input);
 			}
-		}
-	}
-	
-	private void addFileToZip(String path, String srcFile, ZipOutputStream zip) throws Exception
-	{
-		File folder = new File(srcFile);
-		
-		if(folder.isDirectory())
-		{
-			this.addFolderToZip(path, srcFile, zip);
-		}
-		else
-		{
-			FileInputStream input = new FileInputStream(srcFile);
-			zip.putNextEntry(new ZipEntry(path + "/" + folder.getName()));
-			
-			int length;
-			byte[] buffer = new byte[1024];
-			
-			while((length = input.read(buffer)) > 0)
-			{
-				zip.write(buffer, 0, length);
-			}
-			
-			input.close();
 		}
 	}
 }

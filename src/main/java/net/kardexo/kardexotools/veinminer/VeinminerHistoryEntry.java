@@ -8,23 +8,24 @@ import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.World;
 
 public class VeinminerHistoryEntry
 {
-	private final DimensionType dimension;
+	private final RegistryKey<World> world;
 	private final Map<BlockState, Set<BlockPos>> stateMap;
 	
-	public VeinminerHistoryEntry(DimensionType dimension, Map<BlockState, Set<BlockPos>> stateMap)
+	public VeinminerHistoryEntry(RegistryKey<World> world, Map<BlockState, Set<BlockPos>> stateMap)
 	{
-		this.dimension = dimension;
+		this.world = world;
 		this.stateMap = stateMap;
 	}
 	
-	public DimensionType getDimension()
+	public RegistryKey<World> getWorld()
 	{
-		return this.dimension;
+		return this.world;
 	}
 	
 	public Map<BlockState, Set<BlockPos>> getStateMap()

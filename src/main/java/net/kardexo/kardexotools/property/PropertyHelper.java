@@ -6,7 +6,6 @@ import java.util.function.Consumer;
 
 import com.google.common.collect.Lists;
 
-import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.config.Config;
 import net.kardexo.kardexotools.config.DataFile;
 import net.kardexo.kardexotools.tasks.TickableBases;
@@ -21,11 +20,11 @@ import net.minecraft.network.play.client.CUseEntityPacket.Action;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ColumnPos;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
 
 public class PropertyHelper
 {
-	public static void add(String id, DimensionType dimension, ColumnPos from, ColumnPos to, String owner, String title, DataFile<Property, String> file) throws IllegalStateException
+	public static void add(String id, ServerWorld dimension, ColumnPos from, ColumnPos to, String owner, String title, DataFile<Property, String> file) throws IllegalStateException
 	{
 		if(file.getData().containsKey(id))
 		{
@@ -38,7 +37,7 @@ public class PropertyHelper
 		double xMax = Math.max(from.x, to.x);
 		double zMax = Math.max(from.z, to.z);
 		
-		Property property = new Property(id, title, Lists.newArrayList(new PropertyOwner(owner, true, true, null, null)), dimension.getId(), xMin, zMin, xMax, zMax);
+		Property property = new Property(id, title, Lists.newArrayList(new PropertyOwner(owner, true, true, null, null)), dimension.func_234923_W_().func_240901_a_(), xMin, zMin, xMax, zMax);
 		
 		file.getData().put(id, property);
 		file.save();
@@ -60,7 +59,7 @@ public class PropertyHelper
 		}
 	}
 	
-	public static void addChild(Property parent, String id, DimensionType dimension, ColumnPos from, ColumnPos to, String title, DataFile<Property, String> file) throws IllegalStateException
+	public static void addChild(Property parent, String id, ServerWorld dimension, ColumnPos from, ColumnPos to, String title, DataFile<Property, String> file) throws IllegalStateException
 	{
 		double xMin = Math.min(from.x, to.x);
 		double zMin = Math.min(from.z, to.z);
@@ -68,7 +67,7 @@ public class PropertyHelper
 		double xMax = Math.max(from.x, to.x);
 		double zMax = Math.max(from.z, to.z);
 		
-		Property property = new Property(id, title, Collections.emptyList(), dimension.getId(), xMin, zMin, xMax, zMax);
+		Property property = new Property(id, title, Collections.emptyList(), dimension.func_234923_W_().func_240901_a_(), xMin, zMin, xMax, zMax);
 		
 		if(property.getChild(id) != null)
 		{
@@ -162,7 +161,7 @@ public class PropertyHelper
 		
 		for(Property property : file.getData().values())
 		{
-			if(property.isProtected() && !property.isOwner(name) && property.isInside(pos, player.dimension.getId()))
+			if(property.isProtected() && !property.isOwner(name) && property.isInside(pos, player.world.func_234923_W_().func_240901_a_()))
 			{
 				return true;
 			}
@@ -178,7 +177,7 @@ public class PropertyHelper
 	
 	private static boolean isProtected(PlayerEntity player, Entity entity)
 	{
-		return isProtected(player, entity.getPosition(), Config.BASES) || isProtected(player, entity.getPosition(), Config.PLACES);
+		return isProtected(player, entity.func_233580_cy_(), Config.BASES) || isProtected(player, entity.func_233580_cy_(), Config.PLACES);
 	}
 	
 	public static boolean canHarvestBlock(PlayerEntity player, BlockPos pos)
@@ -203,7 +202,7 @@ public class PropertyHelper
 	
 	public static ActionResultType cancelBlockInteraction(ServerPlayerEntity player)
 	{
-		KardExo.getServer().getPlayerList().sendInventory(player);
+		player.getServer().getPlayerList().sendInventory(player);
 		return ActionResultType.PASS;
 	}
 }

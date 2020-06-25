@@ -8,11 +8,14 @@ import com.google.common.collect.Lists;
 import com.google.gson.annotations.SerializedName;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.event.HoverEvent;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.World;
 
 public class Property
 {
@@ -20,7 +23,7 @@ public class Property
 	private List<Property> children;
 	private String name;
 	private String title;
-	private int dimension;
+	private ResourceLocation dimension;
 	private double xMin;
 	private double zMin;
 	private double xMax;
@@ -28,7 +31,7 @@ public class Property
 	@SerializedName("protected")
 	private boolean isProtected;
 	
-	public Property(String name, String title, List<PropertyOwner> owners, int dimension, double xMin, double zMin, double xMax, double zMax)
+	public Property(String name, String title, List<PropertyOwner> owners, ResourceLocation dimension, double xMin, double zMin, double xMax, double zMax)
 	{
 		this.name = name;
 		this.title = title;
@@ -90,14 +93,19 @@ public class Property
 		this.zMax = zMax;
 	}
 	
-	public int getDimension()
+	public RegistryKey<World> getDimension()
 	{
-		return this.dimension;
+		return RegistryKey.func_240903_a_(Registry.field_239699_ae_, this.dimension);
 	}
 	
-	public void setDimension(int dimension)
+	public void setDimension(ResourceLocation dimension)
 	{
 		this.dimension = dimension;
+	}
+	
+	public void setDimension(RegistryKey<World> dimension)
+	{
+		this.dimension = dimension.func_240901_a_();
 	}
 	
 	public String getTitle()
@@ -189,30 +197,30 @@ public class Property
 	
 	public boolean isInside(PlayerEntity player)
 	{
-		return this.isInside(player.getPosition(), player.dimension.getId());
+		return this.isInside(player.func_233580_cy_(), player.world.func_234923_W_().func_240901_a_());
 	}
 	
-	public boolean isInside(BlockPos pos, int dimension)
+	public boolean isInside(BlockPos pos, ResourceLocation dimension)
 	{
 		return this.isInsideMain(pos, dimension) || this.isInsideChild(pos, dimension);
 	}
 	
 	public boolean isInsideMain(PlayerEntity player)
 	{
-		return this.isInsideMain(player.getPosition(), player.dimension.getId());
+		return this.isInsideMain(player.func_233580_cy_(), player.world.func_234923_W_().func_240901_a_());
 	}
 	
-	public boolean isInsideMain(BlockPos pos, int dimension)
+	public boolean isInsideMain(BlockPos pos, ResourceLocation dimension)
 	{
-		return pos.getX() >= this.xMin && pos.getX() <= this.xMax && pos.getZ() >= this.zMin && pos.getZ() <= this.zMax && dimension == this.dimension;
+		return pos.getX() >= this.xMin && pos.getX() <= this.xMax && pos.getZ() >= this.zMin && pos.getZ() <= this.zMax && dimension.equals(this.dimension);
 	}
 	
 	public boolean isInsideChild(PlayerEntity player)
 	{
-		return this.isInsideChild(player.getPosition(), player.dimension.getId());
+		return this.isInsideChild(player.func_233580_cy_(), player.world.func_234923_W_().func_240901_a_());
 	}
 	
-	public boolean isInsideChild(BlockPos pos, int dimension)
+	public boolean isInsideChild(BlockPos pos, ResourceLocation dimension)
 	{
 		if(this.children != null)
 		{
@@ -329,7 +337,7 @@ public class Property
 			builder.append("\nOwners: " + this.getOwners(", "));
 		}
 		
-		builder.append("\nDimension: " + DimensionType.getById(this.dimension).getSuffix());
+		builder.append("\nDimension: " + this.dimension);
 		
 		if(this.children != null)
 		{
@@ -342,8 +350,8 @@ public class Property
 		builder.append("\nProtected: " + this.isProtected);
 		
 		ITextComponent basetextcomponent = new StringTextComponent(this.getTitle());
-		basetextcomponent.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent(builder.toString())));
-		basetextcomponent.getStyle().setInsertion(this.name);
+		basetextcomponent.getStyle().func_240716_a_(new HoverEvent(HoverEvent.Action.field_230550_a_, new StringTextComponent(builder.toString())));
+		basetextcomponent.getStyle().func_240714_a_(this.name); //setInsertion
 		
 		return basetextcomponent;
 	}

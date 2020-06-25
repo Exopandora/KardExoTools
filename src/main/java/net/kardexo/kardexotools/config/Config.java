@@ -1,6 +1,8 @@
 package net.kardexo.kardexotools.config;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -9,10 +11,8 @@ import com.mojang.brigadier.CommandDispatcher;
 import net.kardexo.kardexotools.command.CommandBackup;
 import net.kardexo.kardexotools.command.CommandBases;
 import net.kardexo.kardexotools.command.CommandCalculate;
-import net.kardexo.kardexotools.command.CommandForceSave;
 import net.kardexo.kardexotools.command.CommandHome;
 import net.kardexo.kardexotools.command.CommandKardExo;
-import net.kardexo.kardexotools.command.CommandLocateBiome;
 import net.kardexo.kardexotools.command.CommandMoonPhase;
 import net.kardexo.kardexotools.command.CommandPlaces;
 import net.kardexo.kardexotools.command.CommandResource;
@@ -31,7 +31,7 @@ import net.minecraft.command.CommandSource;
 
 public class Config
 {
-	public static final String VERSION = "1.15.2-2.40.4";
+	public static final String VERSION = "1.16.1-2.41";
 	
 	//** CONFIGURABLE VALUES **//
 	
@@ -71,9 +71,6 @@ public class Config
 	/** Number of history entries for the undo command **/
 	public static final int HISTORY_SIZE = 5;
 	
-	/** Maximum radius to search for a biome **/
-	public static final int LOCATE_BIOME_RADIUS = 10000;
-	
 	/** Backup Directory **/
 	public static final File BACKUP_DIRECTORY = new File("backup");
 	
@@ -91,6 +88,8 @@ public class Config
 		initial.add(new VeinminerConfigEntry(Blocks.BIRCH_LOG, 15, true));
 		initial.add(new VeinminerConfigEntry(Blocks.DARK_OAK_LOG, 10, true));
 		initial.add(new VeinminerConfigEntry(Blocks.ACACIA_LOG, 10, true));
+		initial.add(new VeinminerConfigEntry(Blocks.field_235377_mq_, 26, true)); //crimson_stem
+		initial.add(new VeinminerConfigEntry(Blocks.field_235368_mh_, 26, true)); //warped_stem
 		
 		initial.add(new VeinminerConfigEntry(Blocks.OAK_LEAVES, 5, true));
 		initial.add(new VeinminerConfigEntry(Blocks.SPRUCE_LEAVES, 5, true));
@@ -98,26 +97,32 @@ public class Config
 		initial.add(new VeinminerConfigEntry(Blocks.BIRCH_LEAVES, 5, true));
 		initial.add(new VeinminerConfigEntry(Blocks.DARK_OAK_LEAVES, 5, true));
 		initial.add(new VeinminerConfigEntry(Blocks.ACACIA_LEAVES, 5, true));
+		initial.add(new VeinminerConfigEntry(Blocks.NETHER_WART_BLOCK, 5, true));
+		initial.add(new VeinminerConfigEntry(Blocks.field_235374_mn_, 5, true));
 		
 		initial.add(new VeinminerConfigEntry(Blocks.ANDESITE, 15, true));
 		initial.add(new VeinminerConfigEntry(Blocks.DIORITE, 15, true));
 		initial.add(new VeinminerConfigEntry(Blocks.GRANITE, 15, true));
 		
-		initial.add(new VeinminerConfigEntry(Blocks.GRAVEL, 10, true));
+		initial.add(new VeinminerConfigEntry(Blocks.GRAVEL, 6, true));
 		initial.add(new VeinminerConfigEntry(Blocks.GLOWSTONE, 10, false));
 		initial.add(new VeinminerConfigEntry(Blocks.SOUL_SAND, 5, true));
 		initial.add(new VeinminerConfigEntry(Blocks.OBSIDIAN, 5, true));
-		initial.add(new VeinminerConfigEntry(Blocks.SAND, 5, true));
+		initial.add(new VeinminerConfigEntry(Blocks.field_235399_ni_, 5, true)); //crying_obsidian
+		initial.add(new VeinminerConfigEntry(Blocks.SAND, 7, true));
 		initial.add(new VeinminerConfigEntry(Blocks.RED_SAND, 5, true));
-		initial.add(new VeinminerConfigEntry(Blocks.CLAY, 5, true));
+		initial.add(new VeinminerConfigEntry(Blocks.CLAY, 4, true));
 		
 		initial.add(new VeinminerConfigEntry(Blocks.COAL_ORE, 17, true));
 		initial.add(new VeinminerConfigEntry(Blocks.IRON_ORE, 9, true));
 		initial.add(new VeinminerConfigEntry(Blocks.GOLD_ORE, 9, true));
+		initial.add(new VeinminerConfigEntry(Blocks.field_235387_nA_, 9, true)); //gilded_blackstone
 		initial.add(new VeinminerConfigEntry(Blocks.DIAMOND_ORE, 9, true));
 		initial.add(new VeinminerConfigEntry(Blocks.LAPIS_ORE, 7, true));
 		initial.add(new VeinminerConfigEntry(Blocks.REDSTONE_ORE, 8, true));
 		initial.add(new VeinminerConfigEntry(Blocks.NETHER_QUARTZ_ORE, 14, true));
+		initial.add(new VeinminerConfigEntry(Blocks.field_235334_I_, 10, true)); //nether_gold_ore
+		initial.add(new VeinminerConfigEntry(Blocks.field_235398_nh_, 3, true)); //ancient_debris
 		
 		initial.add(new VeinminerConfigEntry(Blocks.ICE, 10, true));
 		initial.add(new VeinminerConfigEntry(Blocks.PACKED_ICE, 10, true));
@@ -134,7 +139,6 @@ public class Config
 		commands.add(CommandWorldTime::register);
 		commands.add(CommandBases::register);
 		commands.add(CommandResource::register);
-		commands.add(CommandForceSave::register);
 		commands.add(CommandCalculate::register);
 		commands.add(CommandPlaces::register);
 		commands.add(CommandHome::register);
@@ -142,28 +146,16 @@ public class Config
 		commands.add(CommandSpawn::register);
 		commands.add(CommandVeinminer::register);
 		commands.add(CommandUndo::register);
-		commands.add(CommandLocateBiome::register);
 		commands.add(CommandKardExo::register);
 		commands.add(CommandSetBiome::register);
 	}
 	
 	//** DO NOT EDIT BELOW THIS LINE **//
 	
-	static
-	{
-		if(!BACKUP_DIRECTORY.exists())
-		{
-			BACKUP_DIRECTORY.mkdirs();
-		}
-		
-		if(!CONFIG_DIRECTORY.exists())
-		{
-			CONFIG_DIRECTORY.mkdirs();
-		}
-	}
-	
 	public static void saveAllFiles()
 	{
+		Config.createConfigDirectory();
+		
 		BASES.save();
 		PLACES.save();
 		PLAYERS.save();
@@ -172,9 +164,23 @@ public class Config
 	
 	public static void readAllFiles() throws Exception
 	{
+		Config.createConfigDirectory();
+		
 		BASES.read();
 		PLACES.read();
 		PLAYERS.read();
 		VEINMINER.read();
+	}
+	
+	private static void createConfigDirectory()
+	{
+		try
+		{
+			Files.createDirectories(CONFIG_DIRECTORY.toPath());
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 }

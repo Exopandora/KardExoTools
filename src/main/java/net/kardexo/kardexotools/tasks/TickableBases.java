@@ -13,7 +13,9 @@ import net.kardexo.kardexotools.property.Property;
 import net.kardexo.kardexotools.property.PropertyOwner;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.Util;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 public class TickableBases implements Runnable
@@ -73,10 +75,10 @@ public class TickableBases implements Runnable
 			switch(access)
 			{
 				case ENTER:
-					this.server.logInfo(name + " has entered base with id " + base.getTitle());
+					this.server.sendMessage(new StringTextComponent(name + " has entered base with id " + base.getTitle()), null);;
 					break;
 				case LEAVE:
-					this.server.logInfo(name + " has left base with id " + base.getTitle());
+					this.server.sendMessage(new StringTextComponent(name + " has left base with id " + base.getTitle()), null);
 					break;
 			}
 			
@@ -86,7 +88,7 @@ public class TickableBases implements Runnable
 				
 				if(playerOwner != null)
 				{
-					playerOwner.sendMessage(this.getFormattedMessage(player, base, owner, access));
+					playerOwner.sendMessage(this.getFormattedMessage(player, base, owner, access), Util.field_240973_b_);
 				}
 			}
 		}

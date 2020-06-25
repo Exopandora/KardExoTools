@@ -26,7 +26,7 @@ import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
 
 public class CommandBases
 {
@@ -116,7 +116,7 @@ public class CommandBases
 								.executes(context -> setProtection(context.getSource(), StringArgumentType.getString(context, "id"), BoolArgumentType.getBool(context, "enabled")))))));
 	}
 	
-	private static int add(CommandSource source, String id, DimensionType dimension, ColumnPos from, ColumnPos to, PlayerEntity owner, String title) throws CommandSyntaxException
+	private static int add(CommandSource source, String id, ServerWorld dimension, ColumnPos from, ColumnPos to, PlayerEntity owner, String title) throws CommandSyntaxException
 	{
 		try
 		{
@@ -305,7 +305,7 @@ public class CommandBases
 		return 0;
 	}
 	
-	private static int addChild(CommandSource source, String id, String child, DimensionType dimension, ColumnPos from, ColumnPos to, String title) throws CommandSyntaxException
+	private static int addChild(CommandSource source, String id, String child, ServerWorld dimension, ColumnPos from, ColumnPos to, String title) throws CommandSyntaxException
 	{
 		ensurePermission(source, id, null);
 		Property parent = getProperty(id);

@@ -7,7 +7,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
 public class CommandMoonPhase
@@ -33,8 +33,8 @@ public class CommandMoonPhase
 	private static int moonPhase(CommandSource source) throws CommandSyntaxException
 	{
 		MinecraftServer server = source.getServer();
-		ServerWorld overworld = server.getWorld(DimensionType.OVERWORLD);
-		int phase = overworld.getDimension().getMoonPhase(overworld.getDayTime());
+		ServerWorld overworld = server.getWorld(World.field_234918_g_);
+		int phase = overworld.func_230315_m_().func_236035_c_(overworld.getDayTime());
 		
 		source.sendFeedback(new StringTextComponent(PHASES[phase]), false);
 		

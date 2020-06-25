@@ -5,6 +5,7 @@ import java.util.List;
 
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.StringTextComponent;
 
@@ -27,7 +28,7 @@ public class TickableDeathListener implements Runnable
 			{
 				if(!this.cache.contains(player.getGameProfile().getName()))
 				{
-					player.sendMessage(new StringTextComponent("You died at " + MathHelper.floor(player.getPosX()) + " " + MathHelper.floor(player.getPosY()) + " " + MathHelper.floor(player.getPosZ())));
+					player.sendMessage(new StringTextComponent("You died at " + MathHelper.floor(player.getPosX()) + " " + MathHelper.floor(player.getPosY()) + " " + MathHelper.floor(player.getPosZ())), Util.field_240973_b_);
 					this.cache.add(player.getGameProfile().getName());
 				}
 			}
