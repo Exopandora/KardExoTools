@@ -1,6 +1,7 @@
 package net.kardexo.kardexotools.tasks;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -11,9 +12,13 @@ public class TaskScheduler
 {
 	private final List<Worker> workers = new ArrayList<Worker>();
 	
-	public void schedule(AbstractTask task, long offset, long interval, int[] warningTimes)
+	public void schedule(AbstractTask task, int offset, TimeUnit offsetUnit, int interval, TimeUnit intervalUnit, int[] warningTimes, TimeUnit warningTimesUnit)
 	{
-		Worker worker = new Worker(task, offset, interval, warningTimes);
+		long offsetMillis = offsetUnit.toMillis(offset);
+		long intervalMillis = intervalUnit.toMillis(interval);
+		long[] warningTimesMillis = Arrays.stream(warningTimes).mapToObj(warningTimesUnit::toMillis).sorted((a, b) -> Long.compare(b, a)).mapToLong(Long::longValue).toArray();
+		
+		Worker worker = new Worker(task, offsetMillis, intervalMillis, warningTimesMillis);
 		this.workers.add(worker);
 		worker.start();
 	}
@@ -31,9 +36,9 @@ public class TaskScheduler
 		private final AbstractTask task;
 		private final long offset;
 		private final long interval;
-		private final int[] warningTimes;
+		private final long[] warningTimes;
 		
-		public Worker(AbstractTask task, long offset, long interval, int[] warningTimes)
+		public Worker(AbstractTask task, long offset, long interval, long[] warningTimes)
 		{
 			super("KardExo/" + task.getName());
 			this.task = task;
