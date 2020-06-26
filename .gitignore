@@ -3,6 +3,7 @@
 
 # Except
 
+!/conf/settings.json
 !/src/
 !/patches/
 !.gitignore

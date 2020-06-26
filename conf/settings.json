@@ -1,0 +1,15 @@
+{
+	"modname": "kardexotools",
+	"modversion": "1.0",
+	"mcpconfig": "1.16.1-20200625.160719",
+	"mappings": "20200514-1.16",
+	"mcversion": "1.16.1",
+	"pipeline": "joined",
+	"clientmain": "mcp.client.Start",
+	"servermain": "net.minecraft.server.Main",
+	"reformat": true,
+	"customsrg": null,
+	"nopatches": false,
+	"customconstructors": null,
+	"fernflower": null
+}
