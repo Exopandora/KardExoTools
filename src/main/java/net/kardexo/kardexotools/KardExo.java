@@ -47,8 +47,8 @@ public class KardExo
 		KardExo.registerTickables(server);
 		KardExo.registerCommands(server.getCommandManager().getDispatcher());
 		
-		KardExo.TASK_SCHEDULER.schedule(new TaskSave(server), Config.OFFSET_SAVE, TimeUnit.SECONDS, Config.INTERVAL_SAVE, TimeUnit.SECONDS, Config.WARNING_TIMES_SAVE, TimeUnit.SECONDS);
-		KardExo.TASK_SCHEDULER.schedule(new TaskBackup(server), Config.OFFSET_BACKUP, TimeUnit.SECONDS, Config.INTERVAL_BACKUP, TimeUnit.SECONDS, Config.WARNING_TIMES_BACKUP, TimeUnit.SECONDS);
+		KardExo.TASK_SCHEDULER.schedule(new TaskSave(server), Config.OFFSET_SAVE, TimeUnit.MINUTES, Config.INTERVAL_SAVE, TimeUnit.MINUTES, Config.WARNING_TIMES_SAVE, TimeUnit.SECONDS);
+		KardExo.TASK_SCHEDULER.schedule(new TaskBackup(server), Config.OFFSET_BACKUP, TimeUnit.MINUTES, Config.INTERVAL_BACKUP, TimeUnit.MINUTES, Config.WARNING_TIMES_BACKUP, TimeUnit.SECONDS);
 	}
 	
 	private static void setupLevelSaving(MinecraftServer server)
