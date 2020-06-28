@@ -12,7 +12,7 @@
 
 	Command     | Feature                                                       | Permissions
 	----------- | ------------------------------------------------------------- | -----------
-	backup      | Fource world backup                                           | Admin
+	backup      | Force world backup                                           | Admin
 	bases       | Configure bases                                               | Everyone
 	calc        | Calculate mathematical expressions                            | Everyone
 	home        | Teleport to home location                                     | Everyone
