@@ -6,6 +6,8 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.function.Consumer;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mojang.brigadier.CommandDispatcher;
 
 import net.kardexo.kardexotools.command.CommandBackup;
@@ -28,6 +30,8 @@ import net.kardexo.kardexotools.veinminer.VeinminerConfigEntry;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.command.CommandSource;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 
 public class Config
 {
@@ -152,24 +156,39 @@ public class Config
 	
 	//** DO NOT EDIT BELOW THIS LINE **//
 	
+	private static final Gson GSON = new GsonBuilder()
+			.registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
+			.registerTypeAdapter(BlockPos.class, new BlockPosTypeAdapter())
+			.disableHtmlEscaping()
+			.setPrettyPrinting()
+			.create();
+	
 	public static void saveAllFiles()
 	{
-		Config.createConfigDirectory();
-		
-		BASES.save();
-		PLACES.save();
-		PLAYERS.save();
-		VEINMINER.save();
+		Config.save(BASES);
+		Config.save(PLACES);
+		Config.save(PLAYERS);
+		Config.save(VEINMINER);
 	}
 	
 	public static void readAllFiles() throws Exception
 	{
+		Config.read(BASES);
+		Config.read(PLACES);
+		Config.read(PLAYERS);
+		Config.read(VEINMINER);
+	}
+	
+	public static void save(DataFile<?, ?> file)
+	{
 		Config.createConfigDirectory();
-		
-		BASES.read();
-		PLACES.read();
-		PLAYERS.read();
-		VEINMINER.read();
+		file.save(GSON);
+	}
+	
+	public static void read(DataFile<?, ?> file) throws Exception
+	{
+		Config.createConfigDirectory();
+		file.read(GSON);
 	}
 	
 	private static void createConfigDirectory()

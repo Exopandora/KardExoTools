@@ -118,7 +118,7 @@ public class CommandPlaces
 	{
 		try
 		{
-			Config.PLACES.read();
+			Config.read(Config.PLACES);
 			source.sendFeedback(new StringTextComponent("Successfully reloaded places"), false);
 		}
 		catch(Exception e)
@@ -169,7 +169,7 @@ public class CommandPlaces
 	{
 		ensurePermission(source, id, null);
 		getProperty(id).setProtected(enabled);
-		Config.PLACES.save();
+		Config.save(Config.PLACES);
 		
 		if(enabled)
 		{

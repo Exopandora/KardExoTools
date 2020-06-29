@@ -190,7 +190,7 @@ public class CommandBases
 		PropertyHelper.forOwner(id, player, Config.BASES, owner ->
 		{
 			callback.accept(owner);
-			Config.BASES.save();
+			Config.save(Config.BASES);
 		});
 	}
 	
@@ -206,7 +206,7 @@ public class CommandBases
 		
 		PropertyOwner owner = new PropertyOwner(player.getGameProfile().getName());
 		Config.BASES.getData().get(id).addOwner(owner);
-		Config.BASES.save();
+		Config.save(Config.BASES);
 		
 		if(creator)
 		{
@@ -230,7 +230,7 @@ public class CommandBases
 		PropertyOwner owner = new PropertyOwner(player.getGameProfile().getName());
 		property.removeOwner(owner);
 		source.sendFeedback(new StringTextComponent("Removed " + owner.getName() +  " as an owner of the base with id " + id), false);
-		Config.BASES.save();
+		Config.save(Config.BASES);
 		
 		return 1;
 	}
@@ -254,15 +254,13 @@ public class CommandBases
 				{
 					owner.setCreator(true);
 					source.sendFeedback(new StringTextComponent(owner.getName() + " is now a creator of base with id " + id), false);
-					
-					Config.BASES.save();
+					Config.save(Config.BASES);
 				}
 				else if(owner.isCreator() && !creator)
 				{
 					owner.setCreator(false);
 					source.sendFeedback(new StringTextComponent(owner.getName() + " is now an owner of base with id " + id), false);
-					
-					Config.BASES.save();
+					Config.save(Config.BASES);
 				}
 				else if(!owner.isCreator() && !creator)
 				{
@@ -287,7 +285,7 @@ public class CommandBases
 			if(owner.getName().equals(player.getGameProfile().getName()))
 			{
 				owner.setNotify(notify);
-				Config.BASES.save();
+				Config.save(Config.BASES);
 				
 				if(notify)
 				{
@@ -345,7 +343,7 @@ public class CommandBases
 	{
 		ensurePermission(source, id, null);
 		getProperty(id).setProtected(enabled);
-		Config.BASES.save();
+		Config.save(Config.BASES);
 		
 		if(enabled)
 		{
@@ -377,7 +375,7 @@ public class CommandBases
 		
 		try
 		{
-			Config.BASES.read();
+			Config.save(Config.BASES);
 			source.sendFeedback(new StringTextComponent("Successfully reloaded bases"), false);
 		}
 		catch(Exception e)

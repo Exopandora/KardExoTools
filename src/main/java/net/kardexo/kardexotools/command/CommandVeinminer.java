@@ -34,7 +34,7 @@ public class CommandVeinminer
 	private static int setVeinminer(CommandSource source, boolean enabled) throws CommandSyntaxException
 	{
 		Config.PLAYERS.getData().computeIfAbsent(source.getName(), PlayerConfig::new).setVeinminerEnabled(enabled);
-		Config.PLAYERS.save();
+		Config.save(Config.PLAYERS);
 		
 		if(enabled)
 		{

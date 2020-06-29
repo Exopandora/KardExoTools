@@ -40,7 +40,7 @@ public class PropertyHelper
 		Property property = new Property(id, title, Lists.newArrayList(new PropertyOwner(owner, true, true, null, null)), dimension.func_234923_W_().func_240901_a_(), xMin, zMin, xMax, zMax);
 		
 		file.getData().put(id, property);
-		file.save();
+		Config.save(file);
 	}
 	
 	public static void remove(String id, DataFile<Property, String> file) throws NoSuchElementException
@@ -51,7 +51,7 @@ public class PropertyHelper
 		{
 			TickableBases.remove(property);
 			file.getData().remove(id);
-			file.save();
+			Config.save(file);
 		}
 		else
 		{
@@ -75,7 +75,7 @@ public class PropertyHelper
 		}
 		
 		parent.addChild(property);
-		file.save();
+		Config.save(file);
 	}
 	
 	public static void removeChild(Property parent, String id, DataFile<Property, String> file) throws NoSuchElementException
@@ -88,7 +88,7 @@ public class PropertyHelper
 		}
 		
 		parent.removeChild(child);
-		file.save();
+		Config.save(file);
 	}
 	
 	public static boolean isCreator(String name, String id, DataFile<Property, String> file)

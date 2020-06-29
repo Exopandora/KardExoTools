@@ -14,20 +14,11 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
-import net.minecraft.util.ResourceLocation;
-
 public class DataFile<T, K>
 {
-	private static final Gson GSON = new GsonBuilder()
-			.registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
-			.disableHtmlEscaping()
-			.setPrettyPrinting()
-			.create();
-	
 	private final File file;
 	private final Map<K, T> data = new HashMap<K, T>();
 	private final Class<T[]> klass;
@@ -62,9 +53,9 @@ public class DataFile<T, K>
 		return this.data;
 	}
 	
-	public void save()
+	public void save(Gson gson)
 	{
-		String data = GSON.toJson(this.data.values());
+		String data = gson.toJson(this.data.values());
 		
 		if(data != null)
 		{
@@ -87,9 +78,9 @@ public class DataFile<T, K>
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void read() throws Exception
+	public void read(Gson gson) throws Exception
 	{
-		T[] file = DataFile.<T[]>readFile(this.file, this.klass);
+		T[] file = DataFile.<T[]>readFile(gson, this.file, this.klass);
 		boolean flag = false;
 		this.data.clear();
 		
@@ -124,11 +115,11 @@ public class DataFile<T, K>
 		
 		if(flag)
 		{
-			this.save();
+			this.save(gson);
 		}
 	}
 	
-	private static <T> T readFile(File file, Class<T> klass) throws JsonSyntaxException, JsonIOException, FileNotFoundException
+	private static <T> T readFile(Gson gson, File file, Class<T> klass) throws JsonSyntaxException, JsonIOException, FileNotFoundException
 	{
 		if(!file.exists())
 		{
@@ -143,6 +134,6 @@ public class DataFile<T, K>
 			}
 		}
 		
-		return GSON.<T>fromJson(new FileReader(file), klass);
+		return gson.<T>fromJson(new FileReader(file), klass);
 	}
 }
