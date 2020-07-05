@@ -18,7 +18,8 @@ public class CommandBackup
 	
 	private static int backup(CommandSource source) throws CommandSyntaxException
 	{
-		source.getServer().execute(new TaskBackup(source.getServer()));
+		Thread thread = new Thread(new TaskBackup(source.getServer()));
+		thread.start();
 		return 1;
 	}
 }
