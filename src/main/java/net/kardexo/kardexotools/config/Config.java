@@ -132,6 +132,7 @@ public class Config
 		initial.add(new VeinminerConfigEntry(Blocks.PACKED_ICE, 10, true));
 		initial.add(new VeinminerConfigEntry(Blocks.BLUE_ICE, 10, true));
 		initial.add(new VeinminerConfigEntry(Blocks.BONE_BLOCK, 10, true));
+		initial.add(new VeinminerConfigEntry(Blocks.WET_SPONGE, 5, true));
 	});
 	
 	public static void commands(List<Consumer<CommandDispatcher<CommandSource>>> commands)
