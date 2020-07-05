@@ -1,5 +1,14 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
+@@ -159,7 +159,7 @@
+     private static final Logger LOGGER = LogManager.getLogger();
+     public static final File USER_CACHE_FILE = new File("usercache.json");
+     public static final WorldSettings DEMO_WORLD_SETTINGS = new WorldSettings("Demo World", GameType.SURVIVAL, false, Difficulty.NORMAL, false, new GameRules(), DatapackCodec.field_234880_a_);
+-    protected final SaveFormat.LevelSave anvilConverterForAnvilFile;
++    public final SaveFormat.LevelSave anvilConverterForAnvilFile;
+     protected final PlayerData field_240766_e_;
+     private final Snooper snooper = new Snooper("server", this, Util.milliTime());
+     private final List<Runnable> tickables = Lists.newArrayList();
 @@ -656,7 +656,7 @@
          {
              this.snooper.stop();

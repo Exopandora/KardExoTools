@@ -44,7 +44,7 @@ public class TaskBackup extends AbstractTask
 			
 			LocalDateTime date = LocalDateTime.now();
 			
-			String folderName = this.getServer().func_240793_aU_().getWorldName();
+			String folderName = this.getServer().anvilConverterForAnvilFile.func_237282_a_();
 			String time = String.format("%02d_%02d_%04d-%02d_%02d_%02d", date.getDayOfMonth(), date.getMonthValue(), date.getYear(), date.getHour(), date.getMinute(), date.getSecond());
 			String fileName = folderName + "-" + time;
 			
