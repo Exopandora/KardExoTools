@@ -78,7 +78,7 @@ public class TaskScheduler
 							Thread.sleep(waitTime);
 						}
 						
-						this.task.getServer().execute(this.task);
+						this.task.run();
 					}
 					
 					Thread.sleep(Math.max(0, this.interval - this.warningTimes[0] - (System.currentTimeMillis() - millis)));
