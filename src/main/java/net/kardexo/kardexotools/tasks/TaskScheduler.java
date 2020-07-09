@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import net.kardexo.kardexotools.KardExo;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.StringTextComponent;
 
 public class TaskScheduler
@@ -50,23 +51,25 @@ public class TaskScheduler
 		@Override
 		public void run()
 		{
+			MinecraftServer server = this.task.getServer();
+			
 			try
 			{
 				Thread.sleep(Math.max(0, this.offset - this.warningTimes[0]));
 				
-				while(this.task.getServer().isServerRunning())
+				while(server.isServerRunning())
 				{
 					long millis = System.currentTimeMillis();
 					
-					if(this.task.requiresPlayers() && this.task.getServer().getPlayerList().getPlayers().isEmpty())
+					if(this.task.requiresPlayers() && server.getPlayerList().getPlayers().isEmpty())
 					{
-						this.task.getServer().sendMessage(new StringTextComponent("Skipping task " + this.task.getName() + " as there are no players on the server"), null);
+						server.sendMessage(new StringTextComponent("Skipping task " + this.task.getName() + " as there are no players on the server"), null);
 					}
 					else
 					{
 						for(int x = 0; x < this.warningTimes.length; x++)
 						{
-							KardExo.notifyPlayers(this.task.getServer(), new StringTextComponent(this.task.getWarningMessage(TimeUnit.MILLISECONDS.toSeconds(this.warningTimes[x]))));
+							KardExo.notifyPlayers(server, new StringTextComponent(this.task.getWarningMessage(TimeUnit.MILLISECONDS.toSeconds(this.warningTimes[x]))));
 							
 							long waitTime = this.warningTimes[x];
 							
@@ -78,7 +81,7 @@ public class TaskScheduler
 							Thread.sleep(waitTime);
 						}
 						
-						this.task.run();
+						this.task.execute();
 					}
 					
 					Thread.sleep(Math.max(0, this.interval - this.warningTimes[0] - (System.currentTimeMillis() - millis)));

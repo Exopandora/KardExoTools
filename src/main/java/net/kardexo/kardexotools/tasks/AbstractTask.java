@@ -21,4 +21,9 @@ public abstract class AbstractTask implements Runnable
 	public abstract String getWarningMessage(long seconds);
 	
 	public abstract boolean requiresPlayers();
+	
+	public void execute()
+	{
+		this.server.execute(this);
+	}
 }
