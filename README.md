@@ -12,7 +12,7 @@
 
 	Command     | Feature                                                       | Permissions
 	----------- | ------------------------------------------------------------- | -----------
-	backup      | Force world backup                                           | Admin
+	backup      | Force world backup                                            | Admin
 	bases       | Configure bases                                               | Everyone
 	calc        | Calculate mathematical expressions                            | Everyone
 	home        | Teleport to home location                                     | Everyone
@@ -61,7 +61,7 @@ Once activated you can mine veins of blocks (configurable) by sneaking. It only 
 
 ## Configure (Optional) ##
 
-General config file: `src/main/java/exopandora/kardexo/kardexotools/config/Config.java`
+General config file: `src/main/java/net/kardexo/kardexotools/config/Config.java`
 
 ## Build ##
 
