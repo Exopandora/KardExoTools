@@ -12,6 +12,7 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.config.Config;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -105,7 +106,8 @@ public class TaskBackup extends AbstractTask
 			long bytes = file.length();
 			long duration = System.currentTimeMillis() - start;
 			StringTextComponent size = new StringTextComponent(FileUtils.byteCountToDisplaySize(bytes));
-			size.func_230530_a_(Style.field_240709_b_.func_240716_a_(new HoverEvent(Action.field_230550_a_, new TranslationTextComponent("%s\n%s bytes\n%s", file.getName(), String.format("%,d", bytes), DurationFormatUtils.formatDuration(duration, "HH:mm:ss")))));
+			ITextComponent hover = new TranslationTextComponent("%s\n%s bytes\n%s", file.getName(), String.format("%,d", bytes), DurationFormatUtils.formatDuration(duration, "HH:mm:ss"));
+			size.func_230530_a_(Style.field_240709_b_.func_240716_a_(new HoverEvent(Action.field_230550_a_, hover)));
 			KardExo.notifyPlayers(this.getServer(), new TranslationTextComponent("Backup Complete (%s)", size));
 		}
 		else

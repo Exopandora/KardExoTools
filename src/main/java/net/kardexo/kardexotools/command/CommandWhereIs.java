@@ -14,7 +14,7 @@ import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -50,7 +50,7 @@ public class CommandWhereIs
 			}
 		}
 		
-		ITextComponent formattedProperties = null;
+		IFormattableTextComponent formattedProperties = null;
 		
 		for(Property place : properties)
 		{
@@ -60,19 +60,19 @@ public class CommandWhereIs
 			}
 			else
 			{
-				formattedProperties = new TranslationTextComponent("%s, %s", formattedProperties, place.getDisplayName());
+				formattedProperties = new TranslationTextComponent("%s, %s", place.getDisplayName());
 			}
 		}
 		
-		StringTextComponent result = new StringTextComponent(target.getGameProfile().getName() + ": d: " + dimension + " x: " + pos.getX() + " y: " + pos.getY() + " z: " + pos.getZ());
+		IFormattableTextComponent query = new TranslationTextComponent("%s: x: %s y: %s z: %s d: %s", new Object[] {target.getDisplayName(), pos.getX(), pos.getY(), pos.getZ(), dimension});
 		
 		if(formattedProperties != null)
 		{
-			result.func_240702_b_(" (").func_230529_a_(formattedProperties).func_240702_b_(")");
+			query = new TranslationTextComponent("%s (%s)", new Object[] {query, formattedProperties});
 		}
 		
-		source.getServer().sendMessage(new StringTextComponent("Query: ").func_230529_a_(result), Util.field_240973_b_);
-		source.sendFeedback(result, false);
+		source.getServer().sendMessage(new StringTextComponent("Query: ").func_230529_a_(query), Util.field_240973_b_);
+		source.sendFeedback(query, false);
 		
 		return 1;
 	}

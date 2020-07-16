@@ -12,8 +12,9 @@ import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.world.World;
 
@@ -321,7 +322,7 @@ public class Property
 		return size;
 	}
 	
-	public ITextComponent getDisplayName()
+	public IFormattableTextComponent getDisplayName()
 	{
 		StringBuilder builder = new StringBuilder(this.getTitle());
 		
@@ -349,9 +350,11 @@ public class Property
 		builder.append("\nSize: " + this.getSize());
 		builder.append("\nProtected: " + this.isProtected);
 		
-		ITextComponent basetextcomponent = new StringTextComponent(this.getTitle());
-		basetextcomponent.getStyle().func_240716_a_(new HoverEvent(HoverEvent.Action.field_230550_a_, new StringTextComponent(builder.toString())));
-		basetextcomponent.getStyle().func_240714_a_(this.name); //setInsertion
+		IFormattableTextComponent basetextcomponent = new StringTextComponent(this.getTitle());
+		Style style = Style.field_240709_b_
+				.func_240716_a_(new HoverEvent(HoverEvent.Action.field_230550_a_, new StringTextComponent(builder.toString())))
+				.func_240714_a_(this.name); //setInsertion
+		basetextcomponent.func_240703_c_(style);
 		
 		return basetextcomponent;
 	}
