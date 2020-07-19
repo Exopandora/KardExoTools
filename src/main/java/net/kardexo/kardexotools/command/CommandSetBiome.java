@@ -10,6 +10,7 @@ import net.minecraft.command.arguments.ResourceLocationArgument;
 import net.minecraft.network.play.server.SChunkDataPacket;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.ColumnPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.biome.Biome;
@@ -44,9 +45,14 @@ public class CommandSetBiome
 		int chunkMinZ = minZ >> 4;
 		int chunkMaxZ = maxZ >> 4;
 		
-		for(int chunkX = chunkMinX; chunkX <= chunkMaxX; chunkX++)
+		int chunkClampMinX = MathHelper.clamp(chunkMinX, -1875000, 1875000);
+		int chunkClampMaxX = MathHelper.clamp(chunkMaxX, -1875000, 1875000);
+		int chunkClampMinZ = MathHelper.clamp(chunkMinZ, -1875000, 1875000);
+		int chunkClampMaxZ = MathHelper.clamp(chunkMaxZ, -1875000, 1875000);
+		
+		for(int chunkX = chunkClampMinX; chunkX <= chunkClampMaxX; chunkX++)
 		{
-			for(int chunkZ = chunkMinZ; chunkZ <= chunkMaxZ; chunkZ++)
+			for(int chunkZ = chunkClampMinZ; chunkZ <= chunkClampMaxZ; chunkZ++)
 			{
 				Chunk chunk = world.getChunk(chunkX, chunkZ);
 				Biome[] biomes = chunk.getBiomes().biomes;
