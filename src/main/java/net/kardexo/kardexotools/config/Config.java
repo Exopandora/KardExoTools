@@ -35,7 +35,7 @@ import net.minecraft.util.math.BlockPos;
 
 public class Config
 {
-	public static final String VERSION = "1.16.1-2.41.8";
+	public static final String VERSION = "1.16.2-2.41.8";
 	
 	//** CONFIGURABLE VALUES **//
 	
@@ -92,8 +92,8 @@ public class Config
 		initial.add(new VeinminerConfigEntry(Blocks.BIRCH_LOG, 15, true));
 		initial.add(new VeinminerConfigEntry(Blocks.DARK_OAK_LOG, 10, true));
 		initial.add(new VeinminerConfigEntry(Blocks.ACACIA_LOG, 10, true));
-		initial.add(new VeinminerConfigEntry(Blocks.field_235377_mq_, 26, true)); //crimson_stem
-		initial.add(new VeinminerConfigEntry(Blocks.field_235368_mh_, 26, true)); //warped_stem
+		initial.add(new VeinminerConfigEntry(Blocks.CRIMSON_STEM, 26, true));
+		initial.add(new VeinminerConfigEntry(Blocks.WARPED_STEM, 26, true));
 		
 		initial.add(new VeinminerConfigEntry(Blocks.OAK_LEAVES, 5, true));
 		initial.add(new VeinminerConfigEntry(Blocks.SPRUCE_LEAVES, 5, true));
@@ -102,7 +102,7 @@ public class Config
 		initial.add(new VeinminerConfigEntry(Blocks.DARK_OAK_LEAVES, 5, true));
 		initial.add(new VeinminerConfigEntry(Blocks.ACACIA_LEAVES, 5, true));
 		initial.add(new VeinminerConfigEntry(Blocks.NETHER_WART_BLOCK, 5, true));
-		initial.add(new VeinminerConfigEntry(Blocks.field_235374_mn_, 5, true));
+		initial.add(new VeinminerConfigEntry(Blocks.WARPED_WART_BLOCK, 5, true));
 		
 		initial.add(new VeinminerConfigEntry(Blocks.ANDESITE, 15, true));
 		initial.add(new VeinminerConfigEntry(Blocks.DIORITE, 15, true));
@@ -112,7 +112,7 @@ public class Config
 		initial.add(new VeinminerConfigEntry(Blocks.GLOWSTONE, 10, false));
 		initial.add(new VeinminerConfigEntry(Blocks.SOUL_SAND, 5, true));
 		initial.add(new VeinminerConfigEntry(Blocks.OBSIDIAN, 5, true));
-		initial.add(new VeinminerConfigEntry(Blocks.field_235399_ni_, 5, true)); //crying_obsidian
+		initial.add(new VeinminerConfigEntry(Blocks.CRYING_OBSIDIAN, 5, true));
 		initial.add(new VeinminerConfigEntry(Blocks.SAND, 7, true));
 		initial.add(new VeinminerConfigEntry(Blocks.RED_SAND, 5, true));
 		initial.add(new VeinminerConfigEntry(Blocks.CLAY, 4, true));
@@ -120,13 +120,13 @@ public class Config
 		initial.add(new VeinminerConfigEntry(Blocks.COAL_ORE, 17, true));
 		initial.add(new VeinminerConfigEntry(Blocks.IRON_ORE, 9, true));
 		initial.add(new VeinminerConfigEntry(Blocks.GOLD_ORE, 9, true));
-		initial.add(new VeinminerConfigEntry(Blocks.field_235387_nA_, 9, true)); //gilded_blackstone
+		initial.add(new VeinminerConfigEntry(Blocks.GILDED_BLACKSTONE, 9, true));
 		initial.add(new VeinminerConfigEntry(Blocks.DIAMOND_ORE, 9, true));
 		initial.add(new VeinminerConfigEntry(Blocks.LAPIS_ORE, 7, true));
 		initial.add(new VeinminerConfigEntry(Blocks.REDSTONE_ORE, 8, true));
 		initial.add(new VeinminerConfigEntry(Blocks.NETHER_QUARTZ_ORE, 14, true));
-		initial.add(new VeinminerConfigEntry(Blocks.field_235334_I_, 10, true)); //nether_gold_ore
-		initial.add(new VeinminerConfigEntry(Blocks.field_235398_nh_, 3, true)); //ancient_debris
+		initial.add(new VeinminerConfigEntry(Blocks.NETHER_GOLD_ORE, 10, true));
+		initial.add(new VeinminerConfigEntry(Blocks.ANCIENT_DEBRIS, 3, true));
 		
 		initial.add(new VeinminerConfigEntry(Blocks.ICE, 10, true));
 		initial.add(new VeinminerConfigEntry(Blocks.PACKED_ICE, 10, true));

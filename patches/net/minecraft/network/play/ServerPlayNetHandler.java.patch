@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/play/ServerPlayNetHandler.java
 +++ b/net/minecraft/network/play/ServerPlayNetHandler.java
-@@ -1390,7 +1390,7 @@
+@@ -1382,7 +1382,7 @@
          {
              double d0 = 36.0D;
  
@@ -8,4 +8,4 @@
 +            if (this.player.getDistanceSq(entity) < 36.0D && net.kardexo.kardexotools.property.PropertyHelper.canInteractWithEntity(this.player, entity, packetIn.getAction()))
              {
                  Hand hand = packetIn.getHand();
-                 Optional<ActionResultType> optional = Optional.empty();
+                 ItemStack itemstack = hand != null ? this.player.getHeldItem(hand).copy() : ItemStack.EMPTY;

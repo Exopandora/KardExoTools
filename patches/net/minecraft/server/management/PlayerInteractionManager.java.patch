@@ -14,7 +14,7 @@
                      if (flag && flag1)
                      {
 -                        block.harvestBlock(this.world, this.player, pos, blockstate, tileentity, itemstack1);
-+                        block.harvestBlock(this.world, this.player, dropAtPlayer ? this.player.func_233580_cy_() : pos, blockstate, tileentity, itemstack1);
++                        block.harvestBlock(this.world, this.player, dropAtPlayer ? this.player.getPosition() : pos, blockstate, tileentity, itemstack1);
                      }
  
                      return true;

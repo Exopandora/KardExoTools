@@ -21,7 +21,7 @@ import net.minecraft.util.text.event.HoverEvent.Action;
 
 public class TaskBackup extends AbstractTask
 {
-	private static boolean BACKUP_IN_PROGRESS;
+	private static boolean backupInProgress;
 	
 	public TaskBackup(MinecraftServer server)
 	{
@@ -31,13 +31,13 @@ public class TaskBackup extends AbstractTask
 	@Override
 	public void run()
 	{
-		if(BACKUP_IN_PROGRESS)
+		if(TaskBackup.backupInProgress)
 		{
 			KardExo.notifyPlayers(this.getServer(), new StringTextComponent("Backup already in progress"));
 		}
 		else
 		{
-			BACKUP_IN_PROGRESS = true;
+			TaskBackup.backupInProgress = true;
 			long start = System.currentTimeMillis();
 			
 			KardExo.notifyPlayers(this.getServer(), new StringTextComponent("Starting backup..."));
@@ -55,7 +55,7 @@ public class TaskBackup extends AbstractTask
 			ZipThread zipper = new ZipThread("backup", Paths.get(folderName), Config.BACKUP_DIRECTORY.toPath().resolve(fileName + ".zip"), file ->
 			{
 				this.printResult(file, start);
-				BACKUP_IN_PROGRESS = false;
+				TaskBackup.backupInProgress = false;
 			});
 			zipper.start();
 		}
@@ -107,7 +107,7 @@ public class TaskBackup extends AbstractTask
 			long duration = System.currentTimeMillis() - start;
 			StringTextComponent size = new StringTextComponent(FileUtils.byteCountToDisplaySize(bytes));
 			ITextComponent hover = new TranslationTextComponent("%s\n%s bytes\n%s", file.getName(), String.format("%,d", bytes), DurationFormatUtils.formatDuration(duration, "HH:mm:ss"));
-			size.func_230530_a_(Style.field_240709_b_.func_240716_a_(new HoverEvent(Action.field_230550_a_, hover)));
+			size.setStyle(Style.EMPTY.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, hover)));
 			KardExo.notifyPlayers(this.getServer(), new TranslationTextComponent("Backup Complete (%s)", size));
 		}
 		else

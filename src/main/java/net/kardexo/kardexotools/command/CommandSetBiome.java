@@ -7,6 +7,8 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.ColumnPosArgument;
 import net.minecraft.command.arguments.ResourceLocationArgument;
+import net.minecraft.command.arguments.SuggestionProviders;
+import net.minecraft.command.impl.LocateBiomeCommand;
 import net.minecraft.network.play.server.SChunkDataPacket;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.ColumnPos;
@@ -26,14 +28,14 @@ public class CommandSetBiome
 					.then(Commands.argument("from", ColumnPosArgument.columnPos())
 						.then(Commands.argument("to", ColumnPosArgument.columnPos())
 							.then(Commands.argument("biome", ResourceLocationArgument.resourceLocation())
-								.suggests(CommandBase.ALL_BIOMES)
+								.suggests(SuggestionProviders.field_239574_d_)
 								.executes(context -> CommandSetBiome.setBiome(context.getSource(), ColumnPosArgument.fromBlockPos(context, "from"), ColumnPosArgument.fromBlockPos(context, "to"), ResourceLocationArgument.getResourceLocation(context, "biome")))))));
 	}
 	
 	private static int setBiome(CommandSource source, ColumnPos from, ColumnPos to, ResourceLocation resource) throws CommandSyntaxException
 	{
 		ServerWorld world = source.getWorld();
-		Biome biome = Registry.BIOME.getValue(resource).orElseThrow(() -> CommandBase.BIOME_NOT_FOUND.create(resource));
+        Biome biome = source.getServer().func_244267_aX().func_243612_b(Registry.BIOME_KEY).func_241873_b(resource).orElseThrow(() -> LocateBiomeCommand.field_241044_a_.create(resource));
 		
 		int minX = Math.min(from.x, to.x);
 		int maxX = Math.max(from.x, to.x);
@@ -87,13 +89,13 @@ public class CommandSetBiome
 					chunk.markDirty();
 					world.getChunkProvider().chunkManager.getTrackingPlayers(chunk.getPos(), false).forEach(player ->
 					{
-						player.connection.sendPacket(new SChunkDataPacket(chunk, 65535, true));
+						player.connection.sendPacket(new SChunkDataPacket(chunk, 65535));
 					});
 				}
 			}
 		}
 		
-		source.sendFeedback(new StringTextComponent("Set biome to " + Registry.BIOME.getKey(biome)), false);
+		source.sendFeedback(new StringTextComponent("Set biome to " + resource), false);
 		return (maxX - minX) * (maxZ - minZ);
 	}
 	

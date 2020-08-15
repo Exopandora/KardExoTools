@@ -29,7 +29,7 @@ public class CommandWhereIs
 	
 	private static int whereIs(CommandSource source, PlayerEntity target) throws CommandSyntaxException
 	{
-		BlockPos pos = target.func_233580_cy_();
+		BlockPos pos = target.getPosition();
 		String dimension = target.world.func_234923_W_().func_240901_a_().toString();
 		
 		Set<Property> properties = new HashSet<Property>();
@@ -71,7 +71,7 @@ public class CommandWhereIs
 			query = new TranslationTextComponent("%s (%s)", new Object[] {query, formattedProperties});
 		}
 		
-		source.getServer().sendMessage(new StringTextComponent("Query: ").func_230529_a_(query), Util.field_240973_b_);
+		source.getServer().sendMessage(new StringTextComponent("Query: ").append(query), Util.DUMMY_UUID);
 		source.sendFeedback(query, false);
 		
 		return 1;

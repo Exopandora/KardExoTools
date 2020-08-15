@@ -52,12 +52,9 @@ Once activated you can mine veins of blocks (configurable) by sneaking. It only 
 1. Java SE 8 Update 92
 2. Java Development Kit 8 Update 92
 
-## Setup jarmod-buildsystem-2 ##
+## Setup ##
 
-1. Download [jarmod-buildsystem-2](https://github.com/Earthcomputer/jarmod-buildsystem-2)
-2. Delete the folders `patches` and `src` and the file `conf/settings.json`
-3. Copy the folders `patches` and `src` and the file `conf/settings.json` from this repo
-4. Run `gradlew setup`
+1. Run `gradlew setup`
 
 ## Configure (Optional) ##
 

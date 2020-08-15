@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -186,6 +186,7 @@
+@@ -185,6 +185,7 @@
              PlayerProfileCache.setOnlineMode(this.isServerInOnlineMode());
              LOGGER.info("Preparing level \"{}\"", (Object)this.func_230542_k__());
              this.func_240800_l__();

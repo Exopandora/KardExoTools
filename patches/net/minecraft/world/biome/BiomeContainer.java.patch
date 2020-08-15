@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/biome/BiomeContainer.java
 +++ b/net/minecraft/world/biome/BiomeContainer.java
-@@ -17,7 +17,7 @@
-     public static final int BIOMES_SIZE = 1 << WIDTH_BITS + WIDTH_BITS + HEIGHT_BITS;
+@@ -19,7 +19,7 @@
      public static final int HORIZONTAL_MASK = (1 << WIDTH_BITS) - 1;
      public static final int VERTICAL_MASK = (1 << HEIGHT_BITS) - 1;
+     private final IObjectIntIterable<Biome> field_242704_g;
 -    private final Biome[] biomes;
 +    public final Biome[] biomes;
  
-     public BiomeContainer(Biome[] biomesIn)
+     public BiomeContainer(IObjectIntIterable<Biome> p_i241971_1_, Biome[] p_i241971_2_)
      {

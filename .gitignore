@@ -3,10 +3,16 @@
 
 # Except
 
-!/conf/settings.json
+!/conf/
+!/gradle/
+!/license/
 !/src/
 !/patches/
 !.gitignore
+!build.gradle
+!gradlew.bat
+!gradlew
+!patch_mergetool.py
 !README.md
 
 # Subdirs

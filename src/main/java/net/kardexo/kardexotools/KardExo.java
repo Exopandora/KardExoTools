@@ -83,7 +83,7 @@ public class KardExo
 	{
 		if(server.getPlayerList() != null)
 		{
-			server.getPlayerList().func_232641_a_(message, ChatType.SYSTEM, Util.field_240973_b_);
+			server.getPlayerList().func_232641_a_(message, ChatType.SYSTEM, Util.DUMMY_UUID);
 		}
 	}
 	

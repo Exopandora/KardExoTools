@@ -88,7 +88,7 @@ public class TickableBases implements Runnable
 				
 				if(playerOwner != null)
 				{
-					playerOwner.sendMessage(this.getFormattedMessage(player, base, owner, access), Util.field_240973_b_);
+					playerOwner.sendMessage(this.getFormattedMessage(player, base, owner, access), Util.DUMMY_UUID);
 				}
 			}
 		}

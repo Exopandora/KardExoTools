@@ -1,9 +1,9 @@
 {
 	"modname": "kardexotools",
 	"modversion": "1.0",
-	"mcpconfig": "1.16.1-20200625.160719",
-	"mappings": "20200514-1.16",
-	"mcversion": "1.16.1",
+	"mcpconfig": "1.16.2-20200812.004259",
+	"mappings": "20200723-1.16.1",
+	"mcversion": "1.16.2",
 	"pipeline": "joined",
 	"clientmain": "mcp.client.Start",
 	"servermain": "net.minecraft.server.Main",

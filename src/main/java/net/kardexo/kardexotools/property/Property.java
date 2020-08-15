@@ -96,7 +96,7 @@ public class Property
 	
 	public RegistryKey<World> getDimension()
 	{
-		return RegistryKey.func_240903_a_(Registry.field_239699_ae_, this.dimension);
+		return RegistryKey.func_240903_a_(Registry.WORLD_KEY, this.dimension);
 	}
 	
 	public void setDimension(ResourceLocation dimension)
@@ -198,7 +198,7 @@ public class Property
 	
 	public boolean isInside(PlayerEntity player)
 	{
-		return this.isInside(player.func_233580_cy_(), player.world.func_234923_W_().func_240901_a_());
+		return this.isInside(player.getPosition(), player.world.func_234923_W_().func_240901_a_());
 	}
 	
 	public boolean isInside(BlockPos pos, ResourceLocation dimension)
@@ -208,7 +208,7 @@ public class Property
 	
 	public boolean isInsideMain(PlayerEntity player)
 	{
-		return this.isInsideMain(player.func_233580_cy_(), player.world.func_234923_W_().func_240901_a_());
+		return this.isInsideMain(player.getPosition(), player.world.func_234923_W_().func_240901_a_());
 	}
 	
 	public boolean isInsideMain(BlockPos pos, ResourceLocation dimension)
@@ -218,7 +218,7 @@ public class Property
 	
 	public boolean isInsideChild(PlayerEntity player)
 	{
-		return this.isInsideChild(player.func_233580_cy_(), player.world.func_234923_W_().func_240901_a_());
+		return this.isInsideChild(player.getPosition(), player.world.func_234923_W_().func_240901_a_());
 	}
 	
 	public boolean isInsideChild(BlockPos pos, ResourceLocation dimension)
@@ -351,10 +351,10 @@ public class Property
 		builder.append("\nProtected: " + this.isProtected);
 		
 		IFormattableTextComponent basetextcomponent = new StringTextComponent(this.getTitle());
-		Style style = Style.field_240709_b_
-				.func_240716_a_(new HoverEvent(HoverEvent.Action.field_230550_a_, new StringTextComponent(builder.toString())))
-				.func_240714_a_(this.name); //setInsertion
-		basetextcomponent.func_240703_c_(style);
+		Style style = Style.EMPTY
+				.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent(builder.toString())))
+				.setInsertion(this.name);
+		basetextcomponent.setStyle(style);
 		
 		return basetextcomponent;
 	}

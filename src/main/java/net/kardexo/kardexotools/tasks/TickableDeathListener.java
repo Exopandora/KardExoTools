@@ -28,7 +28,7 @@ public class TickableDeathListener implements Runnable
 			{
 				if(!this.cache.contains(player.getGameProfile().getName()))
 				{
-					player.sendMessage(new StringTextComponent("You died at " + MathHelper.floor(player.getPosX()) + " " + MathHelper.floor(player.getPosY()) + " " + MathHelper.floor(player.getPosZ())), Util.field_240973_b_);
+					player.sendMessage(new StringTextComponent("You died at " + MathHelper.floor(player.getPosX()) + " " + MathHelper.floor(player.getPosY()) + " " + MathHelper.floor(player.getPosZ())), Util.DUMMY_UUID);
 					this.cache.add(player.getGameProfile().getName());
 				}
 			}

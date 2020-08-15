@@ -177,7 +177,7 @@ public class PropertyHelper
 	
 	private static boolean isProtected(PlayerEntity player, Entity entity)
 	{
-		return isProtected(player, entity.func_233580_cy_(), Config.BASES) || isProtected(player, entity.func_233580_cy_(), Config.PLACES);
+		return isProtected(player, entity.getPosition(), Config.BASES) || isProtected(player, entity.getPosition(), Config.PLACES);
 	}
 	
 	public static boolean canHarvestBlock(PlayerEntity player, BlockPos pos)
