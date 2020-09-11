@@ -9,15 +9,15 @@
      {
          BlockState blockstate = this.world.getBlockState(pos);
  
-@@ -315,7 +315,7 @@
-                     ItemStack itemstack = this.player.getHeldItemMainhand();
-                     ItemStack itemstack1 = itemstack.copy();
-                     boolean flag1 = this.player.func_234569_d_(blockstate);
--                    itemstack.onBlockDestroyed(this.world, blockstate, pos, this.player);
-+                    itemstack.onBlockDestroyed(this.world, blockstate, dropAtPlayer ? this.player.getPosition() : pos, this.player);
+@@ -319,7 +319,7 @@
  
                      if (flag && flag1)
                      {
+-                        block.harvestBlock(this.world, this.player, pos, blockstate, tileentity, itemstack1);
++                        block.harvestBlock(this.world, this.player, dropAtPlayer ? this.player.getPosition() : pos, blockstate, tileentity, itemstack1);
+                     }
+ 
+                     return true;
 @@ -409,6 +409,7 @@
  
              if (!flag1)
