@@ -35,7 +35,7 @@ public class CommandHome
 		}
 		
 		MinecraftServer server = source.getServer();
-		ServerWorld world = server.getWorld(RegistryKey.func_240903_a_(Registry.WORLD_KEY, config.getHome().getDimension()));
+		ServerWorld world = server.getWorld(RegistryKey.getOrCreateKey(Registry.WORLD_KEY, config.getHome().getDimension()));
 		BlockPos position = CommandHome.spawnPosition(world, config.getHome().getPosition());
 		
 		return CommandBase.teleport(source, sender, world, position);

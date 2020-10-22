@@ -5,10 +5,8 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 
 public class CommandMoonPhase
 {
@@ -32,12 +30,8 @@ public class CommandMoonPhase
 	
 	private static int moonPhase(CommandSource source) throws CommandSyntaxException
 	{
-		MinecraftServer server = source.getServer();
-		ServerWorld overworld = server.getWorld(World.field_234918_g_);
-		int phase = overworld.func_230315_m_().func_236035_c_(overworld.getDayTime());
-		
+		int phase = source.getServer().getWorld(World.OVERWORLD).getMoonPhase();
 		source.sendFeedback(new StringTextComponent(PHASES[phase]), false);
-		
 		return phase;
 	}
 }

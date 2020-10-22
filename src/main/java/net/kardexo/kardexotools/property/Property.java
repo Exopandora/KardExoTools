@@ -96,7 +96,7 @@ public class Property
 	
 	public RegistryKey<World> getDimension()
 	{
-		return RegistryKey.func_240903_a_(Registry.WORLD_KEY, this.dimension);
+		return RegistryKey.getOrCreateKey(Registry.WORLD_KEY, this.dimension);
 	}
 	
 	public void setDimension(ResourceLocation dimension)
@@ -106,7 +106,7 @@ public class Property
 	
 	public void setDimension(RegistryKey<World> dimension)
 	{
-		this.dimension = dimension.func_240901_a_();
+		this.dimension = dimension.getLocation();
 	}
 	
 	public String getTitle()
@@ -198,7 +198,7 @@ public class Property
 	
 	public boolean isInside(PlayerEntity player)
 	{
-		return this.isInside(player.getPosition(), player.world.func_234923_W_().func_240901_a_());
+		return this.isInside(player.getPosition(), player.world.getDimensionKey().getLocation());
 	}
 	
 	public boolean isInside(BlockPos pos, ResourceLocation dimension)
@@ -208,7 +208,7 @@ public class Property
 	
 	public boolean isInsideMain(PlayerEntity player)
 	{
-		return this.isInsideMain(player.getPosition(), player.world.func_234923_W_().func_240901_a_());
+		return this.isInsideMain(player.getPosition(), player.world.getDimensionKey().getLocation());
 	}
 	
 	public boolean isInsideMain(BlockPos pos, ResourceLocation dimension)
@@ -218,7 +218,7 @@ public class Property
 	
 	public boolean isInsideChild(PlayerEntity player)
 	{
-		return this.isInsideChild(player.getPosition(), player.world.func_234923_W_().func_240901_a_());
+		return this.isInsideChild(player.getPosition(), player.world.getDimensionKey().getLocation());
 	}
 	
 	public boolean isInsideChild(BlockPos pos, ResourceLocation dimension)

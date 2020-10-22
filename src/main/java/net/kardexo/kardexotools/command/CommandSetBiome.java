@@ -35,7 +35,7 @@ public class CommandSetBiome
 	private static int setBiome(CommandSource source, ColumnPos from, ColumnPos to, ResourceLocation resource) throws CommandSyntaxException
 	{
 		ServerWorld world = source.getWorld();
-        Biome biome = source.getServer().func_244267_aX().func_243612_b(Registry.BIOME_KEY).func_241873_b(resource).orElseThrow(() -> LocateBiomeCommand.field_241044_a_.create(resource));
+		Biome biome = source.getServer().func_244267_aX().getRegistry(Registry.BIOME_KEY).getOptional(resource).orElseThrow(() -> LocateBiomeCommand.field_241044_a_.create(resource));
 		
 		int minX = Math.min(from.x, to.x);
 		int maxX = Math.max(from.x, to.x);

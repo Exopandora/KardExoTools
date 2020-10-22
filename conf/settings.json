@@ -1,8 +1,8 @@
 {
 	"modname": "kardexotools",
 	"modversion": "1.0",
-	"mcpconfig": "1.16.3-20200911.084530",
-	"mappings": "20200723-1.16.1",
+	"mcpconfig": "1.16.3-20201018.162339",
+	"mappings": "20200916-1.16.2",
 	"mcversion": "1.16.3",
 	"pipeline": "joined",
 	"clientmain": "mcp.client.Start",

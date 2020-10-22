@@ -30,7 +30,7 @@ public class CommandWhereIs
 	private static int whereIs(CommandSource source, PlayerEntity target) throws CommandSyntaxException
 	{
 		BlockPos pos = target.getPosition();
-		String dimension = target.world.func_234923_W_().func_240901_a_().toString();
+		String dimension = target.world.getDimensionKey().getLocation().toString();
 		
 		Set<Property> properties = new HashSet<Property>();
 		

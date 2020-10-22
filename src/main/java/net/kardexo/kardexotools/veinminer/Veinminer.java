@@ -56,7 +56,7 @@ public class Veinminer
 				{
 					PriorityQueue<BlockPos> queue = Veinminer.calculateVein(player, Config.BLOCK_LIMIT, config.getRadius(), state, pos, world);
 					Map<BlockState, Set<BlockPos>> stateMap = new HashMap<BlockState, Set<BlockPos>>();
-					VeinminerHistoryEntry undo = new VeinminerHistoryEntry(player.world.func_234923_W_(), stateMap);
+					VeinminerHistoryEntry undo = new VeinminerHistoryEntry(player.world.getDimensionKey(), stateMap);
 					queue.poll();
 					
 					if(!queue.isEmpty())

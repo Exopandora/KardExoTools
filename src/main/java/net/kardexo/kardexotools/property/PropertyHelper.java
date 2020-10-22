@@ -37,7 +37,7 @@ public class PropertyHelper
 		double xMax = Math.max(from.x, to.x);
 		double zMax = Math.max(from.z, to.z);
 		
-		Property property = new Property(id, title, Lists.newArrayList(new PropertyOwner(owner, true, true, null, null)), dimension.func_234923_W_().func_240901_a_(), xMin, zMin, xMax, zMax);
+		Property property = new Property(id, title, Lists.newArrayList(new PropertyOwner(owner, true, true, null, null)), dimension.getDimensionKey().getLocation(), xMin, zMin, xMax, zMax);
 		
 		file.getData().put(id, property);
 		Config.save(file);
@@ -67,7 +67,7 @@ public class PropertyHelper
 		double xMax = Math.max(from.x, to.x);
 		double zMax = Math.max(from.z, to.z);
 		
-		Property property = new Property(id, title, Collections.emptyList(), dimension.func_234923_W_().func_240901_a_(), xMin, zMin, xMax, zMax);
+		Property property = new Property(id, title, Collections.emptyList(), dimension.getDimensionKey().getLocation(), xMin, zMin, xMax, zMax);
 		
 		if(property.getChild(id) != null)
 		{
@@ -161,7 +161,7 @@ public class PropertyHelper
 		
 		for(Property property : file.getData().values())
 		{
-			if(property.isProtected() && !property.isOwner(name) && property.isInside(pos, player.world.func_234923_W_().func_240901_a_()))
+			if(property.isProtected() && !property.isOwner(name) && property.isInside(pos, player.world.getDimensionKey().getLocation()))
 			{
 				return true;
 			}

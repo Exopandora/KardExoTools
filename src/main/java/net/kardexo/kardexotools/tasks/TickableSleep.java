@@ -26,7 +26,7 @@ public class TickableSleep implements Runnable
 	@Override
 	public void run()
 	{
-		ServerWorld overworld = this.server.getWorld(World.field_234918_g_);
+		ServerWorld overworld = this.server.getWorld(World.OVERWORLD);
 		
 		if(!overworld.getPlayers().isEmpty())
 		{

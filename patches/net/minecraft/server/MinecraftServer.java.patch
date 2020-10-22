@@ -3,7 +3,7 @@
 @@ -158,7 +158,7 @@
      private static final Logger LOGGER = LogManager.getLogger();
      public static final File USER_CACHE_FILE = new File("usercache.json");
-     public static final WorldSettings DEMO_WORLD_SETTINGS = new WorldSettings("Demo World", GameType.SURVIVAL, false, Difficulty.NORMAL, false, new GameRules(), DatapackCodec.field_234880_a_);
+     public static final WorldSettings DEMO_WORLD_SETTINGS = new WorldSettings("Demo World", GameType.SURVIVAL, false, Difficulty.NORMAL, false, new GameRules(), DatapackCodec.VANILLA_CODEC);
 -    protected final SaveFormat.LevelSave anvilConverterForAnvilFile;
 +    public final SaveFormat.LevelSave anvilConverterForAnvilFile;
      protected final PlayerData playerDataManager;
