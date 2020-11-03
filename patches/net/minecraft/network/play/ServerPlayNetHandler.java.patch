@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/play/ServerPlayNetHandler.java
 +++ b/net/minecraft/network/play/ServerPlayNetHandler.java
-@@ -1382,7 +1382,7 @@
+@@ -1493,7 +1493,7 @@
          {
              double d0 = 36.0D;
  

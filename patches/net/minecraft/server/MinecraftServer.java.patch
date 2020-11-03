@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -158,7 +158,7 @@
+@@ -161,7 +161,7 @@
      private static final Logger LOGGER = LogManager.getLogger();
      public static final File USER_CACHE_FILE = new File("usercache.json");
      public static final WorldSettings DEMO_WORLD_SETTINGS = new WorldSettings("Demo World", GameType.SURVIVAL, false, Difficulty.NORMAL, false, new GameRules(), DatapackCodec.VANILLA_CODEC);
@@ -9,7 +9,7 @@
      protected final PlayerData playerDataManager;
      private final Snooper snooper = new Snooper("server", this, Util.milliTime());
      private final List<Runnable> tickables = Lists.newArrayList();
-@@ -649,7 +649,7 @@
+@@ -652,7 +652,7 @@
          {
              this.snooper.stop();
          }
@@ -18,7 +18,7 @@
          this.resourceManager.close();
  
          try
-@@ -1081,7 +1081,7 @@
+@@ -1084,7 +1084,7 @@
  
      public String getServerModName()
      {

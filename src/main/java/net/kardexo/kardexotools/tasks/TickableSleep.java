@@ -2,7 +2,6 @@ package net.kardexo.kardexotools.tasks;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import net.kardexo.kardexotools.KardExo;
 import net.minecraft.entity.player.PlayerEntity;
@@ -47,12 +46,9 @@ public class TickableSleep implements Runnable
 						for(ServerWorld server : this.server.getWorlds())
 						{
 							long time = server.getWorldInfo().getDayTime() + 24000L;
-							server.func_241114_a_(time - time % 24000L);
 							
-							for(PlayerEntity PlayerEntity : server.getPlayers().stream().filter(PlayerEntity::isSleeping).collect(Collectors.toList()))
-							{
-								PlayerEntity.wakeUp();
-							}
+							server.setDayTime(time - time % 24000L);
+							server.getPlayers().stream().filter(PlayerEntity::isSleeping).forEach(p -> p.stopSleepInBed(false, false));
 							
 							if(overworld.getGameRules().getBoolean(GameRules.DO_WEATHER_CYCLE))
 				            {
