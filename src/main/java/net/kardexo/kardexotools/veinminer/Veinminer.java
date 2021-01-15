@@ -87,16 +87,7 @@ public class Veinminer
 									break;
 								}
 								
-								Set<BlockPos> list = stateMap.get(next);
-								
-								if(list != null)
-								{
-									list.add(queue.poll());
-								}
-								else
-								{
-									stateMap.put(next, Sets.newHashSet(queue.poll()));
-								}
+								stateMap.computeIfAbsent(next, key -> Sets.newHashSet()).add(queue.poll());
 							}
 							
 							if(Veinminer.count(stateMap.values()) > 1)
@@ -116,7 +107,7 @@ public class Veinminer
 	
 	private static PriorityQueue<BlockPos> calculateVein(PlayerEntity player, int limit, int radius, BlockState state, BlockPos pos, World world)
 	{
-		PriorityQueue<BlockPos> queue = new PriorityQueue<BlockPos>(Veinminer.getComparator(pos));
+		PriorityQueue<BlockPos> queue = new PriorityQueue<BlockPos>(Veinminer.comparator(pos));
 		Collection<BlockPos> pending = Collections.singleton(pos);
 		
 		while(!pending.isEmpty())
@@ -133,17 +124,17 @@ public class Veinminer
 				}
 			}
 			
-			PriorityQueue<BlockPos> next = new PriorityQueue<BlockPos>(Veinminer.getComparator(pos));
+			PriorityQueue<BlockPos> next = new PriorityQueue<BlockPos>(Veinminer.comparator(pos));
 			
 			for(BlockPos block : pending)
 			{
-				final int delta[] = {-1, 0, 1};
+				final int positions[] = {-1, 0, 1};
 				
-				for(int x : delta)
+				for(int x : positions)
 				{
-					for(int y : delta)
+					for(int y : positions)
 					{
-						for(int z : delta)
+						for(int z : positions)
 						{
 							if(x == 0 && y == 0 && z == 0)
 							{
@@ -189,7 +180,7 @@ public class Veinminer
 		return a.getBlock().equals(b.getBlock());
 	}
 	
-	private static final Comparator<BlockPos> getComparator(BlockPos origin)
+	private static final Comparator<BlockPos> comparator(BlockPos origin)
 	{
 		return (a, b) -> (int) (a.distanceSq(origin) - b.distanceSq(origin));
 	}
@@ -279,7 +270,7 @@ public class Veinminer
 	
 	public static <T> Stream<T> flatten(Collection<Set<T>> collection)
 	{
-		return collection.parallelStream().flatMap(Set::stream);
+		return collection.stream().flatMap(Set::stream);
 	}
 	
 	private static boolean hasNoCollidingEntities(World world, Set<BlockPos> positions) throws Exception
