@@ -241,7 +241,7 @@ class CheckModifiedHelper {
     String modname
     String inputTaskName
     String inputArchiveName
-	Object proj
+    Object proj
 
     String getCleanFilepath()
     {
@@ -258,7 +258,7 @@ class CheckModifiedHelper {
 	    this.modname = modname
         this.inputTaskName = taskname
         this.inputArchiveName = archivname
-		this.proj = proj
+        this.proj = proj
     }
 
     def filterUnchanged() {
