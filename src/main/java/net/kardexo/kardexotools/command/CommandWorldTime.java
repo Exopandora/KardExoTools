@@ -18,7 +18,7 @@ public class CommandWorldTime
 	
 	private static int worldtime(CommandSource source) throws CommandSyntaxException
 	{
-		source.sendFeedback(new StringTextComponent("World time: " + getWorldTime(source.getWorld().getDayTime())), false);
+		source.sendSuccess(new StringTextComponent("World time: " + getWorldTime(source.getLevel().getDayTime())), false);
 		return 1;
 	}
 	

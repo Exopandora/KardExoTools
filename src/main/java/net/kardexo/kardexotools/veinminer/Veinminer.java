@@ -41,22 +41,22 @@ public class Veinminer
 	public static boolean mine(BlockPos pos, ServerPlayerEntity player, World world, BiFunction<BlockPos, Boolean, Boolean> harvestBlock)
 	{
 		String name = player.getGameProfile().getName();
-		ItemStack item = player.getHeldItemMainhand();
+		ItemStack item = player.getMainHandItem();
 		BlockState state = world.getBlockState(pos);
 		boolean isEffectiveTool = item.getDestroySpeed(state) > 1.0F;
 		
-		if(Config.PLAYERS.getData().containsKey(name) && Config.PLAYERS.getData().get(name).isVeinminerEnabled() && player.isSneaking() && !player.isOnLadder() && (!item.isDamageable() || item.getMaxDamage() - item.getDamage() > 1))
+		if(Config.PLAYERS.getData().containsKey(name) && Config.PLAYERS.getData().get(name).isVeinminerEnabled() && player.isCrouching() && !player.onClimbable() && (!item.isDamageableItem() || item.getMaxDamage() - item.getDamageValue() > 1))
 		{
 			for(Entry<Block, VeinminerConfigEntry> entry : Config.VEINMINER.getData().entrySet())
 			{
 				Block block = entry.getKey();
 				VeinminerConfigEntry config = entry.getValue();
 				
-				if(Veinminer.isEqual(state, block.getDefaultState()) && (isEffectiveTool || !config.doesRequireTool()))
+				if(Veinminer.isEqual(state, block.defaultBlockState()) && (isEffectiveTool || !config.doesRequireTool()))
 				{
 					PriorityQueue<BlockPos> queue = Veinminer.calculateVein(player, Config.BLOCK_LIMIT, config.getRadius(), state, pos, world);
 					Map<BlockState, Set<BlockPos>> stateMap = new HashMap<BlockState, Set<BlockPos>>();
-					VeinminerHistoryEntry undo = new VeinminerHistoryEntry(player.world.getDimensionKey(), stateMap);
+					VeinminerHistoryEntry undo = new VeinminerHistoryEntry(player.level.dimension(), stateMap);
 					queue.poll();
 					
 					if(!queue.isEmpty())
@@ -70,7 +70,7 @@ public class Veinminer
 							
 							for(int x = 0; x < Config.BLOCK_LIMIT; x++)
 							{
-								if(item.isDamageable() && item.getMaxDamage() > 0 && item.getMaxDamage() - item.getDamage() == 1)
+								if(item.isDamageableItem() && item.getMaxDamage() > 0 && item.getMaxDamage() - item.getDamageValue() == 1)
 								{
 									break;
 								}
@@ -141,9 +141,9 @@ public class Veinminer
 								continue;
 							}
 							
-							BlockPos nextBlock = block.add(x, y, z);
+							BlockPos nextBlock = block.offset(x, y, z);
 							
-							if(nextBlock.distanceSq(pos) >= radius * radius)
+							if(nextBlock.distSqr(pos) >= radius * radius)
 							{
 								continue;
 							}
@@ -182,14 +182,14 @@ public class Veinminer
 	
 	private static final Comparator<BlockPos> comparator(BlockPos origin)
 	{
-		return (a, b) -> (int) (a.distanceSq(origin) - b.distanceSq(origin));
+		return (a, b) -> (int) (a.distSqr(origin) - b.distSqr(origin));
 	}
 	
 	public static int undo(ServerPlayerEntity player, MinecraftServer server) throws Exception
 	{
 		VeinminerHistoryEntry undo = Veinminer.HISTORY.peek(player.getGameProfile().getName());
 		Set<BlockPos> positions = undo.getAllPositions();
-		ServerWorld world = server.getWorld(undo.getWorld());
+		ServerWorld world = server.getLevel(undo.getWorld());
 		Block block = undo.getBlock();
 		int count = positions.size();
 		
@@ -197,16 +197,22 @@ public class Veinminer
 		{
 			for(Entry<BlockState, Set<BlockPos>> entry : undo.getStateMap().entrySet())
 			{
-				for(BlockPos pos : entry.getValue())
+				Set<BlockPos> blocks = entry.getValue();
+				
+				for(BlockPos pos : blocks)
 				{
-					world.setBlockState(pos, entry.getKey());
-					player.addStat(Stats.BLOCK_MINED.get(block));
+					world.setBlockAndUpdate(pos, entry.getKey());
+				}
+				
+				if(!blocks.isEmpty())
+				{
+					player.awardStat(Stats.BLOCK_MINED.get(block), blocks.size());
 				}
 			}
 			
-			if(!player.interactionManager.isCreative())
+			if(!player.gameMode.isCreative())
 			{
-				player.inventory.func_234564_a_(stack -> stack.getItem().equals(block.asItem()), count, player.container.func_234641_j_());
+				player.inventory.clearOrCountMatchingItems(stack -> stack.getItem().equals(block.asItem()), count, player.inventoryMenu.getCraftSlots());
 			}
 			
 			Veinminer.HISTORY.pop(player.getName().getString());
@@ -219,13 +225,13 @@ public class Veinminer
 	
 	private static boolean playerHasItems(ServerPlayerEntity player, Item item, int amount) throws Exception
 	{
-		if(player.interactionManager.isCreative())
+		if(player.gameMode.isCreative())
 		{
 			return true;
 		}
 		
 		PlayerInventory inventory = player.inventory;
-		List<NonNullList<ItemStack>> inventories = Arrays.<NonNullList<ItemStack>>asList(inventory.mainInventory, inventory.armorInventory, inventory.offHandInventory);
+		List<NonNullList<ItemStack>> inventories = Arrays.<NonNullList<ItemStack>>asList(inventory.items, inventory.armor, inventory.offhand);
 		
 		int count = 0;
 		
@@ -277,7 +283,7 @@ public class Veinminer
 	{
 		for(BlockPos pos : positions)
 		{
-			if(!world.checkNoEntityCollision(null, VoxelShapes.create(new AxisAlignedBB(pos))))
+			if(!world.isUnobstructed(null, VoxelShapes.create(new AxisAlignedBB(pos))))
 			{
 				throw new Exception("Space is being occupied by other entities");
 			}

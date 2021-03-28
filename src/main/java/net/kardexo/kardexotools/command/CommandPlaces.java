@@ -30,35 +30,35 @@ public class CommandPlaces
 	{
 		dispatcher.register(Commands.literal("places")
 				.then(Commands.literal("add")
-					.requires(source -> source.hasPermissionLevel(4))
+					.requires(source -> source.hasPermission(4))
 					.then(Commands.argument("id", StringArgumentType.word())
-						.then(Commands.argument("dimension", DimensionArgument.getDimension())
+						.then(Commands.argument("dimension", DimensionArgument.dimension())
 							.then(Commands.argument("from", ColumnPosArgument.columnPos())
 								.then(Commands.argument("to", ColumnPosArgument.columnPos())
-									.executes(context -> add(context.getSource(), StringArgumentType.getString(context, "id"), DimensionArgument.getDimensionArgument(context, "dimension"), ColumnPosArgument.fromBlockPos(context, "from"), ColumnPosArgument.fromBlockPos(context, "to"), null))
+									.executes(context -> add(context.getSource(), StringArgumentType.getString(context, "id"), DimensionArgument.getDimension(context, "dimension"), ColumnPosArgument.getColumnPos(context, "from"), ColumnPosArgument.getColumnPos(context, "to"), null))
 									.then(Commands.argument("title", StringArgumentType.greedyString())
-										.executes(context -> add(context.getSource(), StringArgumentType.getString(context, "id"), DimensionArgument.getDimensionArgument(context, "dimension"), ColumnPosArgument.fromBlockPos(context, "from"), ColumnPosArgument.fromBlockPos(context, "to"), StringArgumentType.getString(context, "title")))))))))
+										.executes(context -> add(context.getSource(), StringArgumentType.getString(context, "id"), DimensionArgument.getDimension(context, "dimension"), ColumnPosArgument.getColumnPos(context, "from"), ColumnPosArgument.getColumnPos(context, "to"), StringArgumentType.getString(context, "title")))))))))
 				.then(Commands.literal("remove")
-					.requires(source -> source.hasPermissionLevel(4))
+					.requires(source -> source.hasPermission(4))
 					.then(Commands.argument("id", StringArgumentType.word())
 						.executes(context -> remove(context.getSource(), StringArgumentType.getString(context, "id")))))
 				.then(Commands.literal("list")
 					.executes(context -> list(context.getSource())))
 				.then(Commands.literal("reload")
-					.requires(source -> source.hasPermissionLevel(4))
+					.requires(source -> source.hasPermission(4))
 					.executes(context -> reload(context.getSource())))
 				.then(Commands.literal("child")
-					.requires(source -> source.hasPermissionLevel(4))
+					.requires(source -> source.hasPermission(4))
 					.then(Commands.argument("id", StringArgumentType.word())
 						.suggests(CommandPlaces::getSuggestions)
 						.then(Commands.literal("add")
 							.then(Commands.argument("child", StringArgumentType.word())
-								.then(Commands.argument("dimension", DimensionArgument.getDimension())
+								.then(Commands.argument("dimension", DimensionArgument.dimension())
 									.then(Commands.argument("from", ColumnPosArgument.columnPos())
 										.then(Commands.argument("to", ColumnPosArgument.columnPos())
-											.executes(context -> addChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child"), DimensionArgument.getDimensionArgument(context, "dimension"), ColumnPosArgument.fromBlockPos(context, "from"), ColumnPosArgument.fromBlockPos(context, "to"), null)))))))
+											.executes(context -> addChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child"), DimensionArgument.getDimension(context, "dimension"), ColumnPosArgument.getColumnPos(context, "from"), ColumnPosArgument.getColumnPos(context, "to"), null)))))))
 											.then(Commands.argument("title", StringArgumentType.greedyString())
-												.executes(context -> addChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child"), DimensionArgument.getDimensionArgument(context, "dimension"), ColumnPosArgument.fromBlockPos(context, "from"), ColumnPosArgument.fromBlockPos(context, "to"), StringArgumentType.getString(context, "title"))))
+												.executes(context -> addChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child"), DimensionArgument.getDimension(context, "dimension"), ColumnPosArgument.getColumnPos(context, "from"), ColumnPosArgument.getColumnPos(context, "to"), StringArgumentType.getString(context, "title"))))
 						.then(Commands.literal("remove")
 							.then(Commands.argument("child", StringArgumentType.word())
 								.suggests(CommandPlaces::getChildSuggestions)
@@ -74,8 +74,8 @@ public class CommandPlaces
 	{
 		try
 		{
-			PropertyHelper.add(id, dimension, from, to, source.getName(), title, Config.PLACES);
-			source.sendFeedback(new StringTextComponent("Added base with id " + id), false);
+			PropertyHelper.add(id, dimension, from, to, source.getTextName(), title, Config.PLACES);
+			source.sendSuccess(new StringTextComponent("Added base with id " + id), false);
 		}
 		catch(IllegalStateException e)
 		{
@@ -92,7 +92,7 @@ public class CommandPlaces
 		try
 		{
 			PropertyHelper.remove(id, Config.PLACES);
-			source.sendFeedback(new StringTextComponent("Removed base with id " + id), false);
+			source.sendSuccess(new StringTextComponent("Removed base with id " + id), false);
 		}
 		catch(NoSuchElementException e)
 		{
@@ -119,7 +119,7 @@ public class CommandPlaces
 		try
 		{
 			Config.read(Config.PLACES);
-			source.sendFeedback(new StringTextComponent("Successfully reloaded places"), false);
+			source.sendSuccess(new StringTextComponent("Successfully reloaded places"), false);
 		}
 		catch(Exception e)
 		{
@@ -137,7 +137,7 @@ public class CommandPlaces
 		try
 		{
 			PropertyHelper.addChild(parent, child, dimension, from, to, title, Config.PLACES);
-			source.sendFeedback(new StringTextComponent("Added child with id " + child + " to place with id " + id), false);
+			source.sendSuccess(new StringTextComponent("Added child with id " + child + " to place with id " + id), false);
 		}
 		catch(IllegalStateException e)
 		{
@@ -155,7 +155,7 @@ public class CommandPlaces
 		try
 		{
 			PropertyHelper.removeChild(parent, child, Config.PLACES);
-			source.sendFeedback(new StringTextComponent("Removed child with id " + child + " from place with id " + id), false);
+			source.sendSuccess(new StringTextComponent("Removed child with id " + child + " from place with id " + id), false);
 		}
 		catch(NoSuchElementException e)
 		{
@@ -173,11 +173,11 @@ public class CommandPlaces
 		
 		if(enabled)
 		{
-			source.sendFeedback(new StringTextComponent("Enabled protection for place with id " + id), false);
+			source.sendSuccess(new StringTextComponent("Enabled protection for place with id " + id), false);
 		}
 		else
 		{
-			source.sendFeedback(new StringTextComponent("Disabled protection for place with id " + id), false);
+			source.sendSuccess(new StringTextComponent("Disabled protection for place with id " + id), false);
 		}
 		
 		return 1;

@@ -18,11 +18,11 @@ public class CommandUndo
 	
 	private static int undo(CommandSource source) throws CommandSyntaxException
 	{
-		if(source.getEntity() instanceof ServerPlayerEntity && Veinminer.hasUndo(source.getName()))
+		if(source.getEntity() instanceof ServerPlayerEntity && Veinminer.hasUndo(source.getTextName()))
 		{
 			try
 			{
-				int result = Veinminer.undo(source.asPlayer(), source.getServer());
+				int result = Veinminer.undo(source.getPlayerOrException(), source.getServer());
 				
 				if(result == 0)
 				{

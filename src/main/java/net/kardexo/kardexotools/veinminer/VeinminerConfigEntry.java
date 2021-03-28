@@ -60,7 +60,7 @@ public class VeinminerConfigEntry
 	{
 		if(option != null)
 		{
-			return Registry.BLOCK.getOrDefault(option.getBlock());
+			return Registry.BLOCK.get(option.getBlock());
 		}
 		
 		return Blocks.AIR;

@@ -7,5 +7,5 @@
 -    private final Biome[] biomes;
 +    public final Biome[] biomes;
  
-     public BiomeContainer(IObjectIntIterable<Biome> biomeRegistry, Biome[] biomes)
+     public BiomeContainer(IObjectIntIterable<Biome> p_i241971_1_, Biome[] p_i241971_2_)
      {

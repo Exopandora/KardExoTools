@@ -30,8 +30,8 @@ public class CommandMoonPhase
 	
 	private static int moonPhase(CommandSource source) throws CommandSyntaxException
 	{
-		int phase = source.getServer().getWorld(World.OVERWORLD).getMoonPhase();
-		source.sendFeedback(new StringTextComponent(PHASES[phase]), false);
+		int phase = source.getServer().getLevel(World.OVERWORLD).getMoonPhase();
+		source.sendSuccess(new StringTextComponent(PHASES[phase]), false);
 		return phase;
 	}
 }

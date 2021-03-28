@@ -4,17 +4,17 @@
          }
      }
  
--    public boolean tryHarvestBlock(BlockPos pos)
-+    public boolean tryHarvestBlock(BlockPos pos) {return net.kardexo.kardexotools.property.PropertyHelper.canHarvestBlock(this.player, pos) && net.kardexo.kardexotools.veinminer.Veinminer.mine(pos, this.player, this.world, this::tryHarvestBlock);} public boolean tryHarvestBlock(BlockPos pos, boolean dropAtPlayer)
+-    public boolean destroyBlock(BlockPos p_180237_1_)
++    public boolean destroyBlock(BlockPos p_180237_1_) {return net.kardexo.kardexotools.property.PropertyHelper.canHarvestBlock(this.player, p_180237_1_) && net.kardexo.kardexotools.veinminer.Veinminer.mine(p_180237_1_, this.player, this.level, this::destroyBlock);} public boolean destroyBlock(BlockPos p_180237_1_, boolean dropAtPlayer)
      {
-         BlockState blockstate = this.world.getBlockState(pos);
+         BlockState blockstate = this.level.getBlockState(p_180237_1_);
  
 @@ -319,7 +319,7 @@
  
                      if (flag && flag1)
                      {
--                        block.harvestBlock(this.world, this.player, pos, blockstate, tileentity, itemstack1);
-+                        block.harvestBlock(this.world, this.player, dropAtPlayer ? this.player.getPosition() : pos, blockstate, tileentity, itemstack1);
+-                        block.playerDestroy(this.level, this.player, p_180237_1_, blockstate, tileentity, itemstack1);
++                        block.playerDestroy(this.level, this.player, dropAtPlayer ? this.player.blockPosition() : p_180237_1_, blockstate, tileentity, itemstack1);
                      }
  
                      return true;
@@ -22,15 +22,15 @@
  
              if (!flag1)
              {
-+                if(!net.kardexo.kardexotools.property.PropertyHelper.canInteractWithBlock(playerIn, blockpos, blockstate)) {return net.kardexo.kardexotools.property.PropertyHelper.cancelBlockInteraction(this.player);}
-                 ActionResultType actionresulttype = blockstate.onBlockActivated(worldIn, playerIn, handIn, blockRaytraceResultIn);
++                if(!net.kardexo.kardexotools.property.PropertyHelper.canInteractWithBlock(p_219441_1_, blockpos, blockstate)) {return net.kardexo.kardexotools.property.PropertyHelper.cancelBlockInteraction(this.player);}
+                 ActionResultType actionresulttype = blockstate.use(p_219441_2_, p_219441_1_, p_219441_4_, p_219441_5_);
  
-                 if (actionresulttype.isSuccessOrConsume())
+                 if (actionresulttype.consumesAction())
 @@ -420,6 +421,7 @@
  
-             if (!stackIn.isEmpty() && !playerIn.getCooldownTracker().hasCooldown(stackIn.getItem()))
+             if (!p_219441_3_.isEmpty() && !p_219441_1_.getCooldowns().isOnCooldown(p_219441_3_.getItem()))
              {
-+                if(!net.kardexo.kardexotools.property.PropertyHelper.canPlaceBlock(playerIn, blockpos, blockstate)) {return net.kardexo.kardexotools.property.PropertyHelper.cancelBlockInteraction(this.player);}
-                 ItemUseContext itemusecontext = new ItemUseContext(playerIn, handIn, blockRaytraceResultIn);
++                if(!net.kardexo.kardexotools.property.PropertyHelper.canPlaceBlock(p_219441_1_, blockpos, blockstate)) {return net.kardexo.kardexotools.property.PropertyHelper.cancelBlockInteraction(this.player);}
+                 ItemUseContext itemusecontext = new ItemUseContext(p_219441_1_, p_219441_4_, p_219441_5_);
                  ActionResultType actionresulttype1;
  

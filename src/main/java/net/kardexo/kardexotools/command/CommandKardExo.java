@@ -25,13 +25,13 @@ public class CommandKardExo
 	
 	private static int version(CommandSource source)
 	{
-		source.sendFeedback(new StringTextComponent("Version: " + Config.VERSION), false);
+		source.sendSuccess(new StringTextComponent("Version: " + Config.VERSION), false);
 		return 1;
 	}
 	
 	private static int commands(CommandSource source) throws CommandSyntaxException
 	{
-		source.sendFeedback(new StringTextComponent("Commands:"), false);
+		source.sendSuccess(new StringTextComponent("Commands:"), false);
 		
 		CommandDispatcher<CommandSource> dispatcher = new CommandDispatcher<CommandSource>();
 		KardExo.registerCommands(dispatcher);
@@ -39,7 +39,7 @@ public class CommandKardExo
 		
 		for(String command : usage.values())
 		{
-			source.sendFeedback(new StringTextComponent(" /" + command), false);
+			source.sendSuccess(new StringTextComponent(" /" + command), false);
 		}
 		
 		return usage.values().size();

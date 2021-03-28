@@ -25,34 +25,34 @@ public class TickableSleep implements Runnable
 	@Override
 	public void run()
 	{
-		ServerWorld overworld = this.server.getWorld(World.OVERWORLD);
+		ServerWorld overworld = this.server.getLevel(World.OVERWORLD);
 		
-		if(!overworld.getPlayers().isEmpty())
+		if(!overworld.players().isEmpty())
 		{
-			for(PlayerEntity player : overworld.getPlayers())
+			for(PlayerEntity player : overworld.players())
 			{
 				String playername = player.getGameProfile().getName();
 				
 				if(player.isSleeping())
 				{
-					if(!this.sleep.containsKey(playername) && !overworld.isDaytime())
+					if(!this.sleep.containsKey(playername) && !overworld.isDay())
 					{
 						KardExo.notifyPlayers(this.server, new TranslationTextComponent("%s is now sleeping", player.getDisplayName()));
 						this.sleep.put(playername, overworld.getDayTime());
 					}
 					
-					if(this.sleep.get(playername) + 100 <= overworld.getWorldInfo().getDayTime() && overworld.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE))
+					if(this.sleep.get(playername) + 100 <= overworld.getLevelData().getDayTime() && overworld.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT))
 					{
-						for(ServerWorld server : this.server.getWorlds())
+						for(ServerWorld server : this.server.getAllLevels())
 						{
-							long time = server.getWorldInfo().getDayTime() + 24000L;
+							long time = server.getLevelData().getDayTime() + 24000L;
 							
 							server.setDayTime(time - time % 24000L);
-							server.getPlayers().stream().filter(PlayerEntity::isSleeping).forEach(p -> p.stopSleepInBed(false, false));
+							server.players().stream().filter(PlayerEntity::isSleeping).forEach(p -> p.stopSleepInBed(false, false));
 							
-							if(overworld.getGameRules().getBoolean(GameRules.DO_WEATHER_CYCLE))
+							if(overworld.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT))
 				            {
-								IServerWorldInfo info = (IServerWorldInfo) overworld.getWorldInfo();
+								IServerWorldInfo info = (IServerWorldInfo) overworld.getLevelData();
 								info.setRainTime(0);
 								info.setRaining(false);
 								info.setThunderTime(0);
@@ -67,7 +67,7 @@ public class TickableSleep implements Runnable
 				{
 					if(this.sleep.containsKey(playername))
 					{
-						if(!overworld.isDaytime())
+						if(!overworld.isDay())
 						{
 							KardExo.notifyPlayers(this.server, new TranslationTextComponent("%s is no longer sleeping", player.getDisplayName()));
 						}

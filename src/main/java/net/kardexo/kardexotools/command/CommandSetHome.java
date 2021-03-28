@@ -22,13 +22,13 @@ public class CommandSetHome
 	
 	private static int setHome(CommandSource source) throws CommandSyntaxException
 	{
-		ServerPlayerEntity sender = source.asPlayer();
-		BlockPos pos = sender.func_241140_K_();
+		ServerPlayerEntity sender = source.getPlayerOrException();
+		BlockPos pos = sender.blockPosition();
 		
-		Config.PLAYERS.getData().computeIfAbsent(source.getName(), PlayerConfig::new).setHome(new PlayerHome(pos, sender.world.getDimensionKey().getLocation()));
+		Config.PLAYERS.getData().computeIfAbsent(source.getTextName(), PlayerConfig::new).setHome(new PlayerHome(pos, sender.level.dimension().location()));
 		Config.save(Config.PLAYERS);
 		
-		source.sendFeedback(new StringTextComponent("Home set to " + pos.getX() + " " + pos.getY() + " " + pos.getZ()), false);
+		source.sendSuccess(new StringTextComponent("Home set to " + pos.getX() + " " + pos.getY() + " " + pos.getZ()), false);
 		return 1;
 	}
 }

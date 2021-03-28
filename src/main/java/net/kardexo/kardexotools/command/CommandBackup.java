@@ -12,7 +12,7 @@ public class CommandBackup
 	public static void register(CommandDispatcher<CommandSource> dispatcher)
 	{
 		dispatcher.register(Commands.literal("backup")
-				.requires(source -> source.hasPermissionLevel(2))
+				.requires(source -> source.hasPermission(2))
 					.executes(context -> backup(context.getSource())));
 	}
 	

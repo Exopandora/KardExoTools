@@ -33,16 +33,16 @@ public class CommandVeinminer
 	
 	private static int setVeinminer(CommandSource source, boolean enabled) throws CommandSyntaxException
 	{
-		Config.PLAYERS.getData().computeIfAbsent(source.getName(), PlayerConfig::new).setVeinminerEnabled(enabled);
+		Config.PLAYERS.getData().computeIfAbsent(source.getTextName(), PlayerConfig::new).setVeinminerEnabled(enabled);
 		Config.save(Config.PLAYERS);
 		
 		if(enabled)
 		{
-			source.sendFeedback(new StringTextComponent("Veinminer enabled"), false);
+			source.sendSuccess(new StringTextComponent("Veinminer enabled"), false);
 		}
 		else
 		{
-			source.sendFeedback(new StringTextComponent("Veinminer disabled"), false);
+			source.sendSuccess(new StringTextComponent("Veinminer disabled"), false);
 		}
 		
 		return 1;
@@ -59,7 +59,7 @@ public class CommandVeinminer
 		}
 		
 		list.sort((a, b) -> a.toString().compareTo(b.toString()));
-		list.forEach(message -> source.sendFeedback(message, false));
+		list.forEach(message -> source.sendSuccess(message, false));
 		
 		return list.size();
 	}

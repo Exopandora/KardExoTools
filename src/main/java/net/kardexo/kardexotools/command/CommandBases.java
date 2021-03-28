@@ -35,13 +35,13 @@ public class CommandBases
 		dispatcher.register(Commands.literal("bases")
 				.then(Commands.literal("add")
 					.then(Commands.argument("id", StringArgumentType.word())
-						.then(Commands.argument("dimension", DimensionArgument.getDimension())
+						.then(Commands.argument("dimension", DimensionArgument.dimension())
 							.then(Commands.argument("from", ColumnPosArgument.columnPos())
 								.then(Commands.argument("to", ColumnPosArgument.columnPos())
 									.then(Commands.argument("owner", EntityArgument.player())
-										.executes(context -> add(context.getSource(), StringArgumentType.getString(context, "id"), DimensionArgument.getDimensionArgument(context, "dimension"), ColumnPosArgument.fromBlockPos(context, "from"), ColumnPosArgument.fromBlockPos(context, "to"), EntityArgument.getPlayer(context, "owner"), null))
+										.executes(context -> add(context.getSource(), StringArgumentType.getString(context, "id"), DimensionArgument.getDimension(context, "dimension"), ColumnPosArgument.getColumnPos(context, "from"), ColumnPosArgument.getColumnPos(context, "to"), EntityArgument.getPlayer(context, "owner"), null))
 										.then(Commands.argument("title", StringArgumentType.greedyString())
-											.executes(context -> add(context.getSource(), StringArgumentType.getString(context, "id"), DimensionArgument.getDimensionArgument(context, "dimension"), ColumnPosArgument.fromBlockPos(context, "from"), ColumnPosArgument.fromBlockPos(context, "to"), EntityArgument.getPlayer(context, "owner"), StringArgumentType.getString(context, "title"))))))))))
+											.executes(context -> add(context.getSource(), StringArgumentType.getString(context, "id"), DimensionArgument.getDimension(context, "dimension"), ColumnPosArgument.getColumnPos(context, "from"), ColumnPosArgument.getColumnPos(context, "to"), EntityArgument.getPlayer(context, "owner"), StringArgumentType.getString(context, "title"))))))))))
 				.then(Commands.literal("remove")
 					.then(Commands.argument("id", StringArgumentType.word())
 						.suggests(CommandBases::getSuggestions)
@@ -92,19 +92,19 @@ public class CommandBases
 				.then(Commands.literal("list")
 					.executes(context -> list(context.getSource())))
 				.then(Commands.literal("reload")
-					.requires(source -> source.hasPermissionLevel(4))
+					.requires(source -> source.hasPermission(4))
 						.executes(context -> reload(context.getSource())))
 				.then(Commands.literal("child")
 					.then(Commands.argument("id", StringArgumentType.word())
 						.suggests(CommandBases::getSuggestions)
 						.then(Commands.literal("add")
 							.then(Commands.argument("child", StringArgumentType.word())
-								.then(Commands.argument("dimension", DimensionArgument.getDimension())
+								.then(Commands.argument("dimension", DimensionArgument.dimension())
 									.then(Commands.argument("from", ColumnPosArgument.columnPos())
 										.then(Commands.argument("to", ColumnPosArgument.columnPos())
-											.executes(context -> addChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child"), DimensionArgument.getDimensionArgument(context, "dimension"), ColumnPosArgument.fromBlockPos(context, "from"), ColumnPosArgument.fromBlockPos(context, "to"), null)))))))
+											.executes(context -> addChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child"), DimensionArgument.getDimension(context, "dimension"), ColumnPosArgument.getColumnPos(context, "from"), ColumnPosArgument.getColumnPos(context, "to"), null)))))))
 											.then(Commands.argument("title", StringArgumentType.greedyString())
-												.executes(context -> addChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child"), DimensionArgument.getDimensionArgument(context, "dimension"), ColumnPosArgument.fromBlockPos(context, "from"), ColumnPosArgument.fromBlockPos(context, "to"), StringArgumentType.getString(context, "title"))))
+												.executes(context -> addChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child"), DimensionArgument.getDimension(context, "dimension"), ColumnPosArgument.getColumnPos(context, "from"), ColumnPosArgument.getColumnPos(context, "to"), StringArgumentType.getString(context, "title"))))
 						.then(Commands.literal("remove")
 							.then(Commands.argument("child", StringArgumentType.word())
 								.suggests(CommandBases::getChildSuggestions)
@@ -121,7 +121,7 @@ public class CommandBases
 		try
 		{
 			PropertyHelper.add(id, dimension, from, to, owner.getGameProfile().getName(), title, Config.BASES);
-			source.sendFeedback(new StringTextComponent("Added base with id " + id), false);
+			source.sendSuccess(new StringTextComponent("Added base with id " + id), false);
 		}
 		catch(IllegalStateException e)
 		{
@@ -138,7 +138,7 @@ public class CommandBases
 		try
 		{
 			PropertyHelper.remove(id, Config.BASES);
-			source.sendFeedback(new StringTextComponent("Removed base with id " + id), false);
+			source.sendSuccess(new StringTextComponent("Removed base with id " + id), false);
 		}
 		catch(NoSuchElementException e)
 		{
@@ -153,7 +153,7 @@ public class CommandBases
 		ensuredForOwner(source, id, player, owner -> 
 		{
 			owner.setEnterMessage(message);
-			source.sendFeedback(new StringTextComponent("Message upon entrance has been set to \"" + message + "\""), false);
+			source.sendSuccess(new StringTextComponent("Message upon entrance has been set to \"" + message + "\""), false);
 		});
 		
 		return 1;
@@ -164,7 +164,7 @@ public class CommandBases
 		ensuredForOwner(source, id, player, owner -> 
 		{
 			owner.setExitMessage(message);
-			source.sendFeedback(new StringTextComponent("Message upon exit has been set to \"" + message + "\""), false);
+			source.sendSuccess(new StringTextComponent("Message upon exit has been set to \"" + message + "\""), false);
 		});
 		
 		return 1;
@@ -176,7 +176,7 @@ public class CommandBases
 		{
 			owner.setEnterMessage(message);
 			owner.setExitMessage(message);
-			source.sendFeedback(new StringTextComponent("Both messages have been set to \"" + message + "\""), false);
+			source.sendSuccess(new StringTextComponent("Both messages have been set to \"" + message + "\""), false);
 		});
 		
 		return 1;
@@ -210,11 +210,11 @@ public class CommandBases
 		
 		if(creator)
 		{
-			source.sendFeedback(new StringTextComponent("Added " + name +  " as a creator to base with id " + id), false);
+			source.sendSuccess(new StringTextComponent("Added " + name +  " as a creator to base with id " + id), false);
 		}
 		else
 		{
-			source.sendFeedback(new StringTextComponent("Added " + name +  " as an owner to base with id " + id), false);
+			source.sendSuccess(new StringTextComponent("Added " + name +  " as an owner to base with id " + id), false);
 		}
 		
 		return 1;
@@ -229,7 +229,7 @@ public class CommandBases
 		
 		PropertyOwner owner = new PropertyOwner(player.getGameProfile().getName());
 		property.removeOwner(owner);
-		source.sendFeedback(new StringTextComponent("Removed " + owner.getName() +  " as an owner of the base with id " + id), false);
+		source.sendSuccess(new StringTextComponent("Removed " + owner.getName() +  " as an owner of the base with id " + id), false);
 		Config.save(Config.BASES);
 		
 		return 1;
@@ -248,23 +248,23 @@ public class CommandBases
 			{
 				if(owner.isCreator() && creator)
 				{
-					source.sendFeedback(new StringTextComponent(owner.getName() + " is already a creator of base with id " + id), false);
+					source.sendSuccess(new StringTextComponent(owner.getName() + " is already a creator of base with id " + id), false);
 				}
 				else if(!owner.isCreator() && creator)
 				{
 					owner.setCreator(true);
-					source.sendFeedback(new StringTextComponent(owner.getName() + " is now a creator of base with id " + id), false);
+					source.sendSuccess(new StringTextComponent(owner.getName() + " is now a creator of base with id " + id), false);
 					Config.save(Config.BASES);
 				}
 				else if(owner.isCreator() && !creator)
 				{
 					owner.setCreator(false);
-					source.sendFeedback(new StringTextComponent(owner.getName() + " is now an owner of base with id " + id), false);
+					source.sendSuccess(new StringTextComponent(owner.getName() + " is now an owner of base with id " + id), false);
 					Config.save(Config.BASES);
 				}
 				else if(!owner.isCreator() && !creator)
 				{
-					source.sendFeedback(new StringTextComponent(owner.getName() + " is already an owner of base with id " + id), false);
+					source.sendSuccess(new StringTextComponent(owner.getName() + " is already an owner of base with id " + id), false);
 				}
 				
 				return 1;
@@ -289,11 +289,11 @@ public class CommandBases
 				
 				if(notify)
 				{
-					source.sendFeedback(new StringTextComponent(owner.getName() + " will now be notified"), false);
+					source.sendSuccess(new StringTextComponent(owner.getName() + " will now be notified"), false);
 				}
 				else
 				{
-					source.sendFeedback(new StringTextComponent(owner.getName() + " will no longer be notified"), false);
+					source.sendSuccess(new StringTextComponent(owner.getName() + " will no longer be notified"), false);
 				}
 				
 				return 1;
@@ -311,7 +311,7 @@ public class CommandBases
 		try
 		{
 			PropertyHelper.addChild(parent, child, dimension, from, to, title, Config.BASES);
-			source.sendFeedback(new StringTextComponent("Added child with id " + child + " to base with id " + id), false);
+			source.sendSuccess(new StringTextComponent("Added child with id " + child + " to base with id " + id), false);
 		}
 		catch(IllegalStateException e)
 		{
@@ -329,7 +329,7 @@ public class CommandBases
 		try
 		{
 			PropertyHelper.removeChild(parent, child, Config.BASES);
-			source.sendFeedback(new StringTextComponent("Removed child with id " + child + " from base with id " + id), false);
+			source.sendSuccess(new StringTextComponent("Removed child with id " + child + " from base with id " + id), false);
 		}
 		catch(NoSuchElementException e)
 		{
@@ -347,11 +347,11 @@ public class CommandBases
 		
 		if(enabled)
 		{
-			source.sendFeedback(new StringTextComponent("Enabled protection for base with id " + id), false);
+			source.sendSuccess(new StringTextComponent("Enabled protection for base with id " + id), false);
 		}
 		else
 		{
-			source.sendFeedback(new StringTextComponent("Disabled protection for base with id " + id), false);
+			source.sendSuccess(new StringTextComponent("Disabled protection for base with id " + id), false);
 		}
 		
 		return 1;
@@ -376,7 +376,7 @@ public class CommandBases
 		try
 		{
 			Config.save(Config.BASES);
-			source.sendFeedback(new StringTextComponent("Successfully reloaded bases"), false);
+			source.sendSuccess(new StringTextComponent("Successfully reloaded bases"), false);
 		}
 		catch(Exception e)
 		{

@@ -34,24 +34,24 @@ public abstract class CommandProperty
 		
 		for(Property property : list)
 		{
-			source.sendFeedback(new TranslationTextComponent(indentation + (indentation.isEmpty() ? "Name" : "Child") + ": %s", property.getDisplayName()), false);
+			source.sendSuccess(new TranslationTextComponent(indentation + (indentation.isEmpty() ? "Name" : "Child") + ": %s", property.getDisplayName()), false);
 			
 			String creators = property.getCreators(", ");
 			
 			if(!creators.isEmpty())
 			{
-				source.sendFeedback(new StringTextComponent(indentation + " Creators: " + creators), false);
+				source.sendSuccess(new StringTextComponent(indentation + " Creators: " + creators), false);
 			}
 			
 			String owners = property.getOwners(", ");
 			
 			if(!owners.isEmpty())
 			{
-				source.sendFeedback(new StringTextComponent(indentation + " Owners: " + owners), false);
+				source.sendSuccess(new StringTextComponent(indentation + " Owners: " + owners), false);
 			}
 			
-			source.sendFeedback(new StringTextComponent(indentation + " X: [" + property.getXMin() + ", " + property.getXMax() + "]"), false);
-			source.sendFeedback(new StringTextComponent(indentation + " Z: [" + property.getZMin() + ", " + property.getZMax() + "]"), false);
+			source.sendSuccess(new StringTextComponent(indentation + " X: [" + property.getXMin() + ", " + property.getXMax() + "]"), false);
+			source.sendSuccess(new StringTextComponent(indentation + " Z: [" + property.getZMin() + ", " + property.getZMax() + "]"), false);
 			
 			if(property.getChildren() != null)
 			{

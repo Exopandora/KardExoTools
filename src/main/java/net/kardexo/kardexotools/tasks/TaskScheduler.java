@@ -57,7 +57,7 @@ public class TaskScheduler
 			{
 				Thread.sleep(Math.max(0, this.offset - this.warningTimes[0]));
 				
-				while(server.isServerRunning())
+				while(server.isRunning())
 				{
 					long millis = System.currentTimeMillis();
 					

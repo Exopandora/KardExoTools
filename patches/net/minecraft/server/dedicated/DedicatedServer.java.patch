@@ -1,10 +1,10 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -189,6 +189,7 @@
-             PlayerProfileCache.setOnlineMode(this.isServerInOnlineMode());
-             LOGGER.info("Preparing level \"{}\"", (Object)this.func_230542_k__());
-             this.func_240800_l__();
+             PlayerProfileCache.setUsesAuthentication(this.usesAuthentication());
+             LOGGER.info("Preparing level \"{}\"", (Object)this.getLevelIdName());
+             this.loadLevel();
 +            net.kardexo.kardexotools.KardExo.init(this);
-             long j = Util.nanoTime() - i;
+             long j = Util.getNanos() - i;
              String s = String.format(Locale.ROOT, "%.3fs", (double)j / 1.0E9D);
              LOGGER.info("Done ({})! For help, type \"help\"", (Object)s);

@@ -81,12 +81,12 @@ public class CommandCalculate
 	{
 		String script = term;
 		
-		if(script.contains("ans") && !HISTORY.containsKey(source.getName()))
+		if(script.contains("ans") && !HISTORY.containsKey(source.getTextName()))
 		{
 			throw CommandBase.exception("No previous value stored for ans in " + term);
 		}
 		
-		script = script.replaceAll("ans", HISTORY.get(source.getName()));
+		script = script.replaceAll("ans", HISTORY.get(source.getTextName()));
 		
 		for(String function : SPECIAL_FUNCTIONS.keySet())
 		{
@@ -106,9 +106,9 @@ public class CommandCalculate
 		try
 		{
 			String solution = SCRIPT_ENGINE.eval(script).toString();
-			source.sendFeedback(new StringTextComponent(term + " = " + solution), false);
+			source.sendSuccess(new StringTextComponent(term + " = " + solution), false);
 			
-			HISTORY.put(source.getName(), solution);
+			HISTORY.put(source.getTextName(), solution);
 			
 			return (int) Math.round(Double.parseDouble(solution));
 		}

@@ -23,8 +23,8 @@ public class CommandBase
 	
 	public static int teleport(CommandSource source, ServerPlayerEntity player, ServerWorld world, BlockPos position) throws CommandSyntaxException
 	{
-		TeleportCommand.teleport(source, player, world, position.getX() + 0.5F, position.getY(), position.getZ() + 0.5F, EnumSet.noneOf(SPlayerPositionLookPacket.Flags.class), player.rotationYaw, player.rotationPitch, null);
-		player.connection.sendPacket(new SSetExperiencePacket(player.experience, player.experienceTotal, player.experienceLevel));
+		TeleportCommand.performTeleport(source, player, world, position.getX() + 0.5F, position.getY(), position.getZ() + 0.5F, EnumSet.noneOf(SPlayerPositionLookPacket.Flags.class), player.yRot, player.xRot, null);
+		player.connection.send(new SSetExperiencePacket(player.experienceProgress, player.totalExperience, player.experienceLevel));
 		return 1;
 	}
 }

@@ -19,11 +19,11 @@ public class CommandSpawn
 	
 	private static int execute(CommandSource source) throws CommandSyntaxException
 	{
-		ServerWorld overworld = source.getServer().getWorld(World.OVERWORLD);
+		ServerWorld overworld = source.getServer().getLevel(World.OVERWORLD);
 		
 		if(overworld != null)
 		{
-			return CommandBase.teleport(source, source.asPlayer(), overworld, overworld.getHeight(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, overworld.getSpawnPoint()));
+			return CommandBase.teleport(source, source.getPlayerOrException(), overworld, overworld.getHeightmapPos(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, overworld.getSharedSpawnPos()));
 		}
 		
 		return 0;

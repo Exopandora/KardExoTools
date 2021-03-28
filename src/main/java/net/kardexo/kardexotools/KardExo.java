@@ -45,7 +45,7 @@ public class KardExo
 		}
 		
 		KardExo.registerTickables(server);
-		KardExo.registerCommands(server.getCommandManager().getDispatcher());
+		KardExo.registerCommands(server.getCommands().getDispatcher());
 		
 		KardExo.TASK_SCHEDULER.schedule(new TaskSave(server), Config.OFFSET_SAVE, TimeUnit.MINUTES, Config.INTERVAL_SAVE, TimeUnit.MINUTES, Config.WARNING_TIMES_SAVE, TimeUnit.SECONDS);
 		KardExo.TASK_SCHEDULER.schedule(new TaskBackup(server), Config.OFFSET_BACKUP, TimeUnit.MINUTES, Config.INTERVAL_BACKUP, TimeUnit.MINUTES, Config.WARNING_TIMES_BACKUP, TimeUnit.SECONDS);
@@ -55,11 +55,11 @@ public class KardExo
 	{
 		if(Config.DISABLE_AUTO_SAVING)
 		{
-			for(ServerWorld worldserver : server.getWorlds())
+			for(ServerWorld worldserver : server.getAllLevels())
 			{
-				if(worldserver != null && !worldserver.disableLevelSaving)
+				if(worldserver != null && !worldserver.noSave)
 				{
-					worldserver.disableLevelSaving = true;
+					worldserver.noSave = true;
 				}
 			}
 		}
@@ -67,9 +67,9 @@ public class KardExo
 	
 	public static void registerTickables(MinecraftServer server)
 	{
-		server.registerTickable(new TickableSleep(server));
-		server.registerTickable(new TickableBases(server));
-		server.registerTickable(new TickableDeathListener(server));
+		server.addTickable(new TickableSleep(server));
+		server.addTickable(new TickableBases(server));
+		server.addTickable(new TickableDeathListener(server));
 	}
 	
 	public static void registerCommands(CommandDispatcher<CommandSource> dispatcher)
@@ -83,7 +83,7 @@ public class KardExo
 	{
 		if(server.getPlayerList() != null)
 		{
-			server.getPlayerList().func_232641_a_(message, ChatType.SYSTEM, Util.DUMMY_UUID);
+			server.getPlayerList().broadcastMessage(message, ChatType.SYSTEM, Util.NIL_UUID);
 		}
 	}
 	
@@ -101,10 +101,10 @@ public class KardExo
 		
 		if(server.getPlayerList() != null)
 		{
-			server.getPlayerList().saveAllPlayerData();
+			server.getPlayerList().saveAll();
 		}
 		
-		if(server.save(true, true, false))
+		if(server.saveAllChunks(true, true, false))
 		{
 			if(displayMessages)
 			{

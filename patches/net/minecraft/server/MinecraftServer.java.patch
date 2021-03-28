@@ -2,23 +2,22 @@
 +++ b/net/minecraft/server/MinecraftServer.java
 @@ -161,7 +161,7 @@
      private static final Logger LOGGER = LogManager.getLogger();
-     public static final File USER_CACHE_FILE = new File("usercache.json");
-     public static final WorldSettings DEMO_WORLD_SETTINGS = new WorldSettings("Demo World", GameType.SURVIVAL, false, Difficulty.NORMAL, false, new GameRules(), DatapackCodec.VANILLA_CODEC);
--    protected final SaveFormat.LevelSave anvilConverterForAnvilFile;
-+    public final SaveFormat.LevelSave anvilConverterForAnvilFile;
-     protected final PlayerData playerDataManager;
-     private final Snooper snooper = new Snooper("server", this, Util.milliTime());
+     public static final File USERID_CACHE_FILE = new File("usercache.json");
+     public static final WorldSettings DEMO_SETTINGS = new WorldSettings("Demo World", GameType.SURVIVAL, false, Difficulty.NORMAL, false, new GameRules(), DatapackCodec.DEFAULT);
+-    protected final SaveFormat.LevelSave storageSource;
++    public final SaveFormat.LevelSave storageSource;
+     protected final PlayerData playerDataStorage;
+     private final Snooper snooper = new Snooper("server", this, Util.getMillis());
      private final List<Runnable> tickables = Lists.newArrayList();
-@@ -652,7 +652,7 @@
-         {
-             this.snooper.stop();
+@@ -653,6 +653,7 @@
+             this.snooper.interrupt();
          }
--
+ 
 +        net.kardexo.kardexotools.KardExo.stop();
-         this.resourceManager.close();
+         this.resources.close();
  
          try
-@@ -1084,7 +1084,7 @@
+@@ -1084,7 +1085,7 @@
  
      public String getServerModName()
      {
@@ -26,4 +25,4 @@
 +        return "KardExo";
      }
  
-     public CrashReport addServerInfoToCrashReport(CrashReport report)
+     public CrashReport fillReport(CrashReport p_71230_1_)

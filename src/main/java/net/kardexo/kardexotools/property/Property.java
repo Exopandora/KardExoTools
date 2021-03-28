@@ -96,7 +96,7 @@ public class Property
 	
 	public RegistryKey<World> getDimension()
 	{
-		return RegistryKey.getOrCreateKey(Registry.WORLD_KEY, this.dimension);
+		return RegistryKey.create(Registry.DIMENSION_REGISTRY, this.dimension);
 	}
 	
 	public void setDimension(ResourceLocation dimension)
@@ -106,7 +106,7 @@ public class Property
 	
 	public void setDimension(RegistryKey<World> dimension)
 	{
-		this.dimension = dimension.getLocation();
+		this.dimension = dimension.location();
 	}
 	
 	public String getTitle()
@@ -198,7 +198,7 @@ public class Property
 	
 	public boolean isInside(PlayerEntity player)
 	{
-		return this.isInside(player.getPosition(), player.world.getDimensionKey().getLocation());
+		return this.isInside(player.blockPosition(), player.level.dimension().location());
 	}
 	
 	public boolean isInside(BlockPos pos, ResourceLocation dimension)
@@ -208,7 +208,7 @@ public class Property
 	
 	public boolean isInsideMain(PlayerEntity player)
 	{
-		return this.isInsideMain(player.getPosition(), player.world.getDimensionKey().getLocation());
+		return this.isInsideMain(player.blockPosition(), player.level.dimension().location());
 	}
 	
 	public boolean isInsideMain(BlockPos pos, ResourceLocation dimension)
@@ -218,7 +218,7 @@ public class Property
 	
 	public boolean isInsideChild(PlayerEntity player)
 	{
-		return this.isInsideChild(player.getPosition(), player.world.getDimensionKey().getLocation());
+		return this.isInsideChild(player.blockPosition(), player.level.dimension().location());
 	}
 	
 	public boolean isInsideChild(BlockPos pos, ResourceLocation dimension)
@@ -352,8 +352,8 @@ public class Property
 		
 		IFormattableTextComponent basetextcomponent = new StringTextComponent(this.getTitle());
 		Style style = Style.EMPTY
-				.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent(builder.toString())))
-				.setInsertion(this.name);
+				.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent(builder.toString())))
+				.withInsertion(this.name);
 		basetextcomponent.setStyle(style);
 		
 		return basetextcomponent;

@@ -37,7 +37,7 @@ public class PropertyHelper
 		double xMax = Math.max(from.x, to.x);
 		double zMax = Math.max(from.z, to.z);
 		
-		Property property = new Property(id, title, Lists.newArrayList(new PropertyOwner(owner, true, true, null, null)), dimension.getDimensionKey().getLocation(), xMin, zMin, xMax, zMax);
+		Property property = new Property(id, title, Lists.newArrayList(new PropertyOwner(owner, true, true, null, null)), dimension.dimension().location(), xMin, zMin, xMax, zMax);
 		
 		file.getData().put(id, property);
 		Config.save(file);
@@ -67,7 +67,7 @@ public class PropertyHelper
 		double xMax = Math.max(from.x, to.x);
 		double zMax = Math.max(from.z, to.z);
 		
-		Property property = new Property(id, title, Collections.emptyList(), dimension.getDimensionKey().getLocation(), xMin, zMin, xMax, zMax);
+		Property property = new Property(id, title, Collections.emptyList(), dimension.dimension().location(), xMin, zMin, xMax, zMax);
 		
 		if(property.getChild(id) != null)
 		{
@@ -140,7 +140,7 @@ public class PropertyHelper
 	
 	public static boolean hasPermission(CommandSource source, String id, PlayerEntity target, DataFile<Property, String> file)
 	{
-		return source.hasPermissionLevel(4) || isCreator(source.getName(), id, file) || target != null && isOwner(source.getName(), id, file) && target.equals(source.getEntity());
+		return source.hasPermission(4) || isCreator(source.getTextName(), id, file) || target != null && isOwner(source.getTextName(), id, file) && target.equals(source.getEntity());
 	}
 	
 	public static Property getProperty(String id, DataFile<Property, String> file) throws NoSuchElementException
@@ -161,7 +161,7 @@ public class PropertyHelper
 		
 		for(Property property : file.getData().values())
 		{
-			if(property.isProtected() && !property.isOwner(name) && property.isInside(pos, player.world.getDimensionKey().getLocation()))
+			if(property.isProtected() && !property.isOwner(name) && property.isInside(pos, player.level.dimension().location()))
 			{
 				return true;
 			}
@@ -177,7 +177,7 @@ public class PropertyHelper
 	
 	private static boolean isProtected(PlayerEntity player, Entity entity)
 	{
-		return isProtected(player, entity.getPosition(), Config.BASES) || isProtected(player, entity.getPosition(), Config.PLACES);
+		return isProtected(player, entity.blockPosition(), Config.BASES) || isProtected(player, entity.blockPosition(), Config.PLACES);
 	}
 	
 	public static boolean canHarvestBlock(PlayerEntity player, BlockPos pos)
@@ -202,7 +202,7 @@ public class PropertyHelper
 	
 	public static ActionResultType cancelBlockInteraction(ServerPlayerEntity player)
 	{
-		player.getServer().getPlayerList().sendInventory(player);
+		player.getServer().getPlayerList().sendAllPlayerInfo(player);
 		return ActionResultType.PASS;
 	}
 }

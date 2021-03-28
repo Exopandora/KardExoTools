@@ -84,11 +84,11 @@ public class TickableBases implements Runnable
 			
 			for(PropertyOwner owner : notify)
 			{
-				ServerPlayerEntity playerOwner = this.server.getPlayerList().getPlayerByUsername(owner.getName());
+				ServerPlayerEntity playerOwner = this.server.getPlayerList().getPlayerByName(owner.getName());
 				
 				if(playerOwner != null)
 				{
-					playerOwner.sendMessage(this.getFormattedMessage(player, base, owner, access), Util.DUMMY_UUID);
+					playerOwner.sendMessage(this.getFormattedMessage(player, base, owner, access), Util.NIL_UUID);
 				}
 			}
 		}

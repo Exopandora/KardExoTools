@@ -24,18 +24,18 @@ public class CommandSetBiome
 	public static void register(CommandDispatcher<CommandSource> dispatcher)
 	{
 		dispatcher.register(Commands.literal("setbiome")
-				.requires(source -> source.hasPermissionLevel(4))
+				.requires(source -> source.hasPermission(4))
 					.then(Commands.argument("from", ColumnPosArgument.columnPos())
 						.then(Commands.argument("to", ColumnPosArgument.columnPos())
-							.then(Commands.argument("biome", ResourceLocationArgument.resourceLocation())
-								.suggests(SuggestionProviders.field_239574_d_)
-								.executes(context -> CommandSetBiome.setBiome(context.getSource(), ColumnPosArgument.fromBlockPos(context, "from"), ColumnPosArgument.fromBlockPos(context, "to"), ResourceLocationArgument.getResourceLocation(context, "biome")))))));
+							.then(Commands.argument("biome", ResourceLocationArgument.id())
+								.suggests(SuggestionProviders.AVAILABLE_BIOMES)
+								.executes(context -> CommandSetBiome.setBiome(context.getSource(), ColumnPosArgument.getColumnPos(context, "from"), ColumnPosArgument.getColumnPos(context, "to"), ResourceLocationArgument.getId(context, "biome")))))));
 	}
 	
 	private static int setBiome(CommandSource source, ColumnPos from, ColumnPos to, ResourceLocation resource) throws CommandSyntaxException
 	{
-		ServerWorld world = source.getWorld();
-		Biome biome = source.getServer().func_244267_aX().getRegistry(Registry.BIOME_KEY).getOptional(resource).orElseThrow(() -> LocateBiomeCommand.field_241044_a_.create(resource));
+		ServerWorld world = source.getLevel();
+		Biome biome = source.getServer().registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getOptional(resource).orElseThrow(() -> LocateBiomeCommand.ERROR_INVALID_BIOME.create(resource));
 		
 		int minX = Math.min(from.x, to.x);
 		int maxX = Math.max(from.x, to.x);
@@ -86,16 +86,16 @@ public class CommandSetBiome
 				
 				if(flag)
 				{
-					chunk.markDirty();
-					world.getChunkProvider().chunkManager.getTrackingPlayers(chunk.getPos(), false).forEach(player ->
+					chunk.markUnsaved();
+					world.getChunkSource().chunkMap.getPlayers(chunk.getPos(), false).forEach(player ->
 					{
-						player.connection.sendPacket(new SChunkDataPacket(chunk, 65535));
+						player.connection.send(new SChunkDataPacket(chunk, 65535));
 					});
 				}
 			}
 		}
 		
-		source.sendFeedback(new StringTextComponent("Set biome to " + resource), false);
+		source.sendSuccess(new StringTextComponent("Set biome to " + resource), false);
 		return (maxX - minX) * (maxZ - minZ);
 	}
 	

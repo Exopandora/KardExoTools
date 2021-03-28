@@ -26,16 +26,16 @@ public class CommandHome
 	
 	private static int execute(CommandSource source) throws CommandSyntaxException
 	{
-		ServerPlayerEntity sender = source.asPlayer();
-		PlayerConfig config = Config.PLAYERS.getData().get(source.getName());
+		ServerPlayerEntity sender = source.getPlayerOrException();
+		PlayerConfig config = Config.PLAYERS.getData().get(source.getTextName());
 		
-		if(config == null || sender.world == null || config != null && config.getHome() == null || config != null && config.getHome() != null && config.getHome().getPosition() == null)
+		if(config == null || sender.level == null || config != null && config.getHome() == null || config != null && config.getHome() != null && config.getHome().getPosition() == null)
 		{
 			throw CommandBase.exception("No home set");
 		}
 		
 		MinecraftServer server = source.getServer();
-		ServerWorld world = server.getWorld(RegistryKey.getOrCreateKey(Registry.WORLD_KEY, config.getHome().getDimension()));
+		ServerWorld world = server.getLevel(RegistryKey.create(Registry.DIMENSION_REGISTRY, config.getHome().getDimension()));
 		BlockPos position = CommandHome.spawnPosition(world, config.getHome().getPosition());
 		
 		return CommandBase.teleport(source, sender, world, position);
@@ -52,7 +52,7 @@ public class CommandHome
 				throw CommandBase.exception("Could not find safe position");
 			}
 			
-			spawn = spawn.up();
+			spawn = spawn.above();
 		}
 		
 		return spawn;
@@ -60,6 +60,6 @@ public class CommandHome
 	
 	protected static boolean hasRoomForPlayer(IBlockReader reader, BlockPos pos)
 	{
-		return Block.hasSolidSideOnTop(reader, pos.down()) && !reader.getBlockState(pos).getMaterial().isSolid() && !reader.getBlockState(pos.up()).getMaterial().isSolid();
+		return Block.canSupportRigidBlock(reader, pos.below()) && !reader.getBlockState(pos).getMaterial().isSolid() && !reader.getBlockState(pos.above()).getMaterial().isSolid();
 	}
 }

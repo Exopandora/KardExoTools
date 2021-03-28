@@ -29,8 +29,8 @@ public class CommandWhereIs
 	
 	private static int whereIs(CommandSource source, PlayerEntity target) throws CommandSyntaxException
 	{
-		BlockPos pos = target.getPosition();
-		String dimension = target.world.getDimensionKey().getLocation().toString();
+		BlockPos pos = target.blockPosition();
+		String dimension = target.level.dimension().location().toString();
 		
 		Set<Property> properties = new HashSet<Property>();
 		
@@ -71,8 +71,8 @@ public class CommandWhereIs
 			query = new TranslationTextComponent("%s (%s)", new Object[] {query, formattedProperties});
 		}
 		
-		source.getServer().sendMessage(new StringTextComponent("Query: ").append(query), Util.DUMMY_UUID);
-		source.sendFeedback(query, false);
+		source.getServer().sendMessage(new StringTextComponent("Query: ").append(query), Util.NIL_UUID);
+		source.sendSuccess(query, false);
 		
 		return 1;
 	}

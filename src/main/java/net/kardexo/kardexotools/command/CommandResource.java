@@ -29,11 +29,11 @@ public class CommandResource
 	{
 		Map<String, Integer> map = new HashMap<String, Integer>();
 		
-		for(BlockPos blockpos : BlockPos.Mutable.getAllInBoxMutable(area.minX, area.minY, area.minZ, area.maxX, area.maxY, area.maxZ))
+		for(BlockPos blockpos : BlockPos.Mutable.betweenClosed(area.x0, area.y0, area.z0, area.x1, area.y1, area.z1))
 		{
-			String location = source.getWorld().getBlockState(blockpos).getBlock().getTranslationKey();
+			String location = source.getLevel().getBlockState(blockpos).getBlock().getDescriptionId();
 			
-			if(!location.equals(Blocks.AIR.getTranslationKey()))
+			if(!location.equals(Blocks.AIR.getDescriptionId()))
 			{
 				if(!map.containsKey(location))
 				{
@@ -48,7 +48,7 @@ public class CommandResource
 		
 		for(Entry<String, Integer> entry : map.entrySet())
 		{
-			source.sendFeedback(new TranslationTextComponent("x" + entry.getValue() + " %s", new TranslationTextComponent(entry.getKey())), false);
+			source.sendSuccess(new TranslationTextComponent("x" + entry.getValue() + " %s", new TranslationTextComponent(entry.getKey())), false);
 		}
 		
 		return map.values().stream().reduce(Integer::sum).orElse(0);
