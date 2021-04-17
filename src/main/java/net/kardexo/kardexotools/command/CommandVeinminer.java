@@ -7,9 +7,9 @@ import java.util.Map.Entry;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import net.kardexo.kardexotools.config.Config;
+import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.config.PlayerConfig;
-import net.kardexo.kardexotools.veinminer.VeinminerConfigEntry;
+import net.kardexo.kardexotools.config.VeinBlockConfig;
 import net.minecraft.block.Block;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
@@ -33,8 +33,8 @@ public class CommandVeinminer
 	
 	private static int setVeinminer(CommandSource source, boolean enabled) throws CommandSyntaxException
 	{
-		Config.PLAYERS.getData().computeIfAbsent(source.getTextName(), PlayerConfig::new).setVeinminerEnabled(enabled);
-		Config.save(Config.PLAYERS);
+		KardExo.PLAYERS.computeIfAbsent(source.getTextName(), PlayerConfig::new).setVeinminerEnabled(enabled);
+		KardExo.PLAYERS_FILE.save();
 		
 		if(enabled)
 		{
@@ -50,9 +50,9 @@ public class CommandVeinminer
 	
 	private static int list(CommandSource source) throws CommandSyntaxException
 	{
-		List<ITextComponent> list = new ArrayList<ITextComponent>(Config.VEINMINER.getData().size());
+		List<ITextComponent> list = new ArrayList<ITextComponent>(KardExo.VEINMINER.size());
 		
-		for(Entry<Block, VeinminerConfigEntry> entry : Config.VEINMINER.getData().entrySet())
+		for(Entry<Block, VeinBlockConfig> entry : KardExo.VEINMINER.entrySet())
 		{
 			ItemStack stack = new ItemStack(entry.getKey().asItem(), 1);
 			list.add(new TranslationTextComponent("%s = %s", stack.getDisplayName(), entry.getValue().getRadius()));

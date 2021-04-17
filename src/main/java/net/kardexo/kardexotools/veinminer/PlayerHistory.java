@@ -33,14 +33,7 @@ public class PlayerHistory<T>
 	
 	public void add(String player, T entry)
 	{
-		if(this.history.containsKey(player))
-		{
-			this.history.get(player).push(entry);
-		}
-		else
-		{
-			this.history.put(player, new LimitedStack<T>(this.size, entry));
-		}
+		this.history.computeIfAbsent(player, key -> new LimitedStack<T>(this.size)).push(entry);
 	}
 	
 	public LimitedStack<T> remove(String player)

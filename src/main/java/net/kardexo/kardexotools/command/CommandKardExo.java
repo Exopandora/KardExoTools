@@ -7,7 +7,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.CommandNode;
 
 import net.kardexo.kardexotools.KardExo;
-import net.kardexo.kardexotools.config.Config;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.util.text.StringTextComponent;
@@ -25,7 +24,7 @@ public class CommandKardExo
 	
 	private static int version(CommandSource source)
 	{
-		source.sendSuccess(new StringTextComponent("Version: " + Config.VERSION), false);
+		source.sendSuccess(new StringTextComponent("Version: " + KardExo.VERSION), false);
 		return 1;
 	}
 	

@@ -15,7 +15,8 @@ import java.util.stream.Stream;
 
 import com.google.common.collect.Sets;
 
-import net.kardexo.kardexotools.config.Config;
+import net.kardexo.kardexotools.KardExo;
+import net.kardexo.kardexotools.config.VeinBlockConfig;
 import net.kardexo.kardexotools.property.PropertyHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -36,7 +37,7 @@ import net.minecraft.world.server.ServerWorld;
 
 public class Veinminer
 {
-	private static final PlayerHistory<VeinminerHistoryEntry> HISTORY = new PlayerHistory<VeinminerHistoryEntry>(Config.HISTORY_SIZE);
+	private static final PlayerHistory<Vein> HISTORY = new PlayerHistory<Vein>(KardExo.CONFIG.getVeinminerHistorySize());
 	
 	public static boolean mine(BlockPos pos, ServerPlayerEntity player, World world, BiFunction<BlockPos, Boolean, Boolean> harvestBlock)
 	{
@@ -45,18 +46,18 @@ public class Veinminer
 		BlockState state = world.getBlockState(pos);
 		boolean isEffectiveTool = item.getDestroySpeed(state) > 1.0F;
 		
-		if(Config.PLAYERS.getData().containsKey(name) && Config.PLAYERS.getData().get(name).isVeinminerEnabled() && player.isCrouching() && !player.onClimbable() && (!item.isDamageableItem() || item.getMaxDamage() - item.getDamageValue() > 1))
+		if(KardExo.PLAYERS.containsKey(name) && KardExo.PLAYERS.get(name).isVeinminerEnabled() && player.isShiftKeyDown() && !player.onClimbable() && (!item.isDamageableItem() || item.getMaxDamage() - item.getDamageValue() > 1))
 		{
-			for(Entry<Block, VeinminerConfigEntry> entry : Config.VEINMINER.getData().entrySet())
+			for(Entry<Block, VeinBlockConfig> entry : KardExo.VEINMINER.entrySet())
 			{
 				Block block = entry.getKey();
-				VeinminerConfigEntry config = entry.getValue();
+				VeinBlockConfig config = entry.getValue();
 				
 				if(Veinminer.isEqual(state, block.defaultBlockState()) && (isEffectiveTool || !config.doesRequireTool()))
 				{
-					PriorityQueue<BlockPos> queue = Veinminer.calculateVein(player, Config.BLOCK_LIMIT, config.getRadius(), state, pos, world);
+					PriorityQueue<BlockPos> queue = Veinminer.calculateVein(player, KardExo.CONFIG.getVeinminerBlockLimit(), config.getRadius(), state, pos, world);
 					Map<BlockState, Set<BlockPos>> stateMap = new HashMap<BlockState, Set<BlockPos>>();
-					VeinminerHistoryEntry undo = new VeinminerHistoryEntry(player.level.dimension(), stateMap);
+					Vein undo = new Vein(player.level.dimension(), stateMap);
 					queue.poll();
 					
 					if(!queue.isEmpty())
@@ -68,7 +69,7 @@ public class Veinminer
 						{
 							stateMap.put(next, Sets.newHashSet(pos));
 							
-							for(int x = 0; x < Config.BLOCK_LIMIT; x++)
+							for(int x = 0; x < KardExo.CONFIG.getVeinminerBlockLimit(); x++)
 							{
 								if(item.isDamageableItem() && item.getMaxDamage() > 0 && item.getMaxDamage() - item.getDamageValue() == 1)
 								{
@@ -187,7 +188,7 @@ public class Veinminer
 	
 	public static int undo(ServerPlayerEntity player, MinecraftServer server) throws Exception
 	{
-		VeinminerHistoryEntry undo = Veinminer.HISTORY.peek(player.getGameProfile().getName());
+		Vein undo = Veinminer.HISTORY.peek(player.getGameProfile().getName());
 		Set<BlockPos> positions = undo.getAllPositions();
 		ServerWorld world = server.getLevel(undo.getWorld());
 		Block block = undo.getBlock();

@@ -58,14 +58,12 @@ public class CommandSetBiome
 			{
 				Chunk chunk = world.getChunk(chunkX, chunkZ);
 				Biome[] biomes = chunk.getBiomes().biomes;
+				boolean flag = false;
 				
 				int subChunkMinX = minChunkOffset(chunkX, chunkMinX, minX) >> 2;
 				int subChunkMinZ = minChunkOffset(chunkZ, chunkMinZ, minZ) >> 2;
-				
 				int subChunkMaxX = maxChunkOffset(chunkX, chunkMaxX, maxX) >> 2;
 				int subChunkMaxZ = maxChunkOffset(chunkZ, chunkMaxZ, maxZ) >> 2;
-				
-				boolean flag = false;
 				
 				for(int y = 0; y < 64; y++)
 				{

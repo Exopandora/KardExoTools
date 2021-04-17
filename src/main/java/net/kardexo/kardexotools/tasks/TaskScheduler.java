@@ -70,7 +70,6 @@ public class TaskScheduler
 						for(int x = 0; x < this.warningTimes.length; x++)
 						{
 							KardExo.notifyPlayers(server, new StringTextComponent(this.task.getWarningMessage(TimeUnit.MILLISECONDS.toSeconds(this.warningTimes[x]))));
-							
 							long waitTime = this.warningTimes[x];
 							
 							if(x < this.warningTimes.length - 1)

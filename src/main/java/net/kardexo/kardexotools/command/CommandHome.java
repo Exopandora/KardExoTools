@@ -3,7 +3,7 @@ package net.kardexo.kardexotools.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import net.kardexo.kardexotools.config.Config;
+import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.config.PlayerConfig;
 import net.minecraft.block.Block;
 import net.minecraft.command.CommandSource;
@@ -27,7 +27,7 @@ public class CommandHome
 	private static int execute(CommandSource source) throws CommandSyntaxException
 	{
 		ServerPlayerEntity sender = source.getPlayerOrException();
-		PlayerConfig config = Config.PLAYERS.getData().get(source.getTextName());
+		PlayerConfig config = KardExo.PLAYERS.get(source.getTextName());
 		
 		if(config == null || sender.level == null || config != null && config.getHome() == null || config != null && config.getHome() != null && config.getHome().getPosition() == null)
 		{

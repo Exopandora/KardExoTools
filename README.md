@@ -56,10 +56,6 @@ Once activated you can mine veins of blocks (configurable) by sneaking. It only 
 
 1. Run `gradlew setup`
 
-## Configure (Optional) ##
-
-General config file: `src/main/java/net/kardexo/kardexotools/config/Config.java`
-
 ## Build ##
 
 1. Run `gradlew releaseProject`
@@ -70,3 +66,8 @@ General config file: `src/main/java/net/kardexo/kardexotools/config/Config.java`
 1. Open a vanilla `minecraft_server.jar` as a zip file
 2. Copy all files from `build/distributions/KardExoTools_VERSION_Server.zip` into the jar
 3. Run the server
+
+## Configure (Optional) ##
+
+1. Run the server once
+2. Edit generated json files in `config/`

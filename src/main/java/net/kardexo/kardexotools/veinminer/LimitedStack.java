@@ -2,15 +2,14 @@ package net.kardexo.kardexotools.veinminer;
 
 import java.util.Stack;
 
+@SuppressWarnings("serial")
 public class LimitedStack<T> extends Stack<T>
 {
-	private static final long serialVersionUID = 6278523913514757437L;
 	private final int size;
 	
-	public LimitedStack(int size, T entry)
+	public LimitedStack(int size)
 	{
 		this.size = size;
-		this.push(entry);
 	}
 	
 	@Override

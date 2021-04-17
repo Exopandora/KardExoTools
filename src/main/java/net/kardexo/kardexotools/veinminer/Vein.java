@@ -12,12 +12,12 @@ import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class VeinminerHistoryEntry
+public class Vein
 {
 	private final RegistryKey<World> world;
 	private final Map<BlockState, Set<BlockPos>> stateMap;
 	
-	public VeinminerHistoryEntry(RegistryKey<World> world, Map<BlockState, Set<BlockPos>> stateMap)
+	public Vein(RegistryKey<World> world, Map<BlockState, Set<BlockPos>> stateMap)
 	{
 		this.world = world;
 		this.stateMap = stateMap;

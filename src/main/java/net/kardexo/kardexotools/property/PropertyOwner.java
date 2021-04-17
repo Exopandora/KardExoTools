@@ -2,20 +2,19 @@ package net.kardexo.kardexotools.property;
 
 import com.google.gson.annotations.SerializedName;
 
+import net.kardexo.kardexotools.KardExo;
+
 public class PropertyOwner
 {
-	private static final String DEFAULT_ENTER_MESSAGE = "%1$s has entered your base (%2$s)";
-	private static final String DEFAULT_EXIT_MESSAGE = "%1$s has left your base (%2$s)";
-	
+	@SerializedName("name")
 	private String name;
-	
 	@SerializedName("enter_message")
 	private String enterMessage;
-	
 	@SerializedName("exit_message")
 	private String exitMessage;
-	
+	@SerializedName("notify")
 	private boolean notify;
+	@SerializedName("creator")
 	private boolean creator;
 	
 	public PropertyOwner(String name)
@@ -74,22 +73,12 @@ public class PropertyOwner
 	
 	public void resetEnterMessage()
 	{
-		this.enterMessage = PropertyOwner.DEFAULT_ENTER_MESSAGE;
+		this.enterMessage = KardExo.CONFIG.getPropertyDefaultEnterMessage();
 	}
 	
 	public void resetExitMessage()
 	{
-		this.exitMessage = PropertyOwner.DEFAULT_EXIT_MESSAGE;
-	}
-	
-	public static String getDefaultEnterMessage()
-	{
-		return PropertyOwner.DEFAULT_ENTER_MESSAGE;
-	}
-	
-	public static String getDefaultExitMessage()
-	{
-		return PropertyOwner.DEFAULT_EXIT_MESSAGE;
+		this.exitMessage = KardExo.CONFIG.getPropertyDefaultExitMessage();
 	}
 	
 	public boolean isCreator()

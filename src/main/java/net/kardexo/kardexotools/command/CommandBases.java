@@ -12,7 +12,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
-import net.kardexo.kardexotools.config.Config;
+import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.property.Property;
 import net.kardexo.kardexotools.property.PropertyHelper;
 import net.kardexo.kardexotools.property.PropertyOwner;
@@ -120,7 +120,7 @@ public class CommandBases
 	{
 		try
 		{
-			PropertyHelper.add(id, dimension, from, to, owner.getGameProfile().getName(), title, Config.BASES);
+			PropertyHelper.add(id, dimension, from, to, owner.getGameProfile().getName(), title, KardExo.BASES_FILE);
 			source.sendSuccess(new StringTextComponent("Added base with id " + id), false);
 		}
 		catch(IllegalStateException e)
@@ -137,7 +137,7 @@ public class CommandBases
 		
 		try
 		{
-			PropertyHelper.remove(id, Config.BASES);
+			PropertyHelper.remove(id, KardExo.BASES_FILE);
 			source.sendSuccess(new StringTextComponent("Removed base with id " + id), false);
 		}
 		catch(NoSuchElementException e)
@@ -187,10 +187,10 @@ public class CommandBases
 		ensurePermission(source, id, player);
 		ensureOwner(player.getGameProfile().getName(), id);
 		
-		PropertyHelper.forOwner(id, player, Config.BASES, owner ->
+		PropertyHelper.forOwner(id, player, KardExo.BASES, owner ->
 		{
 			callback.accept(owner);
-			Config.save(Config.BASES);
+			KardExo.BASES_FILE.save();
 		});
 	}
 	
@@ -199,14 +199,14 @@ public class CommandBases
 		ensurePermission(source, id, null);
 		String name = player.getGameProfile().getName();
 		
-		if(PropertyHelper.isOwner(name, id, Config.BASES))
+		if(PropertyHelper.isOwner(name, id, KardExo.BASES))
 		{
 			throw CommandBase.exception(name + " already is an owner of base with id " + id);
 		}
 		
 		PropertyOwner owner = new PropertyOwner(player.getGameProfile().getName());
-		Config.BASES.getData().get(id).addOwner(owner);
-		Config.save(Config.BASES);
+		KardExo.BASES.get(id).addOwner(owner);
+		KardExo.BASES_FILE.save();
 		
 		if(creator)
 		{
@@ -225,12 +225,12 @@ public class CommandBases
 		ensurePermission(source, id, player);
 		ensureOwner(player.getGameProfile().getName(), id);
 		Property property = getProperty(id);
-		ensureCreatorSize(id, player, property, PropertyHelper.isCreator(player.getGameProfile().getName(), id, Config.BASES));
+		ensureCreatorSize(id, player, property, PropertyHelper.isCreator(player.getGameProfile().getName(), id, KardExo.BASES));
 		
 		PropertyOwner owner = new PropertyOwner(player.getGameProfile().getName());
 		property.removeOwner(owner);
 		source.sendSuccess(new StringTextComponent("Removed " + owner.getName() +  " as an owner of the base with id " + id), false);
-		Config.save(Config.BASES);
+		KardExo.BASES_FILE.save();
 		
 		return 1;
 	}
@@ -254,13 +254,13 @@ public class CommandBases
 				{
 					owner.setCreator(true);
 					source.sendSuccess(new StringTextComponent(owner.getName() + " is now a creator of base with id " + id), false);
-					Config.save(Config.BASES);
+					KardExo.BASES_FILE.save();
 				}
 				else if(owner.isCreator() && !creator)
 				{
 					owner.setCreator(false);
 					source.sendSuccess(new StringTextComponent(owner.getName() + " is now an owner of base with id " + id), false);
-					Config.save(Config.BASES);
+					KardExo.BASES_FILE.save();
 				}
 				else if(!owner.isCreator() && !creator)
 				{
@@ -285,7 +285,7 @@ public class CommandBases
 			if(owner.getName().equals(player.getGameProfile().getName()))
 			{
 				owner.setNotify(notify);
-				Config.save(Config.BASES);
+				KardExo.BASES_FILE.save();
 				
 				if(notify)
 				{
@@ -310,7 +310,7 @@ public class CommandBases
 		
 		try
 		{
-			PropertyHelper.addChild(parent, child, dimension, from, to, title, Config.BASES);
+			PropertyHelper.addChild(parent, child, dimension, from, to, title, KardExo.BASES_FILE);
 			source.sendSuccess(new StringTextComponent("Added child with id " + child + " to base with id " + id), false);
 		}
 		catch(IllegalStateException e)
@@ -328,7 +328,7 @@ public class CommandBases
 		
 		try
 		{
-			PropertyHelper.removeChild(parent, child, Config.BASES);
+			PropertyHelper.removeChild(parent, child, KardExo.BASES_FILE);
 			source.sendSuccess(new StringTextComponent("Removed child with id " + child + " from base with id " + id), false);
 		}
 		catch(NoSuchElementException e)
@@ -343,7 +343,7 @@ public class CommandBases
 	{
 		ensurePermission(source, id, null);
 		getProperty(id).setProtected(enabled);
-		Config.save(Config.BASES);
+		KardExo.BASES_FILE.save();
 		
 		if(enabled)
 		{
@@ -361,7 +361,7 @@ public class CommandBases
 	{
 		try
 		{
-			return CommandProperty.list(source, Config.BASES);
+			return CommandProperty.list(source, KardExo.BASES);
 		}
 		catch(NoSuchElementException e)
 		{
@@ -375,7 +375,7 @@ public class CommandBases
 		
 		try
 		{
-			Config.save(Config.BASES);
+			KardExo.BASES_FILE.save();
 			source.sendSuccess(new StringTextComponent("Successfully reloaded bases"), false);
 		}
 		catch(Exception e)
@@ -383,12 +383,12 @@ public class CommandBases
 			throw CommandBase.exception("Could not reload bases");
 		}
 		
-		return Config.BASES.getData().size();
+		return KardExo.BASES.size();
 	}
 	
 	private static void ensurePermission(CommandSource source, String id, PlayerEntity target) throws CommandSyntaxException
 	{
-		if(!PropertyHelper.hasPermission(source, id, target, Config.BASES))
+		if(!PropertyHelper.hasPermission(source, id, target, KardExo.BASES))
 		{
 			throw CommandBase.exception("You must be a creator of base with id " + id);
 		}
@@ -396,7 +396,7 @@ public class CommandBases
 	
 	private static void ensureOwner(String name, String id) throws CommandSyntaxException
 	{
-		if(!PropertyHelper.isOwner(name, id, Config.BASES))
+		if(!PropertyHelper.isOwner(name, id, KardExo.BASES))
 		{
 			throw CommandBase.exception(name + " is not an owner of base with id " + id);
 		}
@@ -414,7 +414,7 @@ public class CommandBases
 	{
 		try
 		{
-			return PropertyHelper.getProperty(id, Config.BASES);
+			return PropertyHelper.getProperty(id, KardExo.BASES);
 		}
 		catch(NoSuchElementException e)
 		{
@@ -424,11 +424,11 @@ public class CommandBases
 	
 	private static CompletableFuture<Suggestions> getSuggestions(CommandContext<CommandSource> context, SuggestionsBuilder builder) throws CommandSyntaxException
 	{
-		return ISuggestionProvider.suggest(Config.BASES.getData().keySet(), builder);
+		return ISuggestionProvider.suggest(KardExo.BASES.keySet(), builder);
 	}
 	
 	private static CompletableFuture<Suggestions> getChildSuggestions(CommandContext<CommandSource> context, SuggestionsBuilder builder) throws CommandSyntaxException
 	{
-		return CommandProperty.getChildSuggestions(Config.BASES, context, builder, StringArgumentType.getString(context, "id"));
+		return CommandProperty.getChildSuggestions(KardExo.BASES_FILE, context, builder, StringArgumentType.getString(context, "id"));
 	}
 }

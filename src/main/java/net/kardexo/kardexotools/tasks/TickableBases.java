@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.kardexo.kardexotools.config.Config;
-import net.kardexo.kardexotools.property.EnumBaseAccess;
+import net.kardexo.kardexotools.KardExo;
+import net.kardexo.kardexotools.property.BaseAccess;
 import net.kardexo.kardexotools.property.Property;
 import net.kardexo.kardexotools.property.PropertyOwner;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -32,7 +32,7 @@ public class TickableBases implements Runnable
 	@Override
 	public void run()
 	{
-		for(Property base : Config.BASES.getData().values())
+		for(Property base : KardExo.BASES.values())
 		{
 			List<PropertyOwner> notifyList = new ArrayList<PropertyOwner>();
 			
@@ -55,18 +55,18 @@ public class TickableBases implements Runnable
 				if(!inside && contains)
 				{
 					visitors.remove(name);
-					this.notifyOwners(base, notifyList, player, EnumBaseAccess.LEAVE);
+					this.notifyOwners(base, notifyList, player, BaseAccess.LEAVE);
 				}
 				else if(inside && !contains)
 				{
 					visitors.add(name);
-					this.notifyOwners(base, notifyList, player, EnumBaseAccess.ENTER);
+					this.notifyOwners(base, notifyList, player, BaseAccess.ENTER);
 				}
 			}
 		}
 	}
 	
-	private void notifyOwners(Property base, List<PropertyOwner> notify, ServerPlayerEntity player, EnumBaseAccess access)
+	private void notifyOwners(Property base, List<PropertyOwner> notify, ServerPlayerEntity player, BaseAccess access)
 	{
 		String name = player.getGameProfile().getName();
 		
@@ -94,7 +94,7 @@ public class TickableBases implements Runnable
 		}
 	}
 	
-	private ITextComponent getFormattedMessage(ServerPlayerEntity player, Property base, PropertyOwner owner, EnumBaseAccess access)
+	private ITextComponent getFormattedMessage(ServerPlayerEntity player, Property base, PropertyOwner owner, BaseAccess access)
 	{
 		String format = null;
 		
@@ -116,9 +116,9 @@ public class TickableBases implements Runnable
 		switch(access)
 		{
 			case ENTER:
-				return new TranslationTextComponent(PropertyOwner.getDefaultEnterMessage(), new Object[]{player.getDisplayName(), base.getDisplayName()});
+				return new TranslationTextComponent(KardExo.CONFIG.getPropertyDefaultEnterMessage(), new Object[]{player.getDisplayName(), base.getDisplayName()});
 			case LEAVE:
-				return new TranslationTextComponent(PropertyOwner.getDefaultExitMessage(), new Object[]{player.getDisplayName(), base.getDisplayName()});
+				return new TranslationTextComponent(KardExo.CONFIG.getPropertyDefaultExitMessage(), new Object[]{player.getDisplayName(), base.getDisplayName()});
 		}
 		
 		return null;

@@ -2,6 +2,7 @@ package net.kardexo.kardexotools.command;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
 
@@ -18,14 +19,14 @@ import net.minecraft.util.text.TranslationTextComponent;
 
 public abstract class CommandProperty
 {
-	public static int list(CommandSource source, DataFile<Property, String> file) throws NoSuchElementException
+	public static int list(CommandSource source, Map<String, Property> data) throws NoSuchElementException
 	{
-		if(file.getData().values().isEmpty())
+		if(data.values().isEmpty())
 		{
 			throw new NoSuchElementException();
 		}
 		
-		return CommandProperty.list(source, file.getData().values(), "");
+		return CommandProperty.list(source, data.values(), "");
 	}
 	
 	private static int list(CommandSource source, Collection<Property> list, String indentation)
@@ -64,7 +65,7 @@ public abstract class CommandProperty
 	
 	public static CompletableFuture<Suggestions> getChildSuggestions(DataFile<Property, String> file, CommandContext<CommandSource> context, SuggestionsBuilder builder, String parent)
 	{
-		Property property = file.getData().get(parent);
+		Property property = file.get(parent);
 		
 		if(property != null)
 		{

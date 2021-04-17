@@ -18,16 +18,16 @@ public class CommandWorldTime
 	
 	private static int worldtime(CommandSource source) throws CommandSyntaxException
 	{
-		source.sendSuccess(new StringTextComponent("World time: " + getWorldTime(source.getLevel().getDayTime())), false);
+		source.sendSuccess(new StringTextComponent("World time: " + toWorldTime(source.getLevel().getDayTime())), false);
 		return 1;
 	}
 	
-	private static int getHour(long tick)
+	private static int toHour(long tick)
 	{
 		return MathHelper.floor((tick + 6000) / 1000F) % 24;
 	}
 	
-	private static int getMinute(long tick)
+	private static int toMinute(long tick)
 	{
 		int hour = MathHelper.floor((tick + 6000F) / 1000F);
 		int minute = MathHelper.floor((tick + 6000F - hour * 1000) * 6 / 100);
@@ -35,8 +35,8 @@ public class CommandWorldTime
 		return minute;
 	}
 	
-	private static String getWorldTime(long tick)
+	private static String toWorldTime(long tick)
 	{
-		return String.format("%02d:%02d", getHour(tick), getMinute(tick));
+		return String.format("%02d:%02d", toHour(tick), toMinute(tick));
 	}
 }

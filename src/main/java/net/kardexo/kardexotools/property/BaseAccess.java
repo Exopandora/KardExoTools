@@ -1,6 +1,6 @@
 package net.kardexo.kardexotools.property;
 
-public enum EnumBaseAccess
+public enum BaseAccess
 {
 	ENTER,
 	LEAVE;

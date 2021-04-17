@@ -1,4 +1,4 @@
-package net.kardexo.kardexotools.veinminer;
+package net.kardexo.kardexotools.config;
 
 import javax.annotation.Nullable;
 
@@ -9,7 +9,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 
-public class VeinminerConfigEntry
+public class VeinBlockConfig
 {
 	@SerializedName("block")
 	private final ResourceLocation block;
@@ -18,14 +18,14 @@ public class VeinminerConfigEntry
 	@SerializedName("requires_tool")
 	private boolean requiresTool;
 	
-	public VeinminerConfigEntry(ResourceLocation block, int radius, boolean requiresTool)
+	public VeinBlockConfig(ResourceLocation block, int radius, boolean requiresTool)
 	{
 		this.block = block;
 		this.radius = radius;
 		this.requiresTool = requiresTool;
 	}
 	
-	public VeinminerConfigEntry(Block block, int radius, boolean requiresTool)
+	public VeinBlockConfig(Block block, int radius, boolean requiresTool)
 	{
 		this(Registry.BLOCK.getKey(block), radius, requiresTool);
 	}
@@ -56,7 +56,7 @@ public class VeinminerConfigEntry
 	}
 	
 	@Nullable
-	public static Block toBlock(VeinminerConfigEntry option)
+	public static Block toBlock(VeinBlockConfig option)
 	{
 		if(option != null)
 		{

@@ -27,54 +27,48 @@ public class TickableSleep implements Runnable
 	{
 		ServerWorld overworld = this.server.getLevel(World.OVERWORLD);
 		
-		if(!overworld.players().isEmpty())
+		for(PlayerEntity player : overworld.players())
 		{
-			for(PlayerEntity player : overworld.players())
+			String playername = player.getGameProfile().getName();
+			
+			if(player.isSleeping())
 			{
-				String playername = player.getGameProfile().getName();
-				
-				if(player.isSleeping())
+				if(!this.sleep.containsKey(playername) && !overworld.isDay())
 				{
-					if(!this.sleep.containsKey(playername) && !overworld.isDay())
+					KardExo.notifyPlayers(this.server, new TranslationTextComponent("%s is now sleeping", player.getDisplayName()));
+					this.sleep.put(playername, overworld.getDayTime());
+				}
+				
+				if(this.sleep.get(playername) + 100 <= overworld.getLevelData().getDayTime() && overworld.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT))
+				{
+					for(ServerWorld level : this.server.getAllLevels())
 					{
-						KardExo.notifyPlayers(this.server, new TranslationTextComponent("%s is now sleeping", player.getDisplayName()));
-						this.sleep.put(playername, overworld.getDayTime());
+						long time = level.getLevelData().getDayTime() + 24000L;
+						
+						level.setDayTime(time - time % 24000L);
+						level.players().stream().filter(PlayerEntity::isSleeping).forEach(p -> p.stopSleepInBed(false, false));
+						
+						if(overworld.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT))
+			            {
+							IServerWorldInfo info = (IServerWorldInfo) overworld.getLevelData();
+							info.setRainTime(0);
+							info.setRaining(false);
+							info.setThunderTime(0);
+							info.setThundering(false);
+			            }
 					}
 					
-					if(this.sleep.get(playername) + 100 <= overworld.getLevelData().getDayTime() && overworld.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT))
-					{
-						for(ServerWorld server : this.server.getAllLevels())
-						{
-							long time = server.getLevelData().getDayTime() + 24000L;
-							
-							server.setDayTime(time - time % 24000L);
-							server.players().stream().filter(PlayerEntity::isSleeping).forEach(p -> p.stopSleepInBed(false, false));
-							
-							if(overworld.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT))
-				            {
-								IServerWorldInfo info = (IServerWorldInfo) overworld.getLevelData();
-								info.setRainTime(0);
-								info.setRaining(false);
-								info.setThunderTime(0);
-								info.setThundering(false);
-				            }
-						}
-						
-						this.sleep.clear();
-					}
+					this.sleep.clear();
 				}
-				else
+			}
+			else if(this.sleep.containsKey(playername))
+			{
+				if(!overworld.isDay())
 				{
-					if(this.sleep.containsKey(playername))
-					{
-						if(!overworld.isDay())
-						{
-							KardExo.notifyPlayers(this.server, new TranslationTextComponent("%s is no longer sleeping", player.getDisplayName()));
-						}
-						
-						this.sleep.remove(playername);
-					}
+					KardExo.notifyPlayers(this.server, new TranslationTextComponent("%s is no longer sleeping", player.getDisplayName()));
 				}
+				
+				this.sleep.remove(playername);
 			}
 		}
 	}

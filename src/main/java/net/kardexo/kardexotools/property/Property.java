@@ -159,7 +159,7 @@ public class Property
 	{
 		if(this.children != null)
 		{
-			return this.children.parallelStream().map(Property::getName).collect(Collectors.toList());
+			return this.children.stream().map(Property::getName).collect(Collectors.toList());
 		}
 		
 		return Collections.emptyList();
@@ -169,7 +169,7 @@ public class Property
 	{
 		if(this.children != null)
 		{
-			return this.children.parallelStream().map(Property::getTitle).collect(Collectors.toList());
+			return this.children.stream().map(Property::getTitle).collect(Collectors.toList());
 		}
 		
 		return Collections.emptyList();
@@ -225,16 +225,7 @@ public class Property
 	{
 		if(this.children != null)
 		{
-			for(Property child : this.children)
-			{
-				if(child != null)
-				{
-					if(child.isInside(pos, dimension))
-					{
-						return true;
-					}
-				}
-			}
+			return this.children.stream().anyMatch(child -> child != null && child.isInside(pos, dimension));
 		}
 		
 		return false;
@@ -254,6 +245,7 @@ public class Property
 	{
 		this.owners.remove(owner);
 	}
+	
 	public void hasOwner(PropertyOwner owner)
 	{
 		this.owners.contains(owner);
@@ -261,32 +253,32 @@ public class Property
 	
 	public List<PropertyOwner> getOwners()
 	{
-		return this.owners.parallelStream().filter(owner -> !owner.isCreator()).collect(Collectors.toList());
+		return this.owners.stream().filter(owner -> !owner.isCreator()).collect(Collectors.toList());
 	}
 	
 	public boolean isOwner(String username)
 	{
-		return this.owners.parallelStream().anyMatch(owner -> owner.getName().equals(username));
+		return this.owners.stream().anyMatch(owner -> owner.getName().equals(username));
 	}
 	
 	public List<PropertyOwner> getCreators()
 	{
-		return this.owners.parallelStream().filter(PropertyOwner::isCreator).collect(Collectors.toList());
+		return this.owners.stream().filter(PropertyOwner::isCreator).collect(Collectors.toList());
 	}
 	
 	public boolean isCreator(String username)
 	{
-		return this.owners.parallelStream().filter(PropertyOwner::isCreator).anyMatch(owner -> owner.getName().equals(username));
+		return this.owners.stream().filter(PropertyOwner::isCreator).anyMatch(owner -> owner.getName().equals(username));
 	}
 	
 	public String getOwners(String delimiter)
 	{
-		return String.join(delimiter, this.owners.parallelStream().filter(owner -> !owner.isCreator()).map(PropertyOwner::getName).collect(Collectors.toList()));
+		return String.join(delimiter, this.owners.stream().filter(owner -> !owner.isCreator()).map(PropertyOwner::getName).collect(Collectors.toList()));
 	}
 	
 	public String getCreators(String delimiter)
 	{
-		return String.join(delimiter, this.getCreators().parallelStream().map(PropertyOwner::getName).collect(Collectors.toList()));
+		return String.join(delimiter, this.getCreators().stream().map(PropertyOwner::getName).collect(Collectors.toList()));
 	}
 	
 	public String getChildren(String delimiter)
@@ -306,20 +298,12 @@ public class Property
 	
 	public double getChildrenSize()
 	{
-		double size = 0;
-		
 		if(this.children != null)
 		{
-			for(Property child : this.children)
-			{
-				if(child != null)
-				{
-					size += child.getSize();
-				}
-			}
+			return this.children.stream().mapToDouble(child -> child != null ? child.getSize() : 0D).sum();
 		}
 		
-		return size;
+		return 0D;
 	}
 	
 	public IFormattableTextComponent getDisplayName()

@@ -1,139 +1,99 @@
 package net.kardexo.kardexotools.config;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.Collection;
-import java.util.Formatter;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
-
-public class DataFile<T, K>
+public class DataFile<T, K> extends AbstractConfigFile<T[]>
 {
-	private final File file;
-	private final Map<K, T> data = new HashMap<K, T>();
-	private final Class<T[]> klass;
-	private final Function<T, K> mapper;
-	private final Consumer<Collection<T>> initial; 
-	
-	public DataFile(String fileName, Class<T[]> klass, Function<T, K> mapper)
-	{
-		this(fileName, klass, mapper, null);
-	}
-	
-	public DataFile(String fileName, Class<T[]> klass, Function<T, K> mapper, Consumer<Collection<T>> initial)
-	{
-		this(new File(fileName), klass, mapper, initial);
-	}
+	private final Function<T, K> keyMapper;
+	private final Map<K, T> map = new HashMap<K, T>();
 	
 	public DataFile(File file, Class<T[]> klass, Function<T, K> mapper)
 	{
 		this(file, klass, mapper, null);
 	}
 	
-	public DataFile(File file, Class<T[]> klass, Function<T, K> mapper, Consumer<Collection<T>> initial)
+	public DataFile(File file, Class<T[]> klass, Function<T, K> keyMapper, Supplier<Collection<T>> initial)
 	{
-		this.file = file;
-		this.klass = klass;
-		this.mapper = mapper;
-		this.initial = initial;
-	}
-	
-	public Map<K, T> getData()
-	{
-		return this.data;
-	}
-	
-	public void save(Gson gson)
-	{
-		String data = gson.toJson(this.data.values());
+		super(file, klass);
+		this.keyMapper = keyMapper;
 		
-		if(data != null)
+		if(initial != null)
 		{
-			try
+			this.setData(DataFile.collectionToArray(initial));
+		}
+	}
+	
+	@Override
+	protected T[] getData()
+	{
+		return DataFile.collectionToArray(this.map.values());
+	}
+	
+	@Override
+	protected void setData(T[] data)
+	{
+		this.map.clear();
+		
+		for(T item : data)
+		{
+			K key = this.keyMapper.apply(item);
+			
+			if(key != null)
 			{
-				if(!this.file.exists())
-				{
-					this.file.createNewFile();
-				}
-				
-				Formatter formatter = new Formatter(this.file);
-				formatter.format(data);
-				formatter.close();
-			}
-			catch(Exception e)
-			{
-				e.printStackTrace();
+				this.map.put(key, item);
 			}
 		}
+	}
+	
+	public Map<K, T> getMap()
+	{
+		return this.map;
+	}
+	
+	public T get(K key)
+	{
+		return this.map.get(key);
+	}
+	
+	public T put(K key, T value)
+	{
+		return this.map.put(key, value);
+	}
+	
+	public T remove(K key)
+	{
+		return this.map.remove(key);
+	}
+	
+	public boolean containsKey(String key)
+	{
+		return this.map.containsKey(key);
+	}
+	
+	private static <T> T[] collectionToArray(Supplier<Collection<T>> supplier)
+	{
+		if(supplier != null)
+		{
+			collectionToArray(supplier.get());
+		}
+		
+		return collectionToArray(Collections.emptyList());
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void read(Gson gson) throws Exception
+	private static <T> T[] collectionToArray(Collection<T> collection)
 	{
-		T[] file = DataFile.<T[]>readFile(gson, this.file, this.klass);
-		boolean flag = false;
-		this.data.clear();
-		
-		if(file == null)
+		if(collection != null)
 		{
-			if(this.initial != null)
-			{
-				Set<T> initial = new HashSet<T>();
-				this.initial.accept(initial);
-				
-				if(initial != null)
-				{
-					file = (T[]) initial.toArray();
-				}
-			}
-			
-			flag = true;
+			return (T[]) collection.toArray();
 		}
 		
-		if(file != null)
-		{
-			for(T data : file)
-			{
-				K key = this.mapper.apply(data);
-				
-				if(key != null)
-				{
-					this.data.put(key, data);
-				}
-			}
-		}
-		
-		if(flag)
-		{
-			this.save(gson);
-		}
-	}
-	
-	private static <T> T readFile(Gson gson, File file, Class<T> klass) throws JsonSyntaxException, JsonIOException, FileNotFoundException
-	{
-		if(!file.exists())
-		{
-			try
-			{
-				file.createNewFile();
-				return null;
-			}
-			catch(IOException e)
-			{
-				e.printStackTrace();
-			}
-		}
-		
-		return gson.<T>fromJson(new FileReader(file), klass);
+		return null;
 	}
 }

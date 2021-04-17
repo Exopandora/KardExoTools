@@ -6,7 +6,7 @@ import java.util.Set;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import net.kardexo.kardexotools.config.Config;
+import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.property.Property;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
@@ -34,7 +34,7 @@ public class CommandWhereIs
 		
 		Set<Property> properties = new HashSet<Property>();
 		
-		for(Property base : Config.BASES.getData().values())
+		for(Property base : KardExo.BASES.values())
 		{
 			if(base.isInside(target))
 			{
@@ -42,7 +42,7 @@ public class CommandWhereIs
 			}
 		}
 		
-		for(Property place : Config.PLACES.getData().values())
+		for(Property place : KardExo.PLACES.values())
 		{
 			if(place.isInside(target))
 			{

@@ -11,7 +11,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
-import net.kardexo.kardexotools.config.Config;
+import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.property.Property;
 import net.kardexo.kardexotools.property.PropertyHelper;
 import net.minecraft.command.CommandSource;
@@ -74,7 +74,7 @@ public class CommandPlaces
 	{
 		try
 		{
-			PropertyHelper.add(id, dimension, from, to, source.getTextName(), title, Config.PLACES);
+			PropertyHelper.add(id, dimension, from, to, source.getTextName(), title, KardExo.PLACES_FILE);
 			source.sendSuccess(new StringTextComponent("Added base with id " + id), false);
 		}
 		catch(IllegalStateException e)
@@ -91,7 +91,7 @@ public class CommandPlaces
 		
 		try
 		{
-			PropertyHelper.remove(id, Config.PLACES);
+			PropertyHelper.remove(id, KardExo.PLACES_FILE);
 			source.sendSuccess(new StringTextComponent("Removed base with id " + id), false);
 		}
 		catch(NoSuchElementException e)
@@ -106,7 +106,7 @@ public class CommandPlaces
 	{
 		try
 		{
-			return CommandProperty.list(source, Config.PLACES);
+			return CommandProperty.list(source, KardExo.PLACES);
 		}
 		catch(NoSuchElementException e)
 		{
@@ -118,7 +118,7 @@ public class CommandPlaces
 	{
 		try
 		{
-			Config.read(Config.PLACES);
+			KardExo.PLACES_FILE.read();
 			source.sendSuccess(new StringTextComponent("Successfully reloaded places"), false);
 		}
 		catch(Exception e)
@@ -126,7 +126,7 @@ public class CommandPlaces
 			throw CommandBase.exception("Could not reload places");
 		}
 		
-		return Config.PLACES.getData().size();
+		return KardExo.PLACES.size();
 	}
 	
 	private static int addChild(CommandSource source, String id, String child, ServerWorld dimension, ColumnPos from, ColumnPos to, String title) throws CommandSyntaxException
@@ -136,7 +136,7 @@ public class CommandPlaces
 		
 		try
 		{
-			PropertyHelper.addChild(parent, child, dimension, from, to, title, Config.PLACES);
+			PropertyHelper.addChild(parent, child, dimension, from, to, title, KardExo.PLACES_FILE);
 			source.sendSuccess(new StringTextComponent("Added child with id " + child + " to place with id " + id), false);
 		}
 		catch(IllegalStateException e)
@@ -154,7 +154,7 @@ public class CommandPlaces
 		
 		try
 		{
-			PropertyHelper.removeChild(parent, child, Config.PLACES);
+			PropertyHelper.removeChild(parent, child, KardExo.PLACES_FILE);
 			source.sendSuccess(new StringTextComponent("Removed child with id " + child + " from place with id " + id), false);
 		}
 		catch(NoSuchElementException e)
@@ -169,7 +169,7 @@ public class CommandPlaces
 	{
 		ensurePermission(source, id, null);
 		getProperty(id).setProtected(enabled);
-		Config.save(Config.PLACES);
+		KardExo.PLACES_FILE.save();
 		
 		if(enabled)
 		{
@@ -185,7 +185,7 @@ public class CommandPlaces
 	
 	private static void ensurePermission(CommandSource source, String id, PlayerEntity target) throws CommandSyntaxException
 	{
-		if(!PropertyHelper.hasPermission(source, id, target, Config.PLACES))
+		if(!PropertyHelper.hasPermission(source, id, target, KardExo.PLACES))
 		{
 			throw CommandBase.exception("You must be a creator of place with id " + id);
 		}
@@ -195,7 +195,7 @@ public class CommandPlaces
 	{
 		try
 		{
-			return PropertyHelper.getProperty(id, Config.PLACES);
+			return PropertyHelper.getProperty(id, KardExo.PLACES);
 		}
 		catch(NoSuchElementException e)
 		{
@@ -205,11 +205,11 @@ public class CommandPlaces
 	
 	private static CompletableFuture<Suggestions> getSuggestions(CommandContext<CommandSource> context, SuggestionsBuilder builder) throws CommandSyntaxException
 	{
-		return ISuggestionProvider.suggest(Config.PLACES.getData().keySet(), builder);
+		return ISuggestionProvider.suggest(KardExo.PLACES.keySet(), builder);
 	}
 	
 	private static CompletableFuture<Suggestions> getChildSuggestions(CommandContext<CommandSource> context, SuggestionsBuilder builder) throws CommandSyntaxException
 	{
-		return CommandProperty.getChildSuggestions(Config.PLACES, context, builder, StringArgumentType.getString(context, "id"));
+		return CommandProperty.getChildSuggestions(KardExo.PLACES_FILE, context, builder, StringArgumentType.getString(context, "id"));
 	}
 }

@@ -1,7 +1,6 @@
 package net.kardexo.kardexotools.tasks;
 
 import net.kardexo.kardexotools.KardExo;
-import net.kardexo.kardexotools.config.Config;
 import net.minecraft.server.MinecraftServer;
 
 public class TaskSave extends AbstractTask
@@ -26,7 +25,7 @@ public class TaskSave extends AbstractTask
 	@Override
 	public String getWarningMessage(long seconds)
 	{
-		return String.format(Config.WARNING_MESSAGE_SAVE, seconds);
+		return String.format(KardExo.CONFIG.getSaveWarningMessage(), seconds);
 	}
 	
 	@Override

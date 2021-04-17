@@ -28,7 +28,7 @@ public class PlayerConfig
 	
 	public PlayerHome getHome()
 	{
-		return home;
+		return this.home;
 	}
 	
 	public void setHome(PlayerHome home)

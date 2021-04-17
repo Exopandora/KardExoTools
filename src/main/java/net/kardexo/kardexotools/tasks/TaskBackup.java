@@ -10,7 +10,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
 import net.kardexo.kardexotools.KardExo;
-import net.kardexo.kardexotools.config.Config;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -52,7 +51,7 @@ public class TaskBackup extends AbstractTask
 			this.createDirectories();
 			this.purgeFiles(folderName);
 			
-			ZipThread zipper = new ZipThread("backup", Paths.get(folderName), Config.BACKUP_DIRECTORY.toPath().resolve(fileName + ".zip"), file ->
+			ZipThread zipper = new ZipThread("backup", Paths.get(folderName), KardExo.CONFIG.getBackupDirectory().toPath().resolve(fileName + ".zip"), file ->
 			{
 				this.printResult(file, start);
 				TaskBackup.backupInProgress = false;
@@ -65,7 +64,7 @@ public class TaskBackup extends AbstractTask
 	{
 		try
 		{
-			Files.createDirectories(Config.BACKUP_DIRECTORY.toPath());
+			Files.createDirectories(KardExo.CONFIG.getBackupDirectory().toPath());
 		}
 		catch(IOException e)
 		{
@@ -75,12 +74,14 @@ public class TaskBackup extends AbstractTask
 	
 	private void purgeFiles(String folderName)
 	{
-		if(Config.BACKUP_DIRECTORY.exists() && Config.BACKUP_DIRECTORY.canWrite() && Config.BACKUP_DIRECTORY.listFiles().length >= Config.BACKUP_FILES)
+		File backupDirectory = KardExo.CONFIG.getBackupDirectory();
+		
+		if(backupDirectory.exists() && backupDirectory.canWrite() && backupDirectory.listFiles().length >= KardExo.CONFIG.getBackupFiles())
 		{
 			File purgeFile = null;
 			long lastMod = Long.MAX_VALUE;
 			
-			for(File file : Config.BACKUP_DIRECTORY.listFiles())
+			for(File file : backupDirectory.listFiles())
 			{
 				if(file.getName().contains(folderName))
 				{
@@ -125,7 +126,7 @@ public class TaskBackup extends AbstractTask
 	@Override
 	public String getWarningMessage(long seconds)
 	{
-		return String.format(Config.WARNING_MESSAGE_BACKUP, seconds);
+		return String.format(KardExo.CONFIG.getBackupWarningMessage(), seconds);
 	}
 	
 	@Override

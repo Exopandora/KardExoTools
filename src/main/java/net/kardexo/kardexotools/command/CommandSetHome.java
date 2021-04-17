@@ -3,7 +3,7 @@ package net.kardexo.kardexotools.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import net.kardexo.kardexotools.config.Config;
+import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.config.PlayerConfig;
 import net.kardexo.kardexotools.config.PlayerHome;
 import net.minecraft.command.CommandSource;
@@ -25,8 +25,8 @@ public class CommandSetHome
 		ServerPlayerEntity sender = source.getPlayerOrException();
 		BlockPos pos = sender.blockPosition();
 		
-		Config.PLAYERS.getData().computeIfAbsent(source.getTextName(), PlayerConfig::new).setHome(new PlayerHome(pos, sender.level.dimension().location()));
-		Config.save(Config.PLAYERS);
+		KardExo.PLAYERS.computeIfAbsent(source.getTextName(), PlayerConfig::new).setHome(new PlayerHome(pos, sender.level.dimension().location()));
+		KardExo.PLAYERS_FILE.save();
 		
 		source.sendSuccess(new StringTextComponent("Home set to " + pos.getX() + " " + pos.getY() + " " + pos.getZ()), false);
 		return 1;
