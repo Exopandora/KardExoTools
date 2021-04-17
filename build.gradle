@@ -3,8 +3,8 @@ buildscript {
         mavenLocal()
         mavenCentral()
         maven {
-			url 'https://files.minecraftforge.net/maven'
-		}
+            url 'https://files.minecraftforge.net/maven'
+        }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:4.1.+'
@@ -40,7 +40,7 @@ version = settings.modversion
 
 project(':mcp') {
     apply plugin: 'net.minecraftforge.gradle.mcp'
-	
+    
     repositories {
         mavenLocal()
     }
@@ -91,8 +91,8 @@ project(':' + settings.modname) {
     
     java.toolchain.languageVersion = JavaLanguageVersion.of(8) // Mojang ships Java 8 to end users, so your mod should target Java 8.
     
-	group = settings.group
-	
+    group = settings.group
+    
     sourceSets {
         main {
             java {
@@ -238,7 +238,7 @@ class CheckModifiedHelper {
 
     CheckModifiedHelper(String modname, String taskname, String archivname, Object proj)
     {
-	    this.modname = modname
+        this.modname = modname
         this.inputTaskName = taskname
         this.inputArchiveName = archivname
         this.proj = proj
@@ -246,8 +246,8 @@ class CheckModifiedHelper {
 
     def filterUnchanged() {
         def cleanZipFile = proj.file(getCleanFilepath())
-		def moddedZipFile = proj.file(getModdedFilepath())
-		
+        def moddedZipFile = proj.file(getModdedFilepath())
+        
         def zipIn = new ZipFile(moddedZipFile)
         zipIn.entries().each { moddedFile ->
             def entryName = moddedFile.toString()
@@ -261,7 +261,7 @@ class CheckModifiedHelper {
 
                 boolean modded = !IOUtils.contentEquals(vanillaJar.getInputStream(vanillaEntry), moddedJar.getInputStream(moddedEntry))
                 changedMap.put(entryName, modded)
-				if(modded){print(entryName)}
+                if(modded){print(entryName)}
             }
         }
         zipIn.close()
@@ -598,6 +598,17 @@ for (def dist : ['Client', 'Server']) {
         destinationDir = file('build/distributions')
         includeEmptyDirs = false
     }
+}
+
+task createServer(type: Zip) {
+    dependsOn 'createReleaseServer'
+
+    from(zipTree("build/distributions/${settings.modname}_${project.version}_Server.zip"))
+    from(zipTree("projects/mcp/build/mcp/downloadServer/server.jar"))
+
+    archiveName = "${settings.modname}_server.jar"
+    destinationDir = file('build/libs')
+    includeEmptyDirs = false
 }
 
 // Master task to invoke all createRelease tasks
