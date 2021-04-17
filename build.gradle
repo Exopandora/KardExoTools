@@ -261,7 +261,7 @@ class CheckModifiedHelper {
 
                 boolean modded = !IOUtils.contentEquals(vanillaJar.getInputStream(vanillaEntry), moddedJar.getInputStream(moddedEntry))
                 changedMap.put(entryName, modded)
-                if(modded){print(entryName)}
+                if(modded){println('Modded: ' + entryName)}
             }
         }
         zipIn.close()
@@ -601,10 +601,32 @@ for (def dist : ['Client', 'Server']) {
 }
 
 task createServer(type: Zip) {
-    dependsOn 'createReleaseServer'
+    def inputTaskName = settings.pipeline == 'joined' ? 'filterDistServer' : 'reobfJar'
+    def inputArchiveName = settings.pipeline == 'joined' ? 'output.zip' : 'output.jar'
 
-    from(zipTree("build/distributions/${settings.modname}_${project.version}_Server.zip"))
-    from(zipTree("projects/mcp/build/mcp/downloadServer/server.jar"))
+    dependsOn ':clean:' + inputTaskName, ':' + settings.modname + ':' + inputTaskName
+
+    CheckModifiedHelper check = new CheckModifiedHelper(settings.modname, inputTaskName, inputArchiveName, project)
+
+    doFirst {
+        check.filterUnchanged()
+    }
+
+    from(zipTree("projects/mcp/build/mcp/downloadServer/server.jar")) {
+        eachFile { vanillaFile ->
+            def entryName = vanillaFile.getRelativePath().toString()
+            if (check.isModified(entryName) && check.changedMap.containsKey(entryName))
+                vanillaFile.exclude()
+        }
+    }
+
+    from(zipTree(check.getModdedFilepath())) {
+        eachFile { moddedFile ->
+            def entryName = moddedFile.getRelativePath().toString()
+            if (!check.isModified(entryName))
+                moddedFile.exclude()
+        }
+    }
 
     archiveName = "${settings.modname}_server.jar"
     destinationDir = file('build/libs')
