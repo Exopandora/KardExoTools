@@ -2,124 +2,394 @@ package net.kardexo.kardexotools.command;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
+import java.util.function.BiFunction;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.LiteralMessage;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 
+import net.kardexo.kardexotools.command.CommandCalculate.Expression.ParseException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.util.text.StringTextComponent;
 
 public class CommandCalculate
 {
-	private static final Map<String, String> FUNCTIONS = new HashMap<String, String>();
-	private static final Map<String, String> EXPRESSIONS = new HashMap<String, String>();
-	private static final Map<String, String> SPECIAL_FUNCTIONS = new HashMap<String, String>();
 	private static final Map<String, String> HISTORY = new HashMap<String, String>();
-	private static final ScriptEngine SCRIPT_ENGINE = new ScriptEngineManager().getEngineByName("JavaScript");
-	private static final String TERM;
-	
-	static
-	{
-		FUNCTIONS.put("sin", "Math.sin");
-		FUNCTIONS.put("sinh", "Math.sinh");
-		FUNCTIONS.put("asin", "Math.asin");
-		FUNCTIONS.put("asinh", "Math.asinh");
-		
-		FUNCTIONS.put("cos", "Math.cos");
-		FUNCTIONS.put("cosh", "Math.cosh");
-		FUNCTIONS.put("acos", "Math.acos");
-		FUNCTIONS.put("acosh", "Math.acosh");
-		
-		FUNCTIONS.put("tan", "Math.tan");
-		FUNCTIONS.put("tanh", "Math.tanh");
-		FUNCTIONS.put("atan", "Math.atan");
-		FUNCTIONS.put("atanh", "Math.atanh");
-		
-		FUNCTIONS.put("log", "java.lang.Math.log10");
-		FUNCTIONS.put("ln", "java.lang.Math.log");
-		
-		FUNCTIONS.put("ceil", "Math.ceil");
-		FUNCTIONS.put("floor", "Math.floor");
-		FUNCTIONS.put("round", "Math.round");
-		
-		FUNCTIONS.put("min", "Math.min");
-		FUNCTIONS.put("max", "Math.max");
-		
-		FUNCTIONS.put("pow", "Math.pow");
-		FUNCTIONS.put("exp", "Math.exp");
-		FUNCTIONS.put("sqrt", "Math.sqrt");
-		
-		EXPRESSIONS.put("\\|.*\\|", "Math.abs\\($1\\)");
-		EXPRESSIONS.put("e", "Math.E");
-		EXPRESSIONS.put("pi", "Math.PI");
-		EXPRESSIONS.put("mod", "%");
-		
-		String expressions = String.join("|", EXPRESSIONS.keySet());
-		String functions = String.join("|", FUNCTIONS.keySet());
-		String regexFunctions = String.join("|", FUNCTIONS.keySet().stream().map(function -> function + "\\(.*\\)").collect(Collectors.toList()));
-		String regexExpression = "([0-9]*\\.[0-9]+|[0-9]+|ans|\\(.*\\)|" + regexFunctions + "|" + expressions + ")";
-		
-		SPECIAL_FUNCTIONS.put(regexExpression + "\\^" + regexExpression, "pow($1,$2)");
-		TERM = "([0-9]|\\.|\\(|\\)|\\+|-|\\*|/|%|,|\\^| |ans|" + expressions + "|" + functions + ")*";
-	}
+	private static final DynamicCommandExceptionType PARSING_EXCEPTION = new DynamicCommandExceptionType(exception -> new LiteralMessage(String.valueOf(exception)));
 	
 	public static void register(CommandDispatcher<CommandSource> dispatcher)
 	{
-		dispatcher.register(Commands.literal("calc")
+		LiteralCommandNode<CommandSource> watch2gether = dispatcher.register(Commands.literal("calculate")
 				.then(Commands.argument("expression", StringArgumentType.greedyString())
-					.executes(context -> calc(context.getSource(), StringArgumentType.getString(context, "expression")))));
+						.executes(context -> calculate(context, StringArgumentType.getString(context, "expression")))));
+		dispatcher.register(Commands.literal("calc")
+				.redirect(watch2gether));
 	}
 	
-	private static int calc(CommandSource source, String term) throws CommandSyntaxException
+	private static int calculate(CommandContext<CommandSource> context, String expression) throws CommandSyntaxException
 	{
-		String script = term;
-		
-		if(script.contains("ans") && !HISTORY.containsKey(source.getTextName()))
-		{
-			throw CommandBase.exception("No previous value stored for ans in " + term);
-		}
-		
-		script = script.replaceAll("ans", HISTORY.get(source.getTextName()));
-		
-		for(String function : SPECIAL_FUNCTIONS.keySet())
-		{
-			script = script.replaceAll(function, SPECIAL_FUNCTIONS.get(function));
-		}
-		
-		for(String expression : EXPRESSIONS.keySet())
-		{
-			script = script.replaceAll(expression, EXPRESSIONS.get(expression));
-		}
-		
-		for(String function : FUNCTIONS.keySet())
-		{
-			script = script.replaceAll("(?<![A-Za-z])" + function, FUNCTIONS.get(function));
-		}
-		
 		try
 		{
-			String solution = SCRIPT_ENGINE.eval(script).toString();
-			source.sendSuccess(new StringTextComponent(term + " = " + solution), false);
+			String name = context.getSource().getTextName();
 			
-			HISTORY.put(source.getTextName(), solution);
+			if(expression.contains("ans") && !HISTORY.containsKey(name))
+			{
+				throw CommandBase.exception("No previous value stored for ans");
+			}
 			
-			return (int) Math.round(Double.parseDouble(solution));
+			double x = new Expression(expression.replaceAll("ans", HISTORY.get(name))).eval();
+			
+			if(Double.isFinite(x))
+			{
+				HISTORY.put(name, String.valueOf(x));
+			}
+			
+			context.getSource().sendSuccess(new StringTextComponent(expression + " = " + x), false);
+			return (int) x;
 		}
-		catch(ScriptException e)
+		catch(ParseException e)
 		{
-			throw CommandBase.exception("Invalid expression");
+			throw PARSING_EXCEPTION.create(e.getMessage());
 		}
 	}
 	
-	public static boolean isTerm(String expression)
+	public static class Expression
 	{
-		return expression.matches(TERM);
+		private final String string;
+		
+		public Expression(String string)
+		{
+			this.string = string;
+		}
+		
+		public double eval() throws ParseException
+		{
+			Parser parser = new Parser(this.string);
+			double x = parser.parseExpression();
+			
+			if(parser.getPosition() < this.string.length())
+			{
+				throw new ParseException("Unexpected: " + (char) parser.getChar(), parser.getPosition());
+			}
+			
+			return x;
+		}
+		
+		@Override
+		public String toString()
+		{
+			return this.string;
+		}
+		
+		private static class Parser
+		{
+			private final String string;
+			private int position;
+			private int character;
+			
+			public Parser(String string)
+			{
+				this.string = string;
+				this.position = 0;
+				this.character = this.string.isEmpty() ? -1 : this.string.charAt(0);
+			}
+			
+			private boolean consume(int c)
+			{
+				while(this.getChar() == ' ')
+				{
+					this.next();
+				}
+				
+				if(this.getChar() == c)
+				{
+					this.next();
+					return true;
+				}
+				
+				return false;
+			}
+			
+			private void consumeExpected(char c) throws ParseException
+			{
+				if(!this.consume(c))
+				{
+					throw new ParseException("Expected: " + c, this.getPosition());
+				}
+			}
+			
+			public double parseExpression() throws ParseException
+			{
+				double x = this.parseTerm();
+				
+				while(true)
+				{
+					if(this.consume('+'))
+					{
+						x += this.parseTerm();
+					}
+					else if(this.consume('-'))
+					{
+						x -= this.parseTerm();
+					}
+					else
+					{
+						return x;
+					}
+				}
+			}
+			
+			private double parseTerm() throws ParseException
+			{
+				double x = this.parseFactor();
+				
+				while(true)
+				{
+					if(this.consume('*'))
+					{
+						x *= this.parseFactor();
+					}
+					else if(this.consume('/'))
+					{
+						x /= this.parseFactor();
+					}
+					else if(this.getChar() >= 'a' && this.getChar() <= 'z')
+					{
+						int start = this.getPosition();
+						
+						while(this.getChar() >= 'a' && this.getChar() <= 'z')
+						{
+							this.next();
+						}
+						
+						String function = this.string.substring(start, this.getPosition());
+						
+						if(function.equals("mod"))
+						{
+							x %= this.parseExpression();
+						}
+						else
+						{
+							throw new ParseException("Unknown operator: " + function, start);
+						}
+					}
+					else
+					{
+						return x;
+					}
+				}
+			}
+			
+			private double parseArgument() throws ParseException
+			{
+				this.consumeExpected('(');
+				double x = this.parseExpression();
+				this.consumeExpected(')');
+				return x;
+			}
+			
+			private double parseArguments(BiFunction<Double, Double, Double> function, boolean multipleArgs) throws ParseException
+			{
+				this.consumeExpected('(');
+				double x = this.parseExpression();
+				this.consumeExpected(',');
+				x = function.apply(x, this.parseExpression());
+				
+				if(multipleArgs)
+				{
+					while(this.consume(','))
+					{
+						x = function.apply(x, this.parseExpression());
+					}
+				}
+				
+				this.consumeExpected(')');
+				return x;
+			}
+			
+			private double parseFactor() throws ParseException
+			{
+				if(this.consume('+'))
+				{
+					return this.parseFactor();
+				}
+				
+				if(this.consume('-'))
+				{
+					return -this.parseFactor();
+				}
+				
+				double x;
+				
+				if(this.consume('('))
+				{
+					x = this.parseExpression();
+					this.consumeExpected(')');
+				}
+				else if((this.character >= '0' && this.character <= '9') || this.character == '.')
+				{
+					int start = this.getPosition();
+					
+					while((this.character >= '0' && this.character <= '9') || this.character == '.')
+					{
+						this.next();
+					}
+					
+					try
+					{
+						x = Double.parseDouble(this.string.substring(start, this.getPosition()));
+					}
+					catch(NumberFormatException e)
+					{
+						throw new ParseException(e.getMessage(), start);
+					}
+				}
+				else if(this.getChar() >= 'a' && this.getChar() <= 'z')
+				{
+					int start = this.getPosition();
+					
+					while(this.getChar() >= 'a' && this.getChar() <= 'z')
+					{
+						this.next();
+					}
+					
+					String function = this.string.substring(start, this.getPosition());
+					
+					switch(function)
+					{
+						case "e":
+							x = Math.E;
+							break;
+						case "pi":
+							x = Math.PI;
+							break;
+						case "sqrt":
+							x = Math.sqrt(this.parseArgument());
+							break;
+						case "ceil":
+							x = Math.ceil(this.parseArgument());
+							break;
+						case "floor":
+							x = Math.floor(this.parseArgument());
+							break;
+						case "rad":
+							x = Math.toRadians(this.parseArgument());
+							break;
+						case "deg":
+							x = Math.toDegrees(this.parseArgument());
+							break;
+						case "round":
+							x = Math.round(this.parseArgument());
+							break;
+						case "log":
+							x = Math.log10(this.parseArgument());
+							break;
+						case "ln":
+							x = Math.log(this.parseArgument());
+							break;
+						case "sin":
+							x = Math.sin(this.parseArgument());
+							break;
+						case "cos":
+							x = Math.cos(this.parseArgument());
+							break;
+						case "tan":
+							x = Math.tan(this.parseArgument());
+							break;
+						case "sinh":
+							x = Math.sinh(this.parseArgument());
+							break;
+						case "cosh":
+							x = Math.cosh(this.parseArgument());
+							break;
+						case "tanh":
+							x = Math.tanh(this.parseArgument());
+							break;
+						case "asin":
+							x = Math.asin(this.parseArgument());
+							break;
+						case "acos":
+							x = Math.acos(this.parseArgument());
+							break;
+						case "atan":
+							x = Math.atan(this.parseArgument());
+							break;
+						case "asinh":
+							x = Parser.asinh(this.parseArgument());
+							break;
+						case "acosh":
+							x = Parser.acosh(this.parseArgument());
+							break;
+						case "atanh":
+							x = Parser.atanh(this.parseArgument());
+							break;
+						case "min":
+							x = this.parseArguments(Math::min, true);
+							break;
+						case "max":
+							x = this.parseArguments(Math::max, true);
+							break;
+						default:
+							throw new ParseException("Unknown function: " + function, start);
+					}
+				}
+				else
+				{
+					throw new ParseException("Unexpected: " + (char) this.getChar(), this.getPosition());
+				}
+				
+				if(this.consume('^'))
+				{
+					x = Math.pow(x, this.parseFactor());
+				}
+				
+				return x;
+			}
+			
+			public int getPosition()
+			{
+				return this.position;
+			}
+			
+			public int getChar()
+			{
+				return this.character;
+			}
+			
+			public void next()
+			{
+				this.character = (++this.position < this.string.length()) ? this.string.charAt(this.position) : -1;
+			}
+			
+			private static double asinh(double x)
+			{
+				return Math.log(x + Math.sqrt(x * x + 1.0));
+			}
+			
+			private static double acosh(double x)
+			{
+				return Math.log(x + Math.sqrt(x * x - 1.0));
+			}
+			
+			private static double atanh(double x)
+			{
+				return 0.5 * Math.log((x + 1.0) / (x - 1.0));
+			}
+		}
+		
+		public static class ParseException extends Exception
+		{
+			private static final long serialVersionUID = -7352867054559488848L;
+			
+			public ParseException(String message, int position)
+			{
+				super(message + " at position " + position);
+			}
+		}
 	}
 }
