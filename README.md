@@ -49,8 +49,7 @@ Once activated you can mine veins of blocks (configurable) by sneaking. It only 
 
 ## Prerequisites ##
 
-1. Java SE 8 Update 92
-2. Java Development Kit 8 Update 92
+1. Java 16
 
 ## Setup ##
 
@@ -58,14 +57,8 @@ Once activated you can mine veins of blocks (configurable) by sneaking. It only 
 
 ## Build ##
 
-1. Run `gradlew releaseProject`
-2. Compiled sources can be found in `build/distributions/`
-
-## Install ##
-
-1. Open a vanilla `minecraft_server.jar` as a zip file
-2. Copy all files from `build/distributions/KardExoTools_VERSION_Server.zip` into the jar
-3. Run the server
+1. Run `gradlew createServer`
+2. The server jar can be found in `build/distributions/`
 
 ## Configure (Optional) ##
 
