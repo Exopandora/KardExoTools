@@ -1,0 +1,9 @@
+--- a/net/minecraft/world/level/block/NetherWartBlock.java
++++ b/net/minecraft/world/level/block/NetherWartBlock.java
+@@ -61,4 +61,6 @@
+     {
+         p_54977_.add(AGE);
+     }
++
++    public net.minecraft.world.InteractionResult use(BlockState state, net.minecraft.world.level.Level level, BlockPos pos, net.minecraft.world.entity.player.Player player, net.minecraft.world.InteractionHand hand, net.minecraft.world.phys.BlockHitResult hitResult) {return net.kardexo.kardexotools.patches.PatchCrops.use(state, level, pos, player, hand, hitResult, this, this.asItem(), AGE, MAX_AGE, this.defaultBlockState().setValue(AGE, Integer.valueOf(0)));};
+ }

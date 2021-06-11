@@ -7,6 +7,7 @@
 	* Scheduled backup
 * Comfort features
 	* Print death location upon respawn
+	* Crops can be harvested with a right-click when fully grown
 * Commands
 
 	Command     | Feature                                                       | Permissions
