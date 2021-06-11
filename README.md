@@ -7,7 +7,6 @@
 	* Scheduled backup
 * Comfort features
 	* Print death location upon respawn
-	* Only one player is required to sleep
 * Commands
 
 	Command     | Feature                                                       | Permissions

@@ -41,7 +41,6 @@ import net.kardexo.kardexotools.tasks.TaskSave;
 import net.kardexo.kardexotools.tasks.TaskScheduler;
 import net.kardexo.kardexotools.tasks.TickableBases;
 import net.kardexo.kardexotools.tasks.TickableDeathListener;
-import net.kardexo.kardexotools.tasks.TickableSleep;
 import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.ChatType;
@@ -54,7 +53,7 @@ import net.minecraft.world.level.block.Blocks;
 
 public class KardExo
 {
-	public static final String VERSION = "1.16.5-2.42";
+	public static final String VERSION = "1.17-2.42";
 	public static final Logger LOGGER = LogManager.getLogger("KardExo");
 	
 	private static final File CONFIG_DIRECTORY = new File("config");
@@ -112,7 +111,6 @@ public class KardExo
 	
 	public static void registerTickables(MinecraftServer server)
 	{
-		server.addTickable(new TickableSleep(server));
 		server.addTickable(new TickableBases(server));
 		server.addTickable(new TickableDeathListener(server));
 	}
