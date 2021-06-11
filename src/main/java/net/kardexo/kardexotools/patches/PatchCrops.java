@@ -19,35 +19,35 @@ import net.minecraft.world.phys.BlockHitResult;
 public class PatchCrops
 {
 	public static InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult, Block block, Item seed, IntegerProperty age, int maxAge, BlockState defaultState)
-    {
-    	if(!level.isClientSide && state.getValue(age) >= maxAge)
-    	{
-    		List<ItemStack> drops = Block.getDrops(state, (ServerLevel) level, pos, null);
-    		
-    		for(ItemStack stack : drops)
-    		{
-    			if(stack.getItem().equals(seed))
-    			{
-    				stack.setCount(stack.getCount() - 1);
-    			}
-    		}
-    		
-    		player.awardStat(Stats.BLOCK_MINED.get(block));
-    		player.awardStat(Stats.ITEM_USED.get(seed));
-    		
-    		drops.forEach(drop ->
-    		{
-    			if(drop.getCount() > 0)
-    			{
-    				Block.popResource((ServerLevel) level, pos, drop);
-    			}
-    		});
-    		
-    		level.setBlock(pos, defaultState, 2);
-    		
-    		return InteractionResult.CONSUME;
-    	}
-    	
+	{
+		if(!level.isClientSide && state.getValue(age) >= maxAge)
+		{
+			List<ItemStack> drops = Block.getDrops(state, (ServerLevel) level, pos, null);
+			
+			for(ItemStack stack : drops)
+			{
+				if(stack.getItem().equals(seed))
+				{
+					stack.setCount(stack.getCount() - 1);
+				}
+			}
+			
+			player.awardStat(Stats.BLOCK_MINED.get(block));
+			player.awardStat(Stats.ITEM_USED.get(seed));
+			
+			drops.forEach(drop ->
+			{
+				if(drop.getCount() > 0)
+				{
+					Block.popResource((ServerLevel) level, pos, drop);
+				}
+			});
+			
+			level.setBlock(pos, defaultState, 2);
+			
+			return InteractionResult.CONSUME;
+		}
+		
 		return InteractionResult.PASS;
-    }
+	}
 }
