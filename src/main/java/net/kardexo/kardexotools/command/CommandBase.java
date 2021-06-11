@@ -5,26 +5,26 @@ import java.util.EnumSet;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.impl.TeleportCommand;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.play.server.SPlayerPositionLookPacket;
-import net.minecraft.network.play.server.SSetExperiencePacket;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
+import net.minecraft.network.protocol.game.ClientboundSetExperiencePacket;
+import net.minecraft.server.commands.TeleportCommand;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 
 public class CommandBase
 {
 	public static CommandSyntaxException exception(String message)
 	{
-		return new SimpleCommandExceptionType(new TranslationTextComponent(message)).create();
+		return new SimpleCommandExceptionType(new TranslatableComponent(message)).create();
 	}
 	
-	public static int teleport(CommandSource source, ServerPlayerEntity player, ServerWorld world, BlockPos position) throws CommandSyntaxException
+	public static int teleport(CommandSourceStack source, ServerPlayer player, ServerLevel level, BlockPos position) throws CommandSyntaxException
 	{
-		TeleportCommand.performTeleport(source, player, world, position.getX() + 0.5F, position.getY(), position.getZ() + 0.5F, EnumSet.noneOf(SPlayerPositionLookPacket.Flags.class), player.yRot, player.xRot, null);
-		player.connection.send(new SSetExperiencePacket(player.experienceProgress, player.totalExperience, player.experienceLevel));
+		TeleportCommand.performTeleport(source, player, level, position.getX() + 0.5F, position.getY(), position.getZ() + 0.5F, EnumSet.noneOf(ClientboundPlayerPositionPacket.RelativeArgument.class), player.getYRot(), player.getXRot(), null);
+		player.connection.send(new ClientboundSetExperiencePacket(player.experienceProgress, player.totalExperience, player.experienceLevel));
 		return 1;
 	}
 }

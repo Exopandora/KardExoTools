@@ -4,21 +4,21 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import net.kardexo.kardexotools.veinminer.Veinminer;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.server.level.ServerPlayer;
 
 public class CommandUndo
 {
-	public static void register(CommandDispatcher<CommandSource> dispatcher)
+	public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
 	{
 		dispatcher.register(Commands.literal("undo")
 				.executes(context -> undo(context.getSource())));
 	}
 	
-	private static int undo(CommandSource source) throws CommandSyntaxException
+	private static int undo(CommandSourceStack source) throws CommandSyntaxException
 	{
-		if(source.getEntity() instanceof ServerPlayerEntity && Veinminer.hasUndo(source.getTextName()))
+		if(source.getEntity() instanceof ServerPlayer && Veinminer.hasUndo(source.getTextName()))
 		{
 			try
 			{

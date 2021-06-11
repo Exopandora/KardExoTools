@@ -7,13 +7,13 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.CommandNode;
 
 import net.kardexo.kardexotools.KardExo;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.TextComponent;
 
 public class CommandKardExo
 {
-	public static void register(CommandDispatcher<CommandSource> dispatcher)
+	public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
 	{
 		dispatcher.register(Commands.literal("kardexo")
 				.then(Commands.literal("version")
@@ -22,23 +22,23 @@ public class CommandKardExo
 					.executes(context -> commands(context.getSource()))));
 	}
 	
-	private static int version(CommandSource source)
+	private static int version(CommandSourceStack source)
 	{
-		source.sendSuccess(new StringTextComponent("Version: " + KardExo.VERSION), false);
+		source.sendSuccess(new TextComponent("Version: " + KardExo.VERSION), false);
 		return 1;
 	}
 	
-	private static int commands(CommandSource source) throws CommandSyntaxException
+	private static int commands(CommandSourceStack source) throws CommandSyntaxException
 	{
-		source.sendSuccess(new StringTextComponent("Commands:"), false);
+		source.sendSuccess(new TextComponent("Commands:"), false);
 		
-		CommandDispatcher<CommandSource> dispatcher = new CommandDispatcher<CommandSource>();
+		CommandDispatcher<CommandSourceStack> dispatcher = new CommandDispatcher<CommandSourceStack>();
 		KardExo.registerCommands(dispatcher);
-		Map<CommandNode<CommandSource>, String> usage = dispatcher.getSmartUsage(dispatcher.getRoot(), source);
+		Map<CommandNode<CommandSourceStack>, String> usage = dispatcher.getSmartUsage(dispatcher.getRoot(), source);
 		
 		for(String command : usage.values())
 		{
-			source.sendSuccess(new StringTextComponent(" /" + command), false);
+			source.sendSuccess(new TextComponent(" /" + command), false);
 		}
 		
 		return usage.values().size();

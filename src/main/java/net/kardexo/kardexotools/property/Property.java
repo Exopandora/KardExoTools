@@ -7,16 +7,16 @@ import java.util.stream.Collectors;
 import com.google.common.collect.Lists;
 import com.google.gson.annotations.SerializedName;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.event.HoverEvent;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 
 public class Property
 {
@@ -94,9 +94,9 @@ public class Property
 		this.zMax = zMax;
 	}
 	
-	public RegistryKey<World> getDimension()
+	public ResourceKey<Level> getDimension()
 	{
-		return RegistryKey.create(Registry.DIMENSION_REGISTRY, this.dimension);
+		return ResourceKey.create(Registry.DIMENSION_REGISTRY, this.dimension);
 	}
 	
 	public void setDimension(ResourceLocation dimension)
@@ -104,7 +104,7 @@ public class Property
 		this.dimension = dimension;
 	}
 	
-	public void setDimension(RegistryKey<World> dimension)
+	public void setDimension(ResourceKey<Level> dimension)
 	{
 		this.dimension = dimension.location();
 	}
@@ -196,7 +196,7 @@ public class Property
 		return null;
 	}
 	
-	public boolean isInside(PlayerEntity player)
+	public boolean isInside(Player player)
 	{
 		return this.isInside(player.blockPosition(), player.level.dimension().location());
 	}
@@ -206,7 +206,7 @@ public class Property
 		return this.isInsideMain(pos, dimension) || this.isInsideChild(pos, dimension);
 	}
 	
-	public boolean isInsideMain(PlayerEntity player)
+	public boolean isInsideMain(Player player)
 	{
 		return this.isInsideMain(player.blockPosition(), player.level.dimension().location());
 	}
@@ -216,7 +216,7 @@ public class Property
 		return pos.getX() >= this.xMin && pos.getX() <= this.xMax && pos.getZ() >= this.zMin && pos.getZ() <= this.zMax && dimension.equals(this.dimension);
 	}
 	
-	public boolean isInsideChild(PlayerEntity player)
+	public boolean isInsideChild(Player player)
 	{
 		return this.isInsideChild(player.blockPosition(), player.level.dimension().location());
 	}
@@ -306,7 +306,7 @@ public class Property
 		return 0D;
 	}
 	
-	public IFormattableTextComponent getDisplayName()
+	public MutableComponent getDisplayName()
 	{
 		StringBuilder builder = new StringBuilder(this.getTitle());
 		
@@ -334,9 +334,9 @@ public class Property
 		builder.append("\nSize: " + this.getSize());
 		builder.append("\nProtected: " + this.isProtected);
 		
-		IFormattableTextComponent basetextcomponent = new StringTextComponent(this.getTitle());
+		MutableComponent basetextcomponent = new TextComponent(this.getTitle());
 		Style style = Style.EMPTY
-				.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent(builder.toString())))
+				.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent(builder.toString())))
 				.withInsertion(this.name);
 		basetextcomponent.setStyle(style);
 		

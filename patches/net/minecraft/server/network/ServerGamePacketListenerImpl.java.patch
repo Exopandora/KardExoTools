@@ -1,0 +1,10 @@
+--- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
++++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+@@ -1532,6 +1532,7 @@
+                 {
+                     private void performInteraction(InteractionHand p_143679_, ServerGamePacketListenerImpl.EntityInteraction p_143680_)
+                     {
++                        if (!net.kardexo.kardexotools.property.PropertyHelper.canInteractWithEntity(ServerGamePacketListenerImpl.this.player, entity)) return;
+                         ItemStack itemstack = ServerGamePacketListenerImpl.this.player.getItemInHand(p_143679_).copy();
+                         InteractionResult interactionresult = p_143680_.run(ServerGamePacketListenerImpl.this.player, entity, p_143679_);
+ 

@@ -1,7 +1,7 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -189,6 +189,7 @@
-             PlayerProfileCache.setUsesAuthentication(this.usesAuthentication());
+@@ -197,6 +197,7 @@
+             GameProfileCache.setUsesAuthentication(this.usesAuthentication());
              LOGGER.info("Preparing level \"{}\"", (Object)this.getLevelIdName());
              this.loadLevel();
 +            net.kardexo.kardexotools.KardExo.init(this);

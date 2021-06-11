@@ -42,15 +42,15 @@ import net.kardexo.kardexotools.tasks.TaskScheduler;
 import net.kardexo.kardexotools.tasks.TickableBases;
 import net.kardexo.kardexotools.tasks.TickableDeathListener;
 import net.kardexo.kardexotools.tasks.TickableSleep;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.command.CommandSource;
+import net.minecraft.Util;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.ChatType;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Util;
-import net.minecraft.util.text.ChatType;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 
 public class KardExo
 {
@@ -85,7 +85,7 @@ public class KardExo
 		KardExo.registerTasks(server, CONFIG, TASK_SCHEDULER);
 	}
 	
-	public static void registerCommands(CommandDispatcher<CommandSource> dispatcher)
+	public static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher)
 	{
 		CommandMoonPhase.register(dispatcher);
 		CommandWhereIs.register(dispatcher);
@@ -121,7 +121,7 @@ public class KardExo
 	{
 		if(CONFIG.doDisableAutoSaving())
 		{
-			for(ServerWorld worldserver : server.getAllLevels())
+			for(ServerLevel worldserver : server.getAllLevels())
 			{
 				if(worldserver != null && !worldserver.noSave)
 				{
@@ -131,7 +131,7 @@ public class KardExo
 		}
 	}
 	
-	public static void notifyPlayers(MinecraftServer server, ITextComponent message)
+	public static void notifyPlayers(MinecraftServer server, Component message)
 	{
 		if(server.getPlayerList() != null)
 		{
@@ -139,16 +139,16 @@ public class KardExo
 		}
 	}
 	
-	public static synchronized void saveWorlds(MinecraftServer server)
+	public static synchronized void saveLevels(MinecraftServer server)
 	{
-		KardExo.saveWorlds(server, true);
+		KardExo.saveLevels(server, true);
 	}
 	
-	public static synchronized void saveWorlds(MinecraftServer server, boolean displayMessages)
+	public static synchronized void saveLevels(MinecraftServer server, boolean displayMessages)
 	{
 		if(displayMessages)
 		{
-			KardExo.notifyPlayers(server, new TranslationTextComponent("commands.save.saving", new Object[0]));
+			KardExo.notifyPlayers(server, new TranslatableComponent("commands.save.saving", new Object[0]));
 		}
 		
 		if(server.getPlayerList() != null)
@@ -158,11 +158,11 @@ public class KardExo
 		
 		if(server.saveAllChunks(true, true, false) && displayMessages)
 		{
-			KardExo.notifyPlayers(server, new TranslationTextComponent("commands.save.success", new Object[0]));
+			KardExo.notifyPlayers(server, new TranslatableComponent("commands.save.success", new Object[0]));
 		}
 		else if(displayMessages)
 		{
-			KardExo.notifyPlayers(server, new TranslationTextComponent("commands.save.failed"));
+			KardExo.notifyPlayers(server, new TranslatableComponent("commands.save.failed"));
 		}
 	}
 	

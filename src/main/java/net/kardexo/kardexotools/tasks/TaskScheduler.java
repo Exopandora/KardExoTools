@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import net.kardexo.kardexotools.KardExo;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.StringTextComponent;
 
 public class TaskScheduler
 {
@@ -63,13 +63,13 @@ public class TaskScheduler
 					
 					if(this.task.requiresPlayers() && server.getPlayerList().getPlayers().isEmpty())
 					{
-						server.sendMessage(new StringTextComponent("Skipping task " + this.task.getName() + " as there are no players on the server"), null);
+						server.sendMessage(new TextComponent("Skipping task " + this.task.getName() + " as there are no players on the server"), null);
 					}
 					else
 					{
 						for(int x = 0; x < this.warningTimes.length; x++)
 						{
-							KardExo.notifyPlayers(server, new StringTextComponent(this.task.getWarningMessage(TimeUnit.MILLISECONDS.toSeconds(this.warningTimes[x]))));
+							KardExo.notifyPlayers(server, new TextComponent(this.task.getWarningMessage(TimeUnit.MILLISECONDS.toSeconds(this.warningTimes[x]))));
 							long waitTime = this.warningTimes[x];
 							
 							if(x < this.warningTimes.length - 1)

@@ -2,26 +2,28 @@ package net.kardexo.kardexotools.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
 
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.command.arguments.ColumnPosArgument;
-import net.minecraft.command.arguments.ResourceLocationArgument;
-import net.minecraft.command.arguments.SuggestionProviders;
-import net.minecraft.command.impl.LocateBiomeCommand;
-import net.minecraft.network.play.server.SChunkDataPacket;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.ColumnPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
+import net.minecraft.commands.arguments.coordinates.ColumnPosArgument;
+import net.minecraft.commands.synchronization.SuggestionProviders;
+import net.minecraft.core.Registry;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.protocol.game.ClientboundLevelChunkPacket;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.commands.LocateBiomeCommand;
+import net.minecraft.server.level.ColumnPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.chunk.LevelChunk;
 
 public class CommandSetBiome
 {
-	public static void register(CommandDispatcher<CommandSource> dispatcher)
+	public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
 	{
 		dispatcher.register(Commands.literal("setbiome")
 				.requires(source -> source.hasPermission(4))
@@ -32,9 +34,9 @@ public class CommandSetBiome
 								.executes(context -> CommandSetBiome.setBiome(context.getSource(), ColumnPosArgument.getColumnPos(context, "from"), ColumnPosArgument.getColumnPos(context, "to"), ResourceLocationArgument.getId(context, "biome")))))));
 	}
 	
-	private static int setBiome(CommandSource source, ColumnPos from, ColumnPos to, ResourceLocation resource) throws CommandSyntaxException
+	private static int setBiome(CommandSourceStack source, ColumnPos from, ColumnPos to, ResourceLocation resource) throws CommandSyntaxException
 	{
-		ServerWorld world = source.getLevel();
+		ServerLevel level = source.getLevel();
 		Biome biome = source.getServer().registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getOptional(resource).orElseThrow(() -> LocateBiomeCommand.ERROR_INVALID_BIOME.create(resource));
 		
 		int minX = Math.min(from.x, to.x);
@@ -47,16 +49,16 @@ public class CommandSetBiome
 		int chunkMinZ = minZ >> 4;
 		int chunkMaxZ = maxZ >> 4;
 		
-		int chunkClampMinX = MathHelper.clamp(chunkMinX, -1875000, 1875000);
-		int chunkClampMaxX = MathHelper.clamp(chunkMaxX, -1875000, 1875000);
-		int chunkClampMinZ = MathHelper.clamp(chunkMinZ, -1875000, 1875000);
-		int chunkClampMaxZ = MathHelper.clamp(chunkMaxZ, -1875000, 1875000);
+		int chunkClampMinX = Mth.clamp(chunkMinX, -1875000, 1875000);
+		int chunkClampMaxX = Mth.clamp(chunkMaxX, -1875000, 1875000);
+		int chunkClampMinZ = Mth.clamp(chunkMinZ, -1875000, 1875000);
+		int chunkClampMaxZ = Mth.clamp(chunkMaxZ, -1875000, 1875000);
 		
 		for(int chunkX = chunkClampMinX; chunkX <= chunkClampMaxX; chunkX++)
 		{
 			for(int chunkZ = chunkClampMinZ; chunkZ <= chunkClampMaxZ; chunkZ++)
 			{
-				Chunk chunk = world.getChunk(chunkX, chunkZ);
+				LevelChunk chunk = level.getChunk(chunkX, chunkZ);
 				Biome[] biomes = chunk.getBiomes().biomes;
 				boolean flag = false;
 				
@@ -85,15 +87,15 @@ public class CommandSetBiome
 				if(flag)
 				{
 					chunk.markUnsaved();
-					world.getChunkSource().chunkMap.getPlayers(chunk.getPos(), false).forEach(player ->
+					level.getChunkSource().chunkMap.getPlayers(chunk.getPos(), false).forEach(player ->
 					{
-						player.connection.send(new SChunkDataPacket(chunk, 65535));
+						player.connection.send(new ClientboundLevelChunkPacket(chunk));
 					});
 				}
 			}
 		}
 		
-		source.sendSuccess(new StringTextComponent("Set biome to " + resource), false);
+		source.sendSuccess(new TextComponent("Set biome to " + resource), false);
 		return (maxX - minX) * (maxZ - minZ);
 	}
 	

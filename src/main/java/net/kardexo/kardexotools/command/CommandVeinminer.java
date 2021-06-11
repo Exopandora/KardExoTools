@@ -10,17 +10,17 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.config.PlayerConfig;
 import net.kardexo.kardexotools.config.VeinBlockConfig;
-import net.minecraft.block.Block;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 
 public class CommandVeinminer
 {
-	public static void register(CommandDispatcher<CommandSource> dispatcher)
+	public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
 	{
 		dispatcher.register(Commands.literal("veinminer")
 				.then(Commands.literal("on")
@@ -31,31 +31,31 @@ public class CommandVeinminer
 					.executes(context -> list(context.getSource()))));
 	}
 	
-	private static int setVeinminer(CommandSource source, boolean enabled) throws CommandSyntaxException
+	private static int setVeinminer(CommandSourceStack source, boolean enabled) throws CommandSyntaxException
 	{
 		KardExo.PLAYERS.computeIfAbsent(source.getTextName(), PlayerConfig::new).setVeinminerEnabled(enabled);
 		KardExo.PLAYERS_FILE.save();
 		
 		if(enabled)
 		{
-			source.sendSuccess(new StringTextComponent("Veinminer enabled"), false);
+			source.sendSuccess(new TextComponent("Veinminer enabled"), false);
 		}
 		else
 		{
-			source.sendSuccess(new StringTextComponent("Veinminer disabled"), false);
+			source.sendSuccess(new TextComponent("Veinminer disabled"), false);
 		}
 		
 		return 1;
 	}
 	
-	private static int list(CommandSource source) throws CommandSyntaxException
+	private static int list(CommandSourceStack source) throws CommandSyntaxException
 	{
-		List<ITextComponent> list = new ArrayList<ITextComponent>(KardExo.VEINMINER.size());
+		List<Component> list = new ArrayList<Component>(KardExo.VEINMINER.size());
 		
 		for(Entry<Block, VeinBlockConfig> entry : KardExo.VEINMINER.entrySet())
 		{
 			ItemStack stack = new ItemStack(entry.getKey().asItem(), 1);
-			list.add(new TranslationTextComponent("%s = %s", stack.getDisplayName(), entry.getValue().getRadius()));
+			list.add(new TranslatableComponent("%s = %s", stack.getDisplayName(), entry.getValue().getRadius()));
 		}
 		
 		list.sort((a, b) -> a.toString().compareTo(b.toString()));

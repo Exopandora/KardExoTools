@@ -11,12 +11,12 @@ import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.property.BaseAccess;
 import net.kardexo.kardexotools.property.Property;
 import net.kardexo.kardexotools.property.PropertyOwner;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.Util;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Util;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.server.level.ServerPlayer;
 
 public class TickableBases implements Runnable
 {
@@ -44,7 +44,7 @@ public class TickableBases implements Runnable
 				}
 			}
 			
-			for(ServerPlayerEntity player : this.server.getPlayerList().getPlayers())
+			for(ServerPlayer player : this.server.getPlayerList().getPlayers())
 			{
 				Set<String> visitors = BASE_VISITORS.computeIfAbsent(base, key -> new HashSet<String>());
 				String name = player.getGameProfile().getName();
@@ -66,7 +66,7 @@ public class TickableBases implements Runnable
 		}
 	}
 	
-	private void notifyOwners(Property base, List<PropertyOwner> notify, ServerPlayerEntity player, BaseAccess access)
+	private void notifyOwners(Property base, List<PropertyOwner> notify, ServerPlayer player, BaseAccess access)
 	{
 		String name = player.getGameProfile().getName();
 		
@@ -75,16 +75,16 @@ public class TickableBases implements Runnable
 			switch(access)
 			{
 				case ENTER:
-					this.server.sendMessage(new StringTextComponent(name + " has entered base with id " + base.getTitle()), null);;
+					this.server.sendMessage(new TextComponent(name + " has entered base with id " + base.getTitle()), null);;
 					break;
 				case LEAVE:
-					this.server.sendMessage(new StringTextComponent(name + " has left base with id " + base.getTitle()), null);
+					this.server.sendMessage(new TextComponent(name + " has left base with id " + base.getTitle()), null);
 					break;
 			}
 			
 			for(PropertyOwner owner : notify)
 			{
-				ServerPlayerEntity playerOwner = this.server.getPlayerList().getPlayerByName(owner.getName());
+				ServerPlayer playerOwner = this.server.getPlayerList().getPlayerByName(owner.getName());
 				
 				if(playerOwner != null)
 				{
@@ -94,7 +94,7 @@ public class TickableBases implements Runnable
 		}
 	}
 	
-	private ITextComponent getFormattedMessage(ServerPlayerEntity player, Property base, PropertyOwner owner, BaseAccess access)
+	private Component getFormattedMessage(ServerPlayer player, Property base, PropertyOwner owner, BaseAccess access)
 	{
 		String format = null;
 		
@@ -110,15 +110,15 @@ public class TickableBases implements Runnable
 		
 		if(format != null)
 		{
-			return new TranslationTextComponent(format.replace("&name", "%1$s").replace("&base", "%2$s"), new Object[]{player.getDisplayName(), base.getDisplayName()});
+			return new TranslatableComponent(format.replace("&name", "%1$s").replace("&base", "%2$s"), new Object[]{player.getDisplayName(), base.getDisplayName()});
 		}
 		
 		switch(access)
 		{
 			case ENTER:
-				return new TranslationTextComponent(KardExo.CONFIG.getPropertyDefaultEnterMessage(), new Object[]{player.getDisplayName(), base.getDisplayName()});
+				return new TranslatableComponent(KardExo.CONFIG.getPropertyDefaultEnterMessage(), new Object[]{player.getDisplayName(), base.getDisplayName()});
 			case LEAVE:
-				return new TranslationTextComponent(KardExo.CONFIG.getPropertyDefaultExitMessage(), new Object[]{player.getDisplayName(), base.getDisplayName()});
+				return new TranslatableComponent(KardExo.CONFIG.getPropertyDefaultExitMessage(), new Object[]{player.getDisplayName(), base.getDisplayName()});
 		}
 		
 		return null;

@@ -90,3 +90,5 @@ gradle-app.setting
 
 ### jarmod-buildsystem ###
 projects/
+runserver/
+runclient/

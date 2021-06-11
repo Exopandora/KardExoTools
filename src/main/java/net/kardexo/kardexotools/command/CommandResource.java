@@ -7,29 +7,29 @@ import java.util.Map.Entry;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import net.minecraft.block.Blocks;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.command.arguments.BlockPosArgument;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MutableBoundingBox;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
 public class CommandResource
 {
-	public static void register(CommandDispatcher<CommandSource> dispatcher)
+	public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
 	{
 		dispatcher.register(Commands.literal("resource")
 				.then(Commands.argument("from", BlockPosArgument.blockPos())
 					.then(Commands.argument("to", BlockPosArgument.blockPos())
-						.executes(context -> resource(context.getSource(), new MutableBoundingBox(BlockPosArgument.getLoadedBlockPos(context, "from"), BlockPosArgument.getLoadedBlockPos(context, "to")))))));
+						.executes(context -> resource(context.getSource(), BoundingBox.fromCorners(BlockPosArgument.getLoadedBlockPos(context, "from"), BlockPosArgument.getLoadedBlockPos(context, "to")))))));
 	}
 	
-	private static int resource(CommandSource source, MutableBoundingBox area) throws CommandSyntaxException
+	private static int resource(CommandSourceStack source, BoundingBox area) throws CommandSyntaxException
 	{
 		Map<String, Integer> map = new HashMap<String, Integer>();
 		
-		for(BlockPos blockpos : BlockPos.Mutable.betweenClosed(area.x0, area.y0, area.z0, area.x1, area.y1, area.z1))
+		for(BlockPos blockpos : BlockPos.MutableBlockPos.betweenClosed(area.minX(), area.minY(), area.minZ(), area.maxX(), area.maxY(), area.maxZ()))
 		{
 			String location = source.getLevel().getBlockState(blockpos).getBlock().getDescriptionId();
 			
@@ -48,7 +48,7 @@ public class CommandResource
 		
 		for(Entry<String, Integer> entry : map.entrySet())
 		{
-			source.sendSuccess(new TranslationTextComponent("x" + entry.getValue() + " %s", new TranslationTextComponent(entry.getKey())), false);
+			source.sendSuccess(new TranslatableComponent("x" + entry.getValue() + " %s", new TranslatableComponent(entry.getKey())), false);
 		}
 		
 		return map.values().stream().reduce(Integer::sum).orElse(0);

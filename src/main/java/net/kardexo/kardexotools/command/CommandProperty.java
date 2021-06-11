@@ -12,14 +12,14 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
 import net.kardexo.kardexotools.config.DataFile;
 import net.kardexo.kardexotools.property.Property;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.ISuggestionProvider;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 
 public abstract class CommandProperty
 {
-	public static int list(CommandSource source, Map<String, Property> data) throws NoSuchElementException
+	public static int list(CommandSourceStack source, Map<String, Property> data) throws NoSuchElementException
 	{
 		if(data.values().isEmpty())
 		{
@@ -29,30 +29,30 @@ public abstract class CommandProperty
 		return CommandProperty.list(source, data.values(), "");
 	}
 	
-	private static int list(CommandSource source, Collection<Property> list, String indentation)
+	private static int list(CommandSourceStack source, Collection<Property> list, String indentation)
 	{
 		int count = 0;
 		
 		for(Property property : list)
 		{
-			source.sendSuccess(new TranslationTextComponent(indentation + (indentation.isEmpty() ? "Name" : "Child") + ": %s", property.getDisplayName()), false);
+			source.sendSuccess(new TranslatableComponent(indentation + (indentation.isEmpty() ? "Name" : "Child") + ": %s", property.getDisplayName()), false);
 			
 			String creators = property.getCreators(", ");
 			
 			if(!creators.isEmpty())
 			{
-				source.sendSuccess(new StringTextComponent(indentation + " Creators: " + creators), false);
+				source.sendSuccess(new TextComponent(indentation + " Creators: " + creators), false);
 			}
 			
 			String owners = property.getOwners(", ");
 			
 			if(!owners.isEmpty())
 			{
-				source.sendSuccess(new StringTextComponent(indentation + " Owners: " + owners), false);
+				source.sendSuccess(new TextComponent(indentation + " Owners: " + owners), false);
 			}
 			
-			source.sendSuccess(new StringTextComponent(indentation + " X: [" + property.getXMin() + ", " + property.getXMax() + "]"), false);
-			source.sendSuccess(new StringTextComponent(indentation + " Z: [" + property.getZMin() + ", " + property.getZMax() + "]"), false);
+			source.sendSuccess(new TextComponent(indentation + " X: [" + property.getXMin() + ", " + property.getXMax() + "]"), false);
+			source.sendSuccess(new TextComponent(indentation + " Z: [" + property.getZMin() + ", " + property.getZMax() + "]"), false);
 			
 			if(property.getChildren() != null)
 			{
@@ -63,15 +63,15 @@ public abstract class CommandProperty
 		return count + list.size();
 	}
 	
-	public static CompletableFuture<Suggestions> getChildSuggestions(DataFile<Property, String> file, CommandContext<CommandSource> context, SuggestionsBuilder builder, String parent)
+	public static CompletableFuture<Suggestions> getChildSuggestions(DataFile<Property, String> file, CommandContext<CommandSourceStack> context, SuggestionsBuilder builder, String parent)
 	{
 		Property property = file.get(parent);
 		
 		if(property != null)
 		{
-			return ISuggestionProvider.suggest(property.getChildrenNames(), builder);
+			return SharedSuggestionProvider.suggest(property.getChildrenNames(), builder);
 		}
 		
-		return ISuggestionProvider.suggest(Collections.emptyList(), builder);
+		return SharedSuggestionProvider.suggest(Collections.emptyList(), builder);
 	}
 }

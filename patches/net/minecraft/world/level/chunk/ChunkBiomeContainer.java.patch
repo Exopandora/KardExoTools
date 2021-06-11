@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/chunk/ChunkBiomeContainer.java
++++ b/net/minecraft/world/level/chunk/ChunkBiomeContainer.java
+@@ -21,7 +21,7 @@
+     private static final int HORIZONTAL_MASK = (1 << WIDTH_BITS) - 1;
+     public static final int MAX_SIZE = 1 << WIDTH_BITS + WIDTH_BITS + DimensionType.BITS_FOR_Y - 2;
+     private final IdMap<Biome> biomeRegistry;
+-    private final Biome[] biomes;
++    public final Biome[] biomes;
+     private final int quartMinY;
+     private final int quartHeight;
+ 

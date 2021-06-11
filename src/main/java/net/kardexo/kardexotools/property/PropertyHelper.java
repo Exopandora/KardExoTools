@@ -10,22 +10,21 @@ import com.google.common.collect.Lists;
 import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.config.DataFile;
 import net.kardexo.kardexotools.tasks.TickableBases;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ContainerBlock;
-import net.minecraft.command.CommandSource;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.monster.MonsterEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.play.client.CUseEntityPacket.Action;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ColumnPos;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ColumnPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class PropertyHelper
 {
-	public static void add(String id, ServerWorld dimension, ColumnPos from, ColumnPos to, String owner, String title, DataFile<Property, String> data) throws IllegalStateException
+	public static void add(String id, ServerLevel dimension, ColumnPos from, ColumnPos to, String owner, String title, DataFile<Property, String> data) throws IllegalStateException
 	{
 		if(data.containsKey(id))
 		{
@@ -59,7 +58,7 @@ public class PropertyHelper
 		}
 	}
 	
-	public static void addChild(Property parent, String id, ServerWorld dimension, ColumnPos from, ColumnPos to, String title, DataFile<Property, String> data) throws IllegalStateException
+	public static void addChild(Property parent, String id, ServerLevel dimension, ColumnPos from, ColumnPos to, String title, DataFile<Property, String> data) throws IllegalStateException
 	{
 		double xMin = Math.min(from.x, to.x);
 		double zMin = Math.min(from.z, to.z);
@@ -127,7 +126,7 @@ public class PropertyHelper
 		return null;
 	}
 	
-	public static void forOwner(String id, PlayerEntity player, Map<String, Property> data, Consumer<PropertyOwner> callback)
+	public static void forOwner(String id, Player player, Map<String, Property> data, Consumer<PropertyOwner> callback)
 	{
 		PropertyOwner owner = getOwner(id, player.getGameProfile().getName(), data);
 		
@@ -137,7 +136,7 @@ public class PropertyHelper
 		}
 	}
 	
-	public static boolean hasPermission(CommandSource source, String id, PlayerEntity target, Map<String, Property> data)
+	public static boolean hasPermission(CommandSourceStack source, String id, Player target, Map<String, Property> data)
 	{
 		return source.hasPermission(4) || isCreator(source.getTextName(), id, data) || target != null && isOwner(source.getTextName(), id, data) && target.equals(source.getEntity());
 	}
@@ -154,7 +153,7 @@ public class PropertyHelper
 		return property;
 	}
 	
-	private static boolean isProtected(PlayerEntity player, BlockPos pos, Map<String, Property> data)
+	private static boolean isProtected(Player player, BlockPos pos, Map<String, Property> data)
 	{
 		String name = player.getGameProfile().getName();
 		
@@ -169,39 +168,39 @@ public class PropertyHelper
 		return false;
 	}
 	
-	private static boolean isProtected(PlayerEntity player, BlockPos pos)
+	private static boolean isProtected(Player player, BlockPos pos)
 	{
 		return isProtected(player, pos, KardExo.BASES) || isProtected(player, pos, KardExo.PLACES);
 	}
 	
-	private static boolean isProtected(PlayerEntity player, Entity entity)
+	private static boolean isProtected(Player player, Entity entity)
 	{
 		return isProtected(player, entity.blockPosition(), KardExo.BASES) || isProtected(player, entity.blockPosition(), KardExo.PLACES);
 	}
 	
-	public static boolean canHarvestBlock(PlayerEntity player, BlockPos pos)
+	public static boolean canHarvestBlock(Player player, BlockPos pos)
 	{
 		return !isProtected(player, pos);
 	}
 	
-	public static boolean canInteractWithBlock(PlayerEntity player, BlockPos pos, BlockState blockstate)
+	public static boolean canInteractWithBlock(Player player, BlockPos pos, BlockState blockstate)
 	{
-		return !(blockstate.getBlock() instanceof ContainerBlock) || !isProtected(player, pos);
+		return !(blockstate.getBlock() instanceof BaseEntityBlock) || !isProtected(player, pos);
 	}
 	
-	public static boolean canPlaceBlock(PlayerEntity player, BlockPos pos, BlockState blockstate)
+	public static boolean canPlaceBlock(Player player, BlockPos pos, BlockState blockstate)
 	{
 		return !isProtected(player, pos);
 	}
 	
-	public static boolean canInteractWithEntity(PlayerEntity player, Entity entity, Action action)
+	public static boolean canInteractWithEntity(Player player, Entity entity)
 	{
-		return entity instanceof MonsterEntity && !entity.hasCustomName() || action != Action.ATTACK || !isProtected(player, entity);
+		return entity instanceof Monster && !entity.hasCustomName() || !isProtected(player, entity);
 	}
 	
-	public static ActionResultType cancelBlockInteraction(ServerPlayerEntity player)
+	public static InteractionResult cancelBlockInteraction(ServerPlayer player)
 	{
 		player.getServer().getPlayerList().sendAllPlayerInfo(player);
-		return ActionResultType.PASS;
+		return InteractionResult.PASS;
 	}
 }

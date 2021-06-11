@@ -13,25 +13,25 @@ import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 
 import net.kardexo.kardexotools.command.CommandCalculate.Expression.ParseException;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.TextComponent;
 
 public class CommandCalculate
 {
 	private static final Map<String, String> HISTORY = new HashMap<String, String>();
 	private static final DynamicCommandExceptionType PARSING_EXCEPTION = new DynamicCommandExceptionType(exception -> new LiteralMessage(String.valueOf(exception)));
 	
-	public static void register(CommandDispatcher<CommandSource> dispatcher)
+	public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
 	{
-		LiteralCommandNode<CommandSource> watch2gether = dispatcher.register(Commands.literal("calculate")
+		LiteralCommandNode<CommandSourceStack> watch2gether = dispatcher.register(Commands.literal("calculate")
 				.then(Commands.argument("expression", StringArgumentType.greedyString())
 						.executes(context -> calculate(context, StringArgumentType.getString(context, "expression")))));
 		dispatcher.register(Commands.literal("calc")
 				.redirect(watch2gether));
 	}
 	
-	private static int calculate(CommandContext<CommandSource> context, String expression) throws CommandSyntaxException
+	private static int calculate(CommandContext<CommandSourceStack> context, String expression) throws CommandSyntaxException
 	{
 		try
 		{
@@ -49,7 +49,7 @@ public class CommandCalculate
 				HISTORY.put(name, String.valueOf(x));
 			}
 			
-			context.getSource().sendSuccess(new StringTextComponent(expression + " = " + x), false);
+			context.getSource().sendSuccess(new TextComponent(expression + " = " + x), false);
 			return (int) x;
 		}
 		catch(ParseException e)

@@ -6,26 +6,26 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class Vein
 {
-	private final RegistryKey<World> world;
+	private final ResourceKey<Level> level;
 	private final Map<BlockState, Set<BlockPos>> stateMap;
 	
-	public Vein(RegistryKey<World> world, Map<BlockState, Set<BlockPos>> stateMap)
+	public Vein(ResourceKey<Level> level, Map<BlockState, Set<BlockPos>> stateMap)
 	{
-		this.world = world;
+		this.level = level;
 		this.stateMap = stateMap;
 	}
 	
-	public RegistryKey<World> getWorld()
+	public ResourceKey<Level> getLevel()
 	{
-		return this.world;
+		return this.level;
 	}
 	
 	public Map<BlockState, Set<BlockPos>> getStateMap()

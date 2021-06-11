@@ -4,13 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.kardexo.kardexotools.KardExo;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.IServerWorldInfo;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ServerLevelData;
 
 public class TickableSleep implements Runnable
 {
@@ -25,9 +25,9 @@ public class TickableSleep implements Runnable
 	@Override
 	public void run()
 	{
-		ServerWorld overworld = this.server.getLevel(World.OVERWORLD);
+		ServerLevel overworld = this.server.getLevel(Level.OVERWORLD);
 		
-		for(PlayerEntity player : overworld.players())
+		for(Player player : overworld.players())
 		{
 			String playername = player.getGameProfile().getName();
 			
@@ -35,26 +35,26 @@ public class TickableSleep implements Runnable
 			{
 				if(!this.sleep.containsKey(playername) && !overworld.isDay())
 				{
-					KardExo.notifyPlayers(this.server, new TranslationTextComponent("%s is now sleeping", player.getDisplayName()));
+					KardExo.notifyPlayers(this.server, new TranslatableComponent("%s is now sleeping", player.getDisplayName()));
 					this.sleep.put(playername, overworld.getDayTime());
 				}
 				
 				if(this.sleep.get(playername) + 100 <= overworld.getLevelData().getDayTime() && overworld.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT))
 				{
-					for(ServerWorld level : this.server.getAllLevels())
+					for(ServerLevel level : this.server.getAllLevels())
 					{
 						long time = level.getLevelData().getDayTime() + 24000L;
 						
 						level.setDayTime(time - time % 24000L);
-						level.players().stream().filter(PlayerEntity::isSleeping).forEach(p -> p.stopSleepInBed(false, false));
+						level.players().stream().filter(Player::isSleeping).forEach(p -> p.stopSleepInBed(false, false));
 						
 						if(overworld.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT))
 			            {
-							IServerWorldInfo info = (IServerWorldInfo) overworld.getLevelData();
-							info.setRainTime(0);
-							info.setRaining(false);
-							info.setThunderTime(0);
-							info.setThundering(false);
+							ServerLevelData data = (ServerLevelData) overworld.getLevelData();
+							data.setRainTime(0);
+							data.setRaining(false);
+							data.setThunderTime(0);
+							data.setThundering(false);
 			            }
 					}
 					
@@ -65,7 +65,7 @@ public class TickableSleep implements Runnable
 			{
 				if(!overworld.isDay())
 				{
-					KardExo.notifyPlayers(this.server, new TranslationTextComponent("%s is no longer sleeping", player.getDisplayName()));
+					KardExo.notifyPlayers(this.server, new TranslatableComponent("%s is no longer sleeping", player.getDisplayName()));
 				}
 				
 				this.sleep.remove(playername);

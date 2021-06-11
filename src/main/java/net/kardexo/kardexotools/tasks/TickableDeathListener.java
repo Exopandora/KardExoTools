@@ -3,11 +3,11 @@ package net.kardexo.kardexotools.tasks;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.Util;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Util;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 
 public class TickableDeathListener implements Runnable
 {
@@ -22,17 +22,17 @@ public class TickableDeathListener implements Runnable
 	@Override
 	public void run()
 	{
-		for(ServerPlayerEntity player : this.server.getPlayerList().getPlayers())
+		for(ServerPlayer player : this.server.getPlayerList().getPlayers())
 		{
 			if(player.getHealth() == 0)
 			{
 				if(!this.cache.contains(player.getGameProfile().getName()))
 				{
-					int x = MathHelper.floor(player.getX());
-					int y = MathHelper.floor(player.getY());
-					int z = MathHelper.floor(player.getZ());
+					int x = Mth.floor(player.getX());
+					int y = Mth.floor(player.getY());
+					int z = Mth.floor(player.getZ());
 					
-					player.sendMessage(new StringTextComponent("You died at " + x + " " + y + " " + z), Util.NIL_UUID);
+					player.sendMessage(new TextComponent("You died at " + x + " " + y + " " + z), Util.NIL_UUID);
 					
 					this.cache.add(player.getGameProfile().getName());
 				}

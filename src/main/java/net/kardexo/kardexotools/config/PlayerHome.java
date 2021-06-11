@@ -1,7 +1,7 @@
 package net.kardexo.kardexotools.config;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 
 public class PlayerHome
 {

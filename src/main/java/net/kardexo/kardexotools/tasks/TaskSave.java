@@ -13,7 +13,7 @@ public class TaskSave extends AbstractTask
 	@Override
 	public void run()
 	{
-		KardExo.saveWorlds(this.getServer());
+		KardExo.saveLevels(this.getServer());
 	}
 	
 	@Override

@@ -3,34 +3,34 @@ package net.kardexo.kardexotools.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.util.Mth;
 
 public class CommandWorldTime
 {
-	public static void register(CommandDispatcher<CommandSource> dispatcher)
+	public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
 	{
 		dispatcher.register(Commands.literal("worldtime")
 				.executes(context -> worldtime(context.getSource())));
 	}
 	
-	private static int worldtime(CommandSource source) throws CommandSyntaxException
+	private static int worldtime(CommandSourceStack source) throws CommandSyntaxException
 	{
-		source.sendSuccess(new StringTextComponent("World time: " + toWorldTime(source.getLevel().getDayTime())), false);
+		source.sendSuccess(new TextComponent("World time: " + toWorldTime(source.getLevel().getDayTime())), false);
 		return 1;
 	}
 	
 	private static int toHour(long tick)
 	{
-		return MathHelper.floor((tick + 6000) / 1000F) % 24;
+		return Mth.floor((tick + 6000) / 1000F) % 24;
 	}
 	
 	private static int toMinute(long tick)
 	{
-		int hour = MathHelper.floor((tick + 6000F) / 1000F);
-		int minute = MathHelper.floor((tick + 6000F - hour * 1000) * 6 / 100);
+		int hour = Mth.floor((tick + 6000F) / 1000F);
+		int minute = Mth.floor((tick + 6000F - hour * 1000) * 6 / 100);
 		
 		return minute;
 	}

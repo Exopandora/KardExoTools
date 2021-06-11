@@ -8,26 +8,26 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.property.Property;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.command.arguments.EntityArgument;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Util;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.Util;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.player.Player;
 
 public class CommandWhereIs
 {
-	public static void register(CommandDispatcher<CommandSource> dispatcher)
+	public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
 	{
 		dispatcher.register(Commands.literal("whereis")
 				.then(Commands.argument("target", EntityArgument.player())
 					.executes(context -> whereIs(context.getSource(), EntityArgument.getPlayer(context, "target")))));
 	}
 	
-	private static int whereIs(CommandSource source, PlayerEntity target) throws CommandSyntaxException
+	private static int whereIs(CommandSourceStack source, Player target) throws CommandSyntaxException
 	{
 		BlockPos pos = target.blockPosition();
 		String dimension = target.level.dimension().location().toString();
@@ -50,7 +50,7 @@ public class CommandWhereIs
 			}
 		}
 		
-		IFormattableTextComponent formattedProperties = null;
+		MutableComponent formattedProperties = null;
 		
 		for(Property place : properties)
 		{
@@ -60,18 +60,18 @@ public class CommandWhereIs
 			}
 			else
 			{
-				formattedProperties = new TranslationTextComponent("%s, %s", place.getDisplayName());
+				formattedProperties = new TranslatableComponent("%s, %s", place.getDisplayName());
 			}
 		}
 		
-		IFormattableTextComponent query = new TranslationTextComponent("%s: x: %s y: %s z: %s d: %s", new Object[] {target.getDisplayName(), pos.getX(), pos.getY(), pos.getZ(), dimension});
+		MutableComponent query = new TranslatableComponent("%s: x: %s y: %s z: %s d: %s", new Object[] {target.getDisplayName(), pos.getX(), pos.getY(), pos.getZ(), dimension});
 		
 		if(formattedProperties != null)
 		{
-			query = new TranslationTextComponent("%s (%s)", new Object[] {query, formattedProperties});
+			query = new TranslatableComponent("%s (%s)", new Object[] {query, formattedProperties});
 		}
 		
-		source.getServer().sendMessage(new StringTextComponent("Query: ").append(query), Util.NIL_UUID);
+		source.getServer().sendMessage(new TextComponent("Query: ").append(query), Util.NIL_UUID);
 		source.sendSuccess(query, false);
 		
 		return 1;

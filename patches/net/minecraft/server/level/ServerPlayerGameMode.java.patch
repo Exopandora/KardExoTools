@@ -1,0 +1,36 @@
+--- a/net/minecraft/server/level/ServerPlayerGameMode.java
++++ b/net/minecraft/server/level/ServerPlayerGameMode.java
+@@ -272,7 +272,7 @@
+         }
+     }
+ 
+-    public boolean destroyBlock(BlockPos p_9281_)
++    public boolean destroyBlock(BlockPos p_9281_) {return net.kardexo.kardexotools.property.PropertyHelper.canHarvestBlock(this.player, p_9281_) && net.kardexo.kardexotools.veinminer.Veinminer.mine(p_9281_, this.player, this.level, this::destroyBlock);} public boolean destroyBlock(BlockPos p_9281_, boolean dropAtPlayer)
+     {
+         BlockState blockstate = this.level.getBlockState(p_9281_);
+ 
+@@ -317,7 +317,7 @@
+ 
+                     if (flag && flag1)
+                     {
+-                        block.playerDestroy(this.level, this.player, p_9281_, blockstate, blockentity, itemstack1);
++                        block.playerDestroy(this.level, this.player, dropAtPlayer ? this.player.blockPosition() : p_9281_, blockstate, blockentity, itemstack1);
+                     }
+ 
+                     return true;
+@@ -407,6 +407,7 @@
+ 
+             if (!flag1)
+             {
++                if (!net.kardexo.kardexotools.property.PropertyHelper.canInteractWithBlock(p_9266_, blockpos, blockstate)) return net.kardexo.kardexotools.property.PropertyHelper.cancelBlockInteraction(this.player);
+                 InteractionResult interactionresult = blockstate.use(p_9267_, p_9266_, p_9269_, p_9270_);
+ 
+                 if (interactionresult.consumesAction())
+@@ -418,6 +419,7 @@
+ 
+             if (!p_9268_.isEmpty() && !p_9266_.getCooldowns().isOnCooldown(p_9268_.getItem()))
+             {
++                if (!net.kardexo.kardexotools.property.PropertyHelper.canPlaceBlock(p_9266_, blockpos, blockstate)) return net.kardexo.kardexotools.property.PropertyHelper.cancelBlockInteraction(this.player);
+                 UseOnContext useoncontext = new UseOnContext(p_9266_, p_9269_, p_9270_);
+                 InteractionResult interactionresult1;
+ 

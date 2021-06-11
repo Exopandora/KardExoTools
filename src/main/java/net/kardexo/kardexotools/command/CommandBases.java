@@ -17,20 +17,20 @@ import net.kardexo.kardexotools.property.Property;
 import net.kardexo.kardexotools.property.PropertyHelper;
 import net.kardexo.kardexotools.property.PropertyOwner;
 import net.kardexo.kardexotools.tasks.TickableBases;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.command.ISuggestionProvider;
-import net.minecraft.command.arguments.ColumnPosArgument;
-import net.minecraft.command.arguments.DimensionArgument;
-import net.minecraft.command.arguments.EntityArgument;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.ColumnPos;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.DimensionArgument;
+import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.commands.arguments.coordinates.ColumnPosArgument;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.level.ColumnPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Player;
 
 public class CommandBases
 {
-	public static void register(CommandDispatcher<CommandSource> dispatcher)
+	public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
 	{
 		dispatcher.register(Commands.literal("bases")
 				.then(Commands.literal("add")
@@ -116,12 +116,12 @@ public class CommandBases
 								.executes(context -> setProtection(context.getSource(), StringArgumentType.getString(context, "id"), BoolArgumentType.getBool(context, "enabled")))))));
 	}
 	
-	private static int add(CommandSource source, String id, ServerWorld dimension, ColumnPos from, ColumnPos to, PlayerEntity owner, String title) throws CommandSyntaxException
+	private static int add(CommandSourceStack source, String id, ServerLevel dimension, ColumnPos from, ColumnPos to, Player owner, String title) throws CommandSyntaxException
 	{
 		try
 		{
 			PropertyHelper.add(id, dimension, from, to, owner.getGameProfile().getName(), title, KardExo.BASES_FILE);
-			source.sendSuccess(new StringTextComponent("Added base with id " + id), false);
+			source.sendSuccess(new TextComponent("Added base with id " + id), false);
 		}
 		catch(IllegalStateException e)
 		{
@@ -131,14 +131,14 @@ public class CommandBases
 		return 1;
 	}
 	
-	private static int remove(CommandSource source, String id) throws CommandSyntaxException
+	private static int remove(CommandSourceStack source, String id) throws CommandSyntaxException
 	{
 		ensurePermission(source, id, null);
 		
 		try
 		{
 			PropertyHelper.remove(id, KardExo.BASES_FILE);
-			source.sendSuccess(new StringTextComponent("Removed base with id " + id), false);
+			source.sendSuccess(new TextComponent("Removed base with id " + id), false);
 		}
 		catch(NoSuchElementException e)
 		{
@@ -148,41 +148,41 @@ public class CommandBases
 		return 1;
 	}
 	
-	private static int setEnterMessage(CommandSource source, String id, PlayerEntity player, String message) throws CommandSyntaxException
+	private static int setEnterMessage(CommandSourceStack source, String id, Player player, String message) throws CommandSyntaxException
 	{
 		ensuredForOwner(source, id, player, owner -> 
 		{
 			owner.setEnterMessage(message);
-			source.sendSuccess(new StringTextComponent("Message upon entrance has been set to \"" + message + "\""), false);
+			source.sendSuccess(new TextComponent("Message upon entrance has been set to \"" + message + "\""), false);
 		});
 		
 		return 1;
 	}
 	
-	private static int setExitMessage(CommandSource source, String id, PlayerEntity player, String message) throws CommandSyntaxException
+	private static int setExitMessage(CommandSourceStack source, String id, Player player, String message) throws CommandSyntaxException
 	{
 		ensuredForOwner(source, id, player, owner -> 
 		{
 			owner.setExitMessage(message);
-			source.sendSuccess(new StringTextComponent("Message upon exit has been set to \"" + message + "\""), false);
+			source.sendSuccess(new TextComponent("Message upon exit has been set to \"" + message + "\""), false);
 		});
 		
 		return 1;
 	}
 	
-	private static int setBothMessages(CommandSource source, String id, PlayerEntity player, String message) throws CommandSyntaxException
+	private static int setBothMessages(CommandSourceStack source, String id, Player player, String message) throws CommandSyntaxException
 	{
 		ensuredForOwner(source, id, player, owner -> 
 		{
 			owner.setEnterMessage(message);
 			owner.setExitMessage(message);
-			source.sendSuccess(new StringTextComponent("Both messages have been set to \"" + message + "\""), false);
+			source.sendSuccess(new TextComponent("Both messages have been set to \"" + message + "\""), false);
 		});
 		
 		return 1;
 	}
 	
-	private static void ensuredForOwner(CommandSource source, String id, PlayerEntity player, Consumer<PropertyOwner> callback) throws CommandSyntaxException
+	private static void ensuredForOwner(CommandSourceStack source, String id, Player player, Consumer<PropertyOwner> callback) throws CommandSyntaxException
 	{
 		ensurePermission(source, id, player);
 		ensureOwner(player.getGameProfile().getName(), id);
@@ -194,7 +194,7 @@ public class CommandBases
 		});
 	}
 	
-	private static int addOwner(CommandSource source, String id, PlayerEntity player, boolean creator) throws CommandSyntaxException
+	private static int addOwner(CommandSourceStack source, String id, Player player, boolean creator) throws CommandSyntaxException
 	{
 		ensurePermission(source, id, null);
 		String name = player.getGameProfile().getName();
@@ -210,17 +210,17 @@ public class CommandBases
 		
 		if(creator)
 		{
-			source.sendSuccess(new StringTextComponent("Added " + name +  " as a creator to base with id " + id), false);
+			source.sendSuccess(new TextComponent("Added " + name +  " as a creator to base with id " + id), false);
 		}
 		else
 		{
-			source.sendSuccess(new StringTextComponent("Added " + name +  " as an owner to base with id " + id), false);
+			source.sendSuccess(new TextComponent("Added " + name +  " as an owner to base with id " + id), false);
 		}
 		
 		return 1;
 	}
 	
-	private static int removeOwner(CommandSource source, String id, PlayerEntity player) throws CommandSyntaxException
+	private static int removeOwner(CommandSourceStack source, String id, Player player) throws CommandSyntaxException
 	{
 		ensurePermission(source, id, player);
 		ensureOwner(player.getGameProfile().getName(), id);
@@ -229,13 +229,13 @@ public class CommandBases
 		
 		PropertyOwner owner = new PropertyOwner(player.getGameProfile().getName());
 		property.removeOwner(owner);
-		source.sendSuccess(new StringTextComponent("Removed " + owner.getName() +  " as an owner of the base with id " + id), false);
+		source.sendSuccess(new TextComponent("Removed " + owner.getName() +  " as an owner of the base with id " + id), false);
 		KardExo.BASES_FILE.save();
 		
 		return 1;
 	}
 	
-	private static int setOwner(CommandSource source, String id, PlayerEntity player, boolean creator) throws CommandSyntaxException
+	private static int setOwner(CommandSourceStack source, String id, Player player, boolean creator) throws CommandSyntaxException
 	{
 		ensurePermission(source, id, null);
 		ensureOwner(player.getGameProfile().getName(), id);
@@ -248,23 +248,23 @@ public class CommandBases
 			{
 				if(owner.isCreator() && creator)
 				{
-					source.sendSuccess(new StringTextComponent(owner.getName() + " is already a creator of base with id " + id), false);
+					source.sendSuccess(new TextComponent(owner.getName() + " is already a creator of base with id " + id), false);
 				}
 				else if(!owner.isCreator() && creator)
 				{
 					owner.setCreator(true);
-					source.sendSuccess(new StringTextComponent(owner.getName() + " is now a creator of base with id " + id), false);
+					source.sendSuccess(new TextComponent(owner.getName() + " is now a creator of base with id " + id), false);
 					KardExo.BASES_FILE.save();
 				}
 				else if(owner.isCreator() && !creator)
 				{
 					owner.setCreator(false);
-					source.sendSuccess(new StringTextComponent(owner.getName() + " is now an owner of base with id " + id), false);
+					source.sendSuccess(new TextComponent(owner.getName() + " is now an owner of base with id " + id), false);
 					KardExo.BASES_FILE.save();
 				}
 				else if(!owner.isCreator() && !creator)
 				{
-					source.sendSuccess(new StringTextComponent(owner.getName() + " is already an owner of base with id " + id), false);
+					source.sendSuccess(new TextComponent(owner.getName() + " is already an owner of base with id " + id), false);
 				}
 				
 				return 1;
@@ -274,7 +274,7 @@ public class CommandBases
 		return 0;
 	}
 	
-	private static int setNotify(CommandSource source, String id, PlayerEntity player, boolean notify) throws CommandSyntaxException
+	private static int setNotify(CommandSourceStack source, String id, Player player, boolean notify) throws CommandSyntaxException
 	{
 		ensurePermission(source, id, player);
 		ensureOwner(player.getGameProfile().getName(), id);
@@ -289,11 +289,11 @@ public class CommandBases
 				
 				if(notify)
 				{
-					source.sendSuccess(new StringTextComponent(owner.getName() + " will now be notified"), false);
+					source.sendSuccess(new TextComponent(owner.getName() + " will now be notified"), false);
 				}
 				else
 				{
-					source.sendSuccess(new StringTextComponent(owner.getName() + " will no longer be notified"), false);
+					source.sendSuccess(new TextComponent(owner.getName() + " will no longer be notified"), false);
 				}
 				
 				return 1;
@@ -303,7 +303,7 @@ public class CommandBases
 		return 0;
 	}
 	
-	private static int addChild(CommandSource source, String id, String child, ServerWorld dimension, ColumnPos from, ColumnPos to, String title) throws CommandSyntaxException
+	private static int addChild(CommandSourceStack source, String id, String child, ServerLevel dimension, ColumnPos from, ColumnPos to, String title) throws CommandSyntaxException
 	{
 		ensurePermission(source, id, null);
 		Property parent = getProperty(id);
@@ -311,7 +311,7 @@ public class CommandBases
 		try
 		{
 			PropertyHelper.addChild(parent, child, dimension, from, to, title, KardExo.BASES_FILE);
-			source.sendSuccess(new StringTextComponent("Added child with id " + child + " to base with id " + id), false);
+			source.sendSuccess(new TextComponent("Added child with id " + child + " to base with id " + id), false);
 		}
 		catch(IllegalStateException e)
 		{
@@ -321,7 +321,7 @@ public class CommandBases
 		return 1;
 	}
 	
-	private static int removeChild(CommandSource source, String id, String child) throws CommandSyntaxException
+	private static int removeChild(CommandSourceStack source, String id, String child) throws CommandSyntaxException
 	{
 		ensurePermission(source, id, null);
 		Property parent = getProperty(id);
@@ -329,7 +329,7 @@ public class CommandBases
 		try
 		{
 			PropertyHelper.removeChild(parent, child, KardExo.BASES_FILE);
-			source.sendSuccess(new StringTextComponent("Removed child with id " + child + " from base with id " + id), false);
+			source.sendSuccess(new TextComponent("Removed child with id " + child + " from base with id " + id), false);
 		}
 		catch(NoSuchElementException e)
 		{
@@ -339,7 +339,7 @@ public class CommandBases
 		return 1;
 	}
 	
-	private static int setProtection(CommandSource source, String id, boolean enabled) throws CommandSyntaxException
+	private static int setProtection(CommandSourceStack source, String id, boolean enabled) throws CommandSyntaxException
 	{
 		ensurePermission(source, id, null);
 		getProperty(id).setProtected(enabled);
@@ -347,17 +347,17 @@ public class CommandBases
 		
 		if(enabled)
 		{
-			source.sendSuccess(new StringTextComponent("Enabled protection for base with id " + id), false);
+			source.sendSuccess(new TextComponent("Enabled protection for base with id " + id), false);
 		}
 		else
 		{
-			source.sendSuccess(new StringTextComponent("Disabled protection for base with id " + id), false);
+			source.sendSuccess(new TextComponent("Disabled protection for base with id " + id), false);
 		}
 		
 		return 1;
 	}
 	
-	private static int list(CommandSource source) throws CommandSyntaxException
+	private static int list(CommandSourceStack source) throws CommandSyntaxException
 	{
 		try
 		{
@@ -369,14 +369,14 @@ public class CommandBases
 		}
 	}
 	
-	private static int reload(CommandSource source) throws CommandSyntaxException
+	private static int reload(CommandSourceStack source) throws CommandSyntaxException
 	{
 		TickableBases.reload();
 		
 		try
 		{
 			KardExo.BASES_FILE.save();
-			source.sendSuccess(new StringTextComponent("Successfully reloaded bases"), false);
+			source.sendSuccess(new TextComponent("Successfully reloaded bases"), false);
 		}
 		catch(Exception e)
 		{
@@ -386,7 +386,7 @@ public class CommandBases
 		return KardExo.BASES.size();
 	}
 	
-	private static void ensurePermission(CommandSource source, String id, PlayerEntity target) throws CommandSyntaxException
+	private static void ensurePermission(CommandSourceStack source, String id, Player target) throws CommandSyntaxException
 	{
 		if(!PropertyHelper.hasPermission(source, id, target, KardExo.BASES))
 		{
@@ -402,7 +402,7 @@ public class CommandBases
 		}
 	}
 	
-	private static void ensureCreatorSize(String id, PlayerEntity player, Property property, boolean condition) throws CommandSyntaxException
+	private static void ensureCreatorSize(String id, Player player, Property property, boolean condition) throws CommandSyntaxException
 	{
 		if(condition && property.getCreators().size() == 1)
 		{
@@ -422,12 +422,12 @@ public class CommandBases
 		}
 	}
 	
-	private static CompletableFuture<Suggestions> getSuggestions(CommandContext<CommandSource> context, SuggestionsBuilder builder) throws CommandSyntaxException
+	private static CompletableFuture<Suggestions> getSuggestions(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) throws CommandSyntaxException
 	{
-		return ISuggestionProvider.suggest(KardExo.BASES.keySet(), builder);
+		return SharedSuggestionProvider.suggest(KardExo.BASES.keySet(), builder);
 	}
 	
-	private static CompletableFuture<Suggestions> getChildSuggestions(CommandContext<CommandSource> context, SuggestionsBuilder builder) throws CommandSyntaxException
+	private static CompletableFuture<Suggestions> getChildSuggestions(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) throws CommandSyntaxException
 	{
 		return CommandProperty.getChildSuggestions(KardExo.BASES_FILE, context, builder, StringArgumentType.getString(context, "id"));
 	}
