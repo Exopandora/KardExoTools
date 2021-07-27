@@ -168,7 +168,7 @@ public class PropertyHelper
 		return false;
 	}
 	
-	private static boolean isProtected(Player player, BlockPos pos)
+	public static boolean isProtected(Player player, BlockPos pos)
 	{
 		return isProtected(player, pos, KardExo.BASES) || isProtected(player, pos, KardExo.PLACES);
 	}
@@ -183,24 +183,14 @@ public class PropertyHelper
 		return !isProtected(player, pos);
 	}
 	
-	public static boolean canInteractWithBlock(Player player, BlockPos pos, BlockState blockstate)
-	{
-		return !(blockstate.getBlock() instanceof BaseEntityBlock) || !isProtected(player, pos);
-	}
-	
-	public static boolean canPlaceBlock(Player player, BlockPos pos, BlockState blockstate)
-	{
-		return !isProtected(player, pos);
-	}
-	
 	public static boolean canInteractWithEntity(Player player, Entity entity)
 	{
 		return entity instanceof Monster && !entity.hasCustomName() || !isProtected(player, entity);
 	}
 	
-	public static InteractionResult cancelBlockInteraction(ServerPlayer player)
+	public static boolean cancelBlockInteraction(ServerPlayer player)
 	{
 		player.getServer().getPlayerList().sendAllPlayerInfo(player);
-		return InteractionResult.PASS;
+		return true;
 	}
 }

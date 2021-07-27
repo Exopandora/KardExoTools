@@ -1,10 +1,10 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -1511,6 +_,7 @@
-                 {
-                     private void m_143678_(InteractionHand p_143679_, ServerGamePacketListenerImpl.EntityInteraction p_143680_)
+@@ -1537,6 +_,7 @@
+                     }
+                     public void m_141994_()
                      {
 +                        if (!net.kardexo.kardexotools.property.PropertyHelper.canInteractWithEntity(ServerGamePacketListenerImpl.this.f_9743_, entity)) return;
-                         ItemStack itemstack = ServerGamePacketListenerImpl.this.f_9743_.m_21120_(p_143679_).m_41777_();
-                         InteractionResult interactionresult = p_143680_.m_143694_(ServerGamePacketListenerImpl.this.f_9743_, entity, p_143679_);
- 
+                         if (!(entity instanceof ItemEntity) && !(entity instanceof ExperienceOrb) && !(entity instanceof AbstractArrow) && entity != ServerGamePacketListenerImpl.this.f_9743_)
+                         {
+                             ServerGamePacketListenerImpl.this.f_9743_.m_5706_(entity);

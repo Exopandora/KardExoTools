@@ -18,19 +18,3 @@
                      }
  
                      return true;
-@@ -407,6 +_,7 @@
- 
-             if (!flag1)
-             {
-+                if (!net.kardexo.kardexotools.property.PropertyHelper.canInteractWithBlock(p_9266_, blockpos, blockstate)) return net.kardexo.kardexotools.property.PropertyHelper.cancelBlockInteraction(this.f_9245_);
-                 InteractionResult interactionresult = blockstate.m_60664_(p_9267_, p_9266_, p_9269_, p_9270_);
- 
-                 if (interactionresult.m_19077_())
-@@ -418,6 +_,7 @@
- 
-             if (!p_9268_.m_41619_() && !p_9266_.m_36335_().m_41519_(p_9268_.m_41720_()))
-             {
-+                if (!net.kardexo.kardexotools.property.PropertyHelper.canPlaceBlock(p_9266_, blockpos, blockstate)) return net.kardexo.kardexotools.property.PropertyHelper.cancelBlockInteraction(this.f_9245_);
-                 UseOnContext useoncontext = new UseOnContext(p_9266_, p_9269_, p_9270_);
-                 InteractionResult interactionresult1;
- 
