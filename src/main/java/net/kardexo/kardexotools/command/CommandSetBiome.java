@@ -2,11 +2,9 @@ package net.kardexo.kardexotools.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.suggestion.SuggestionProvider;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.commands.arguments.coordinates.ColumnPosArgument;
 import net.minecraft.commands.synchronization.SuggestionProviders;
@@ -16,6 +14,7 @@ import net.minecraft.network.protocol.game.ClientboundLevelChunkPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.commands.LocateBiomeCommand;
 import net.minecraft.server.level.ColumnPos;
+import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.biome.Biome;
@@ -87,7 +86,8 @@ public class CommandSetBiome
 				if(flag)
 				{
 					chunk.markUnsaved();
-					level.getChunkSource().chunkMap.getPlayers(chunk.getPos(), false).forEach(player ->
+					ServerChunkCache chunkCache = level.getChunkSource();
+					chunkCache.chunkMap.getPlayers(chunk.getPos(), false).forEach(player ->
 					{
 						player.connection.send(new ClientboundLevelChunkPacket(chunk));
 					});

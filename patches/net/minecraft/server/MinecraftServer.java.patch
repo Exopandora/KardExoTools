@@ -1,28 +1,28 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -184,7 +184,7 @@
-     public static final int ABSOLUTE_MAX_WORLD_SIZE = 29999984;
-     public static final LevelSettings DEMO_SETTINGS = new LevelSettings("Demo World", GameType.SURVIVAL, false, Difficulty.NORMAL, false, new GameRules(), DataPackConfig.DEFAULT);
-     private static final long DELAYED_TASKS_TICK_EXTENSION = 50L;
--    protected final LevelStorageSource.LevelStorageAccess storageSource;
-+    public final LevelStorageSource.LevelStorageAccess storageSource;
-     protected final PlayerDataStorage playerDataStorage;
-     private final Snooper snooper = new Snooper("server", this, Util.getMillis());
-     private final List<Runnable> tickables = Lists.newArrayList();
-@@ -690,6 +690,7 @@
-             this.snooper.interrupt();
+@@ -184,7 +_,7 @@
+     public static final int f_177883_ = 29999984;
+     public static final LevelSettings f_129743_ = new LevelSettings("Demo World", GameType.SURVIVAL, false, Difficulty.NORMAL, false, new GameRules(), DataPackConfig.f_45842_);
+     private static final long f_177871_ = 50L;
+-    protected final LevelStorageSource.LevelStorageAccess f_129744_;
++    public final LevelStorageSource.LevelStorageAccess f_129744_;
+     protected final PlayerDataStorage f_129745_;
+     private final Snooper f_129751_ = new Snooper("server", this, Util.m_137550_());
+     private final List<Runnable> f_129752_ = Lists.newArrayList();
+@@ -690,6 +_,7 @@
+             this.f_129751_.m_19231_();
          }
  
 +        net.kardexo.kardexotools.KardExo.stop();
-         this.resources.close();
+         this.f_129740_.close();
  
          try
-@@ -1123,7 +1124,7 @@
+@@ -1123,7 +_,7 @@
      @DontObfuscate
-     public String getServerModName()
+     public String m_130001_()
      {
 -        return "vanilla";
 +        return "KardExo";
      }
  
-     public SystemReport fillSystemReport(SystemReport p_177936_)
+     public SystemReport m_177935_(SystemReport p_177936_)

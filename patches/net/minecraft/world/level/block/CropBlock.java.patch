@@ -1,9 +1,9 @@
 --- a/net/minecraft/world/level/block/CropBlock.java
 +++ b/net/minecraft/world/level/block/CropBlock.java
-@@ -208,4 +208,6 @@
+@@ -208,4 +_,6 @@
      {
-         p_52286_.add(AGE);
+         p_52286_.m_61104_(f_52244_);
      }
 +
-+    public net.minecraft.world.InteractionResult use(BlockState state, Level level, BlockPos pos, net.minecraft.world.entity.player.Player player, net.minecraft.world.InteractionHand hand, net.minecraft.world.phys.BlockHitResult hitResult) {return net.kardexo.kardexotools.patches.PatchCrops.use(state, level, pos, player, hand, hitResult, this, this.getBaseSeedId().asItem(), this.getAgeProperty(), this.getMaxAge(), this.getStateForAge(0));};
++    public net.minecraft.world.InteractionResult m_6227_(BlockState state, Level level, BlockPos pos, net.minecraft.world.entity.player.Player player, net.minecraft.world.InteractionHand hand, net.minecraft.world.phys.BlockHitResult hitResult) {return net.kardexo.kardexotools.patches.PatchCrops.use(state, level, pos, player, hand, hitResult, this, this.m_6404_().m_5456_(), this.m_7959_(), this.m_7419_(), this.m_52289_(0));};
  }

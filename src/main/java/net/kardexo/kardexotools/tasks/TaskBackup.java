@@ -10,9 +10,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
 import net.kardexo.kardexotools.KardExo;
-import net.minecraft.network.chat.HoverEvent.Action;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.HoverEvent.Action;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -30,21 +30,23 @@ public class TaskBackup extends AbstractTask
 	@Override
 	public void run()
 	{
+		
+		
 		if(TaskBackup.backupInProgress)
 		{
-			KardExo.notifyPlayers(this.getServer(), new TextComponent("Backup already in progress"));
+			KardExo.notifyPlayers(this.server, new TextComponent("Backup already in progress"));
 		}
 		else
 		{
 			TaskBackup.backupInProgress = true;
 			long start = System.currentTimeMillis();
 			
-			KardExo.notifyPlayers(this.getServer(), new TextComponent("Starting backup..."));
-			KardExo.saveLevels(this.getServer(), false);
+			KardExo.notifyPlayers(this.server, new TextComponent("Starting backup..."));
+			KardExo.saveLevels(this.server, false);
 			
 			LocalDateTime date = LocalDateTime.now();
 			
-			String folderName = this.getServer().storageSource.getLevelId();
+			String folderName = this.server.storageSource.getLevelId();
 			String time = String.format("%02d_%02d_%04d-%02d_%02d_%02d", date.getDayOfMonth(), date.getMonthValue(), date.getYear(), date.getHour(), date.getMinute(), date.getSecond());
 			String fileName = folderName + "-" + time;
 			
@@ -109,11 +111,11 @@ public class TaskBackup extends AbstractTask
 			TextComponent size = new TextComponent(FileUtils.byteCountToDisplaySize(bytes));
 			Component hover = new TranslatableComponent("%s\n%s bytes\n%s", file.getName(), String.format("%,d", bytes), DurationFormatUtils.formatDuration(duration, "HH:mm:ss"));
 			size.setStyle(Style.EMPTY.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, hover)));
-			KardExo.notifyPlayers(this.getServer(), new TranslatableComponent("Backup Complete (%s)", size));
+			KardExo.notifyPlayers(this.server, new TranslatableComponent("Backup Complete (%s)", size));
 		}
 		else
 		{
-			KardExo.notifyPlayers(this.getServer(), new TextComponent("Backup Failed"));
+			KardExo.notifyPlayers(this.server, new TextComponent("Backup Failed"));
 		}
 	}
 	

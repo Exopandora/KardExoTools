@@ -51,7 +51,7 @@ public class TaskScheduler
 		@Override
 		public void run()
 		{
-			MinecraftServer server = this.task.getServer();
+			MinecraftServer server = this.task.server;
 			
 			try
 			{

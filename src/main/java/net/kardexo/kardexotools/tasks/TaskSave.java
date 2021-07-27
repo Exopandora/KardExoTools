@@ -13,7 +13,7 @@ public class TaskSave extends AbstractTask
 	@Override
 	public void run()
 	{
-		KardExo.saveLevels(this.getServer());
+		KardExo.saveLevels(this.server);
 	}
 	
 	@Override

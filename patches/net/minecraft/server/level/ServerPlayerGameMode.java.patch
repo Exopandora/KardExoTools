@@ -1,36 +1,36 @@
 --- a/net/minecraft/server/level/ServerPlayerGameMode.java
 +++ b/net/minecraft/server/level/ServerPlayerGameMode.java
-@@ -272,7 +272,7 @@
+@@ -272,7 +_,7 @@
          }
      }
  
--    public boolean destroyBlock(BlockPos p_9281_)
-+    public boolean destroyBlock(BlockPos p_9281_) {return net.kardexo.kardexotools.property.PropertyHelper.canHarvestBlock(this.player, p_9281_) && net.kardexo.kardexotools.veinminer.Veinminer.mine(p_9281_, this.player, this.level, this::destroyBlock);} public boolean destroyBlock(BlockPos p_9281_, boolean dropAtPlayer)
+-    public boolean m_9280_(BlockPos p_9281_)
++    public boolean m_9280_(BlockPos p_9281_) {return net.kardexo.kardexotools.property.PropertyHelper.canHarvestBlock(this.f_9245_, p_9281_) && net.kardexo.kardexotools.veinminer.Veinminer.mine(p_9281_, this.f_9245_, this.f_9244_, this::destroyBlock);} public boolean destroyBlock(BlockPos p_9281_, boolean dropAtPlayer)
      {
-         BlockState blockstate = this.level.getBlockState(p_9281_);
+         BlockState blockstate = this.f_9244_.m_8055_(p_9281_);
  
-@@ -317,7 +317,7 @@
+@@ -317,7 +_,7 @@
  
                      if (flag && flag1)
                      {
--                        block.playerDestroy(this.level, this.player, p_9281_, blockstate, blockentity, itemstack1);
-+                        block.playerDestroy(this.level, this.player, dropAtPlayer ? this.player.blockPosition() : p_9281_, blockstate, blockentity, itemstack1);
+-                        block.m_6240_(this.f_9244_, this.f_9245_, p_9281_, blockstate, blockentity, itemstack1);
++                        block.m_6240_(this.f_9244_, this.f_9245_, dropAtPlayer ? this.f_9245_.m_142538_() : p_9281_, blockstate, blockentity, itemstack1);
                      }
  
                      return true;
-@@ -407,6 +407,7 @@
+@@ -407,6 +_,7 @@
  
              if (!flag1)
              {
-+                if (!net.kardexo.kardexotools.property.PropertyHelper.canInteractWithBlock(p_9266_, blockpos, blockstate)) return net.kardexo.kardexotools.property.PropertyHelper.cancelBlockInteraction(this.player);
-                 InteractionResult interactionresult = blockstate.use(p_9267_, p_9266_, p_9269_, p_9270_);
++                if (!net.kardexo.kardexotools.property.PropertyHelper.canInteractWithBlock(p_9266_, blockpos, blockstate)) return net.kardexo.kardexotools.property.PropertyHelper.cancelBlockInteraction(this.f_9245_);
+                 InteractionResult interactionresult = blockstate.m_60664_(p_9267_, p_9266_, p_9269_, p_9270_);
  
-                 if (interactionresult.consumesAction())
-@@ -418,6 +419,7 @@
+                 if (interactionresult.m_19077_())
+@@ -418,6 +_,7 @@
  
-             if (!p_9268_.isEmpty() && !p_9266_.getCooldowns().isOnCooldown(p_9268_.getItem()))
+             if (!p_9268_.m_41619_() && !p_9266_.m_36335_().m_41519_(p_9268_.m_41720_()))
              {
-+                if (!net.kardexo.kardexotools.property.PropertyHelper.canPlaceBlock(p_9266_, blockpos, blockstate)) return net.kardexo.kardexotools.property.PropertyHelper.cancelBlockInteraction(this.player);
++                if (!net.kardexo.kardexotools.property.PropertyHelper.canPlaceBlock(p_9266_, blockpos, blockstate)) return net.kardexo.kardexotools.property.PropertyHelper.cancelBlockInteraction(this.f_9245_);
                  UseOnContext useoncontext = new UseOnContext(p_9266_, p_9269_, p_9270_);
                  InteractionResult interactionresult1;
  

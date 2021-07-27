@@ -1,10 +1,10 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -197,6 +197,7 @@
-             GameProfileCache.setUsesAuthentication(this.usesAuthentication());
-             LOGGER.info("Preparing level \"{}\"", (Object)this.getLevelIdName());
-             this.loadLevel();
+@@ -197,6 +_,7 @@
+             GameProfileCache.m_11004_(this.m_129797_());
+             f_139598_.info("Preparing level \"{}\"", (Object)this.m_7123_());
+             this.m_130006_();
 +            net.kardexo.kardexotools.KardExo.init(this);
-             long j = Util.getNanos() - i;
+             long j = Util.m_137569_() - i;
              String s = String.format(Locale.ROOT, "%.3fs", (double)j / 1.0E9D);
-             LOGGER.info("Done ({})! For help, type \"help\"", (Object)s);
+             f_139598_.info("Done ({})! For help, type \"help\"", (Object)s);

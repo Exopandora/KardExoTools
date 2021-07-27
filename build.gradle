@@ -3,12 +3,12 @@ buildscript {
 		mavenLocal()
 		mavenCentral()
 		maven {
-			url 'https://files.minecraftforge.net/maven'
+			url = 'https://maven.minecraftforge.net/'
 		}
 	}
 	
 	dependencies {
-		classpath 'net.minecraftforge.gradle:ForgeGradle:5.0.+'
+		classpath 'net.minecraftforge.gradle:ForgeGradle:5.1.+'
 		classpath 'org.ow2.asm:asm:9.1'
 		classpath 'org.ow2.asm:asm-tree:9.1'
 		classpath 'com.github.abrarsyed.jastyle:jAstyle:1.3'
@@ -24,14 +24,17 @@ import com.google.gson.GsonBuilder
 import groovy.json.JsonSlurper
 import java.util.zip.*
 import org.apache.commons.io.IOUtils
-import org.apache.commons.io.input.NullInputStream
 import org.objectweb.asm.*
 import org.objectweb.asm.tree.*
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
+import net.minecraftforge.gradle.patcher.tasks.ApplyPatches
 
 // ===== MAIN BUILDSCRIPT ===== //
 
-apply plugin: 'eclipse'
+plugins {
+	id 'eclipse'
+	// id "com.dorongold.task-tree" version "2.1.0" // debug only
+}
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 
@@ -42,30 +45,79 @@ version = settings.modversion
 
 // subprojects
 
+subprojects {
+	apply plugin: 'java'
+	
+	if (!project.name.equals("tools")) {
+		apply plugin: 'eclipse'
+	}
+	
+	repositories {
+		mavenLocal()
+		mavenCentral()
+		maven {
+			name = 'forge'
+			url = 'https://maven.minecraftforge.net/'
+		}
+	}
+	
+	java.toolchain.languageVersion = JavaLanguageVersion.of(16)
+}
+
 project(':mcp') {
 	apply plugin: 'net.minecraftforge.gradle.mcp'
+	
+	ext {
+		configActions = []
+		filterActions = []
+		additionalDirs = [:]
+	}
 	
 	repositories {
 		mavenLocal()
 	}
 	
 	mcp {
-		config = 'de.oceanlabs.mcp:mcp_config:' + settings.mcpconfig + '@zip'
+		config = settings.mcpconfig
 		pipeline = settings.pipeline
+	}
+	
+	downloadConfig.doLast {
+		JarFilter.filterJar(file(downloadConfig.output), file('build/mcp_config_tmp.zip'), {
+			if (filename == 'config.json') {
+				def cfg = new JsonSlurper().parse(istream)
+				
+				for (def action : configActions) {
+					action.call(cfg)
+				}
+				
+				return new GsonBuilder().setPrettyPrinting().create().toJson(cfg)
+			} else {
+				for (def action : filterActions) {
+					action.delegate = delegate
+					def newistream = action.call()
+					
+					if (!istream.is(newistream)) {
+						return newistream
+					}
+				}
+				
+				return istream
+			}
+		}, additionalDirs)
+		
+		copy {
+			from "$buildDir"
+			into "$buildDir"
+			include 'mcp_config_tmp.zip'
+			rename 'mcp_config_tmp.zip', 'mcp_config.zip'
+		}
 	}
 }
 
 project(':clean') {
 	evaluationDependsOn(':mcp')
-	apply plugin: 'eclipse'
 	apply plugin: 'net.minecraftforge.gradle.patcher'
-	
-	java.toolchain.languageVersion = JavaLanguageVersion.of(16) // Mojang ships Java 16 to end users, so your mod should target Java 16.
-	
-	repositories {
-		mavenLocal()
-		mavenCentral()
-	}
 	
 	dependencies {
 		implementation group: 'net.minecraftforge', name: 'forgespi', version: settings.spiversion
@@ -75,6 +127,7 @@ project(':clean') {
 		parent = project(':mcp')
 		mcVersion = settings.mcversion
 		patchedSrc = file('src/main/java')
+		
 		mappings channel: settings.mappings_channel, version: settings.mappings_version
 	}
 	
@@ -83,24 +136,47 @@ project(':clean') {
 			patches = null
 		}
 	}
+	
+	jar {
+		exclude 'net/minecraft/Util$2.class'
+	}
+	
+	reobfJar {
+		tool = 'net.md-5:SpecialSource:1.10.0:shaded'
+	}
 }
 
 project(':' + settings.modname) {
 	evaluationDependsOn(':clean')
 	apply plugin: 'java-library'
-	apply plugin: 'eclipse'
 	apply plugin: 'net.minecraftforge.gradle.patcher'
 	
-	java.toolchain.languageVersion = JavaLanguageVersion.of(16) // Mojang ships Java 16 to end users, so your mod should target Java 16.
 	group = settings.group
 	
 	sourceSets {
 		main {
 			java {
-				srcDirs = ["$rootDir/src/main/java"]
+				srcDirs = [
+					"$rootDir/src/main/java"
+				]
 			}
 			resources {
-				srcDirs = ["$rootDir/src/main/resources"]
+				srcDirs = [
+					"$rootDir/src/main/resources"
+				]
+			}
+		}
+		test {
+			java {
+				srcDirs = [
+					"$rootDir/src/test/java"
+				]
+			}
+			resources {
+				srcDirs = [
+					"$rootDir/src/test/resources",
+					"$rootDir/src/generated_test/resources"
+				]
 			}
 		}
 	}
@@ -110,11 +186,18 @@ project(':' + settings.modname) {
 		mavenCentral()
 	}
 	
+	eclipse.classpath.file.whenMerged { cls ->
+		cls.entries.removeIf { e ->
+			e instanceof SourceFolder && e.path.startsWith('src/') && !e.path.startsWith('src/main/')
+		}
+	}
+	
 	patcher {
 		parent = project(':clean')
 		patches = file("$rootDir/patches")
 		patchedSrc = file('src/main/java')
-		srgPatches = false
+		srgPatches = true
+		
 		getRuns().each { run ->
 			if (run.getName().equals(settings.modname + '_client')) {
 				run.setMain(settings.clientmain)
@@ -130,6 +213,19 @@ project(':' + settings.modname) {
 		if (settings.nopatches) {
 			patches = null
 		}
+	}
+	
+	genPatches {
+		autoHeader true
+		lineEnding = '\n'
+	}
+	
+	jar {
+		exclude 'net/minecraft/Util$2.class'
+	}
+	
+	reobfJar {
+		tool = 'net.md-5:SpecialSource:1.10.0:shaded'
 	}
 	
 	dependencies {
@@ -197,7 +293,7 @@ class JarFilter {
 		
 		additionalDirs.each { additionalDir, prefix ->
 			additionalDir.eachFileRecurse { file ->
-				def filter = new JarFilter(prefix + additionalDir.toPath().relativize(file.toPath()).toString().replace(File.separator, '/'), file.isDirectory() ? new NullInputStream(0) : file.newInputStream(), true)
+				def filter = new JarFilter(prefix + additionalDir.toPath().relativize(file.toPath()).toString().replace(File.separator, '/'), file.isDirectory() ? null : file.newInputStream(), true)
 				transformer.delegate = filter
 				def content = transformer.call()
 				if (content != null && !existing.contains(filter.filename)) {
@@ -303,89 +399,26 @@ class CheckModifiedHelper {
 // Fix recompilation requiring extractSrg output
 setup.dependsOn ':clean:extractSrg'
 
-// Generic fixMcpConfig task for anything that needs to modify the mcpconfig
-class FixMcpConfigTask extends DefaultTask {
-	@Internal
-	List<Closure> configActions = []
-	@Internal
-	List<Closure> filterActions = []
-	@Internal
-	Map<File, String> additionalDirs = [:]
-	
-	void configAction(Closure action) {
-		configActions.add(action)
-	}
-	
-	void filterAction(Closure action) {
-		filterActions.add(action)
-	}
-	
-	void additionalDir(Object dir, String prefix) {
-		additionalDirs.put(project.file(dir), prefix)
-	}
-	
-	@TaskAction
-	void filterMcpConfig() {
-		JarFilter.filterJar(project.file(project.downloadConfig.output), project.file('build/mcp_config.zip'), {
-			if (filename == 'config.json') {
-				def cfg = new JsonSlurper().parse(istream)
-				
-				for (def action : configActions) {
-					action.call(cfg)
-				}
-				
-				return new GsonBuilder().setPrettyPrinting().create().toJson(cfg)
-			} else {
-				for (def action : filterActions) {
-					action.delegate = delegate
-					def newistream = action.call()
-					
-					if (!istream.is(newistream)) {
-						return newistream
-					}
-				}
-				
-				return istream
-			}
-		}, additionalDirs)
-	}
-	
-	static def register(def proj) {
-		if (!proj.ext.properties.containsKey('registered')) {
-			proj.ext.registered = true
-			proj.downloadConfig.output = proj.file('build/mcp_config_broken.zip')
-			
-			proj.task('fixMcpConfig', type: FixMcpConfigTask) {
-				dependsOn proj.downloadConfig
-				inputs.file proj.downloadConfig.output
-				outputs.file 'build/mcp_config.zip'
-			}
-			
-			proj.setupMCP.dependsOn proj.fixMcpConfig
-		}
-	}
-}
-
 // Fix https://github.com/MinecraftForge/ForgeGradle/issues/517 - FG3 server pipeline missing download version JSON
 // Also fix recompile error on server due to mcp.client.Start being present
 if (settings.pipeline == 'server') {
 	project(':mcp') {
-		FixMcpConfigTask.register(project)
-		fixMcpConfig.configAction {cfg -> cfg.steps.server.add(1, [type: 'downloadJson'])}
-		fixMcpConfig.filterAction {return filename.startsWith('config/inject/mcp/client/') ? null : istream}
+		configActions.add({ cfg ->
+			cfg.steps.server.add(1, [type: 'downloadJson'])
+		})
+		configActions.add({ return filename.startsWith('config/inject/mcp/client/') ? null : istream })
 	}
 }
 
 // Custom SRG
 if (settings.customsrg != null) {
 	project(':mcp') {
-		FixMcpConfigTask.register(project)
-		fixMcpConfig.configAction { cfg ->
+		configActions.add({ cfg ->
 			cfg.version = settings.mcversion
 			cfg.data.mappings = 'config/' + settings.customsrg
-		}
+		})
 		
-		fixMcpConfig.filterAction {
+		filterActions.add({
 			if (filename == 'config/joined.tsrg') {
 				filename = 'config/' + settings.customsrg
 				return new FileInputStream(rootProject.file('conf/' + settings.customsrg))
@@ -394,58 +427,54 @@ if (settings.customsrg != null) {
 			} else {
 				return istream
 			}
-		}
+		})
 		
 		if (settings.customconstructors != null) {
-		
-			fixMcpConfig.configAction { cfg ->
+			configActions.add({ cfg ->
 				cfg.data.constructors = 'config/' + settings.customconstructors
-			}
+			})
 			
-			fixMcpConfig.filterAction {
+			filterActions.add({
 				if (filename == 'config/constructors.txt') {
 					filename = 'config/' + settings.customconstructors
 					return new FileInputStream(rootProject.file('conf/' + settings.customconstructors))
 				} else {
 					return istream
 				}
-			}
+			})
 		}
 	}
 } else if (settings.nopatches) {
 	project(':mcp') {
-		FixMcpConfigTask.register(project)
-		fixMcpConfig.filterAction {
+		filterActions.add({
 			if (filename.startsWith('patches/') && !newFile) {
 				return null
 			} else {
 				return istream
 			}
-		}
+		})
 	}
 }
 
 // Custom Fernflower
 if (settings.fernflower != null) {
 	project(':mcp') {
-		FixMcpConfigTask.register(project)
-		fixMcpConfig.configAction { cfg ->
+		configActions.add({ cfg ->
 			cfg.functions.decompile.version = settings.fernflower
-		}
+		})
 	}
 }
 
 // Custom patches
 if (rootProject.file('conf/patches/').exists()) {
 	project(':mcp') {
-		FixMcpConfigTask.register(project)
-		fixMcpConfig.additionalDir(rootProject.file('conf/patches/'), 'patches/' + settings.pipeline + '/')
+		additionalDirs.put(file(rootProject.file('conf/patches/')), 'patches/' + settings.pipeline + '/')
 	}
 }
+
 if (rootProject.file('conf/inject/').exists()) {
 	project(':mcp') {
-		FixMcpConfigTask.register(project)
-		fixMcpConfig.additionalDir(rootProject.file('conf/inject/'), 'config/inject/')
+		additionalDirs.put(file(rootProject.file('conf/inject/')), 'config/inject/')
 	}
 }
 
@@ -598,11 +627,11 @@ if (settings.pipeline == 'joined') {
 				def idx = i
 				
 				task('filterDist' + dists[idx]) {
-					patcher {
-						notchObf = true
-					}
-					
 					dependsOn 'createMcp2Obf', 'reobfJar'
+					
+					patcher.notchObf = true
+					reobfJar.srg = createMcp2Obf.output
+					
 					inputs.file reobfJar.output
 					outputs.file 'build/filterDist' + dists[idx] + '/output.zip'
 					

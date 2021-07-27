@@ -5,7 +5,7 @@
 	"mappings_channel": "official",
 	"mappings_version": "1.17",
 	"mcversion": "1.17",
-	"spiversion": "3.2.3",
+	"spiversion": "4.0.9",
 	"pipeline": "joined",
 	"clientmain": "mcp.client.Start",
 	"servermain": "net.minecraft.server.Main",
