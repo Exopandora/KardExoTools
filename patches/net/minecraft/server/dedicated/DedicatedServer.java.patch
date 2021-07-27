@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -197,6 +_,7 @@
+@@ -198,6 +_,7 @@
              GameProfileCache.m_11004_(this.m_129797_());
              f_139598_.info("Preparing level \"{}\"", (Object)this.m_7123_());
              this.m_130006_();

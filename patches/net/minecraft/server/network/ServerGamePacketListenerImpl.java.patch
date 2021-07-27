@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -1532,6 +_,7 @@
+@@ -1511,6 +_,7 @@
                  {
                      private void m_143678_(InteractionHand p_143679_, ServerGamePacketListenerImpl.EntityInteraction p_143680_)
                      {
