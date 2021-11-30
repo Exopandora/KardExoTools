@@ -1,97 +1,67 @@
 package net.kardexo.kardexotools.property;
 
 import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
-import com.google.common.collect.Lists;
+import org.jetbrains.annotations.Nullable;
+import org.spongepowered.include.com.google.common.base.Objects;
+
+import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
+import com.mojang.authlib.GameProfile;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.players.GameProfileCache;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
 public class Property
 {
-	private final List<PropertyOwner> owners;
-	private List<Property> children;
-	private String name;
-	private String title;
+	@Nullable
+	@SerializedName("display_name")
+	private Component displayName;
+	@Nullable
+	@SerializedName("owners")
+	private Map<UUID, OwnerConfig> owners;
+	@SerializedName("dimension")
 	private ResourceLocation dimension;
-	private double xMin;
-	private double zMin;
-	private double xMax;
-	private double zMax;
+	@SerializedName("bounds")
+	private BoundingBox boundingBox;
 	@SerializedName("protected")
 	private boolean isProtected;
+	@Nullable
+	@SerializedName("children")
+	private Map<String, Property> children;
 	
-	public Property(String name, String title, List<PropertyOwner> owners, ResourceLocation dimension, double xMin, double zMin, double xMax, double zMax)
+	public Property(@Nullable Component displayName, @Nullable Map<UUID, OwnerConfig> owners, ResourceLocation dimension, BoundingBox boundingBox)
 	{
-		this.name = name;
-		this.title = title;
+		this.displayName = displayName;
 		this.owners = owners;
 		this.dimension = dimension;
-		this.xMin = xMin;
-		this.zMin = zMin;
-		this.xMax = xMax;
-		this.zMax = zMax;
+		this.boundingBox = boundingBox;
 	}
 	
-	public String getName()
+	public BoundingBox getBoundingBox()
 	{
-		return this.name;
+		return this.boundingBox;
 	}
 	
-	public void setName(String name)
+	public void setBoundingBox(BoundingBox boundingBox)
 	{
-		this.name = name;
-	}
-	
-	public double getXMin()
-	{
-		return this.xMin;
-	}
-	
-	public void setXMin(int xMin)
-	{
-		this.xMin = xMin;
-	}
-	
-	public double getZMin()
-	{
-		return this.zMin;
-	}
-	
-	public void setZMin(int zMin)
-	{
-		this.zMin = zMin;
-	}
-	
-	public double getXMax()
-	{
-		return this.xMax;
-	}
-	
-	public void setXMax(int xMax)
-	{
-		this.xMax = xMax;
-	}
-	
-	public double getZMax()
-	{
-		return this.zMax;
-	}
-	
-	public void setZMax(int zMax)
-	{
-		this.zMax = zMax;
+		this.boundingBox = boundingBox;
 	}
 	
 	public ResourceKey<Level> getDimension()
@@ -109,19 +79,19 @@ public class Property
 		this.dimension = dimension.location();
 	}
 	
-	public String getTitle()
+	public MutableComponent getDisplayName(String id)
 	{
-		return this.title != null ? this.title : this.name;
+		return this.displayName != null ? this.displayName.copy() : new TextComponent(id);
 	}
 	
-	public void setTitle(String title)
+	public void setDisplayName(Component displayName)
 	{
-		this.title = title;
+		this.displayName = displayName;
 	}
 	
 	public boolean isProtected()
 	{
-		return isProtected;
+		return this.isProtected;
 	}
 	
 	public void setProtected(boolean isProtected)
@@ -130,70 +100,60 @@ public class Property
 		
 		if(this.children != null)
 		{
-			for(Property child : this.children)
+			for(Property child : this.children.values())
 			{
 				child.setProtected(isProtected);
 			}
 		}
 	}
 	
-	public void addChild(Property child)
+	public void addChild(String id, Property child)
 	{
 		if(this.children == null)
 		{
-			this.children = Lists.newArrayList();
+			this.children = Maps.newHashMap();
 		}
 		
-		this.children.add(child);
+		this.children.put(id, child);
 	}
 	
-	public void removeChild(Property child)
+	public void removeChild(String id)
 	{
 		if(this.children != null)
 		{
-			this.children.remove(child);
+			this.children.remove(id);
 		}
 	}
 	
-	public List<String> getChildrenNames()
+	public Set<String> getChildrenIds()
 	{
-		if(this.children != null)
+		if(this.children == null)
 		{
-			return this.children.stream().map(Property::getName).collect(Collectors.toList());
+			return Collections.emptySet();
 		}
 		
-		return Collections.emptyList();
+		return this.children.keySet();
 	}
 	
-	public List<String> getChildrenTitles()
+	public Map<String, Property> getChildren()
 	{
-		if(this.children != null)
+		if(this.children == null)
 		{
-			return this.children.stream().map(Property::getTitle).collect(Collectors.toList());
+			return Collections.emptyMap();
 		}
 		
-		return Collections.emptyList();
+		return Collections.unmodifiableMap(this.children);
 	}
 	
-	public List<Property> getChildren()
+	@Nullable
+	public Property getChild(String id)
 	{
-		return this.children;
-	}
-	
-	public Property getChild(String name)
-	{
-		if(this.children != null)
+		if(this.children == null)
 		{
-			for(Property child : this.children)
-			{
-				if(child.getName().equals(name))
-				{
-					return child;
-				}
-			}
+			return null;
 		}
 		
-		return null;
+		return this.children.get(id);
 	}
 	
 	public boolean isInside(Player player)
@@ -213,7 +173,7 @@ public class Property
 	
 	public boolean isInsideMain(BlockPos pos, ResourceLocation dimension)
 	{
-		return pos.getX() >= this.xMin && pos.getX() <= this.xMax && pos.getZ() >= this.zMin && pos.getZ() <= this.zMax && dimension.equals(this.dimension);
+		return this.boundingBox.isInside(pos) && dimension.equals(this.dimension);
 	}
 	
 	public boolean isInsideChild(Player player)
@@ -223,123 +183,111 @@ public class Property
 	
 	public boolean isInsideChild(BlockPos pos, ResourceLocation dimension)
 	{
-		if(this.children != null)
+		if(this.children == null)
 		{
-			return this.children.stream().anyMatch(child -> child != null && child.isInside(pos, dimension));
+			return false;
 		}
 		
-		return false;
+		return this.children.values().stream().anyMatch(child -> child != null && child.isInside(pos, dimension));
 	}
 	
-	public List<PropertyOwner> getAllOwners()
+	public Map<UUID, OwnerConfig> getOwners()
 	{
-		return this.owners;
-	}
-	
-	public void addOwner(PropertyOwner owner)
-	{
-		this.owners.add(owner);
-	}
-	
-	public void removeOwner(PropertyOwner owner)
-	{
-		this.owners.remove(owner);
-	}
-	
-	public void hasOwner(PropertyOwner owner)
-	{
-		this.owners.contains(owner);
-	}
-	
-	public List<PropertyOwner> getOwners()
-	{
-		return this.owners.stream().filter(owner -> !owner.isCreator()).collect(Collectors.toList());
-	}
-	
-	public boolean isOwner(String username)
-	{
-		return this.owners.stream().anyMatch(owner -> owner.getName().equals(username));
-	}
-	
-	public List<PropertyOwner> getCreators()
-	{
-		return this.owners.stream().filter(PropertyOwner::isCreator).collect(Collectors.toList());
-	}
-	
-	public boolean isCreator(String username)
-	{
-		return this.owners.stream().filter(PropertyOwner::isCreator).anyMatch(owner -> owner.getName().equals(username));
-	}
-	
-	public String getOwners(String delimiter)
-	{
-		return String.join(delimiter, this.owners.stream().filter(owner -> !owner.isCreator()).map(PropertyOwner::getName).collect(Collectors.toList()));
-	}
-	
-	public String getCreators(String delimiter)
-	{
-		return String.join(delimiter, this.getCreators().stream().map(PropertyOwner::getName).collect(Collectors.toList()));
-	}
-	
-	public String getChildren(String delimiter)
-	{
-		return String.join(delimiter, this.getChildrenTitles());
-	}
-	
-	public double getSize()
-	{
-		return this.getMainSize() + this.getChildrenSize();
-	}
-	
-	public double getMainSize()
-	{
-		return (this.getXMax() - this.getXMin() + 1) * (this.getZMax() - this.getZMin() + 1);
-	}
-	
-	public double getChildrenSize()
-	{
-		if(this.children != null)
+		if(this.owners.isEmpty())
 		{
-			return this.children.stream().mapToDouble(child -> child != null ? child.getSize() : 0D).sum();
+			return Collections.emptyMap();
 		}
 		
-		return 0D;
+		return Collections.unmodifiableMap(this.owners);
 	}
 	
-	public MutableComponent getDisplayName()
+	public void putOwner(UUID uuid, OwnerConfig config)
 	{
-		StringBuilder builder = new StringBuilder(this.getTitle());
-		
-		if(this.title != null)
+		if(this.owners == null)
 		{
-			builder.append("\nName: " + this.name);
+			this.owners = Maps.newHashMap();
 		}
 		
-		builder.append("\nCreators: " + this.getCreators(", "));
-		
-		if(!this.getOwners().isEmpty())
+		this.owners.put(uuid, config);
+	}
+	
+	public void removeOwner(UUID uuid)
+	{
+		if(this.owners != null)
 		{
-			builder.append("\nOwners: " + this.getOwners(", "));
+			this.owners.remove(uuid);
+		}
+	}
+	
+	public boolean isCreator(UUID uuid)
+	{
+		if(this.owners == null)
+		{
+			return false;
 		}
 		
-		builder.append("\nDimension: " + this.dimension);
-		
-		if(this.children != null)
+		return this.owners.entrySet().stream().anyMatch(entry -> entry.getValue().isCreator() && Objects.equal(entry.getKey(), uuid));
+	}
+	
+	public boolean isOwner(UUID uuid)
+	{
+		if(this.owners == null)
 		{
-			builder.append("\nChildren: " + this.getChildren(","));
+			return false;
 		}
 		
-		builder.append("\nX: [" + this.xMin + ", " + this.xMax + "]");
-		builder.append("\nZ: [" + this.zMin + ", " + this.zMax + "]");
-		builder.append("\nSize: " + this.getSize());
-		builder.append("\nProtected: " + this.isProtected);
+		return this.owners.keySet().stream().anyMatch(owner -> Objects.equal(owner, uuid));
+	}
+	
+	private MutableComponent getDisplayTooltip(String id, GameProfileCache profileCache)
+	{
+		MutableComponent metadata = new TextComponent("\n" + id).withStyle(ChatFormatting.GRAY);
 		
-		MutableComponent basetextcomponent = new TextComponent(this.getTitle());
-		Style style = Style.EMPTY
-				.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent(builder.toString())))
-				.withInsertion(this.name);
-		basetextcomponent.setStyle(style);
+		if(this.owners != null && !this.owners.isEmpty())
+		{
+			metadata.append("\nOwners: ").append(listOwners(this.owners, profileCache));
+		}
 		
-		return basetextcomponent;
+		metadata.append("\nDimension: " + this.dimension);
+		metadata.append("\nFrom: ").append(formatCoordinate(new BlockPos(this.boundingBox.minX(), this.boundingBox.minY(), this.boundingBox.minZ())));
+		metadata.append("\nTo: ").append(formatCoordinate(new BlockPos(this.boundingBox.maxX(), this.boundingBox.maxY(), this.boundingBox.maxZ())));
+		metadata.append("\nProtected: " + this.isProtected);
+		
+		if(this.children != null && !this.children.isEmpty())
+		{
+			metadata.append("\nChildren: ").append(listChildren(this.children));
+		}
+		
+		return this.getDisplayName(id).append(metadata);
+	}
+	
+	public MutableComponent getDisplayName(String id, GameProfileCache profileCache)
+	{
+		return this.getDisplayName(id).withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, this.getDisplayTooltip(id, profileCache))).withInsertion(id));
+	}
+	
+	private static Component listOwners(Map<UUID, OwnerConfig> owners, GameProfileCache profileCache)
+	{
+		return ComponentUtils.formatList(owners.entrySet(), ComponentUtils.DEFAULT_NO_STYLE_SEPARATOR, entry ->
+		{
+			MutableComponent result = new TextComponent(profileCache.get(entry.getKey()).map(GameProfile::getName).orElse(entry.getKey().toString()));
+			
+			if(entry.getValue().isCreator())
+			{
+				result.withStyle(ChatFormatting.AQUA);
+			}
+			
+			return result;
+		});
+	}
+	
+	private static Component listChildren(Map<String, Property> children)
+	{
+		return ComponentUtils.formatList(children.entrySet(), ComponentUtils.DEFAULT_NO_STYLE_SEPARATOR, entry -> entry.getValue().getDisplayName(entry.getKey()));
+	}
+	
+	private static MutableComponent formatCoordinate(BlockPos pos)
+	{
+		return ComponentUtils.wrapInSquareBrackets(new TranslatableComponent("chat.coordinates", new Object[]{pos.getX(), pos.getY(), pos.getZ()}));
 	}
 }

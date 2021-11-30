@@ -10,13 +10,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Set;
-import java.util.function.BiFunction;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import com.google.common.collect.Sets;
 
 import net.kardexo.kardexotools.KardExo;
-import net.kardexo.kardexotools.config.VeinBlockConfig;
+import net.kardexo.kardexotools.config.BlockPredicate;
+import net.kardexo.kardexotools.config.VeinConfig;
 import net.kardexo.kardexotools.property.PropertyHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -28,9 +29,12 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.GameMasterBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -39,23 +43,23 @@ public class Veinminer
 {
 	private static final PlayerHistory<Vein> HISTORY = new PlayerHistory<Vein>(KardExo.CONFIG.getVeinminerHistorySize());
 	
-	public static boolean mine(BlockPos pos, ServerPlayer player, Level level, BiFunction<BlockPos, Boolean, Boolean> harvestBlock)
+	public static boolean mine(BlockPos pos, ServerPlayer player, ServerLevel level, GameType gameModeForPlayer)
 	{
-		String name = player.getGameProfile().getName();
+		UUID uuid = player.getUUID();
 		ItemStack item = player.getMainHandItem();
 		BlockState state = level.getBlockState(pos);
 		boolean isEffectiveTool = item.getDestroySpeed(state) > 1.0F;
 		
-		if(KardExo.PLAYERS.containsKey(name) && KardExo.PLAYERS.get(name).isVeinminerEnabled() && player.isShiftKeyDown() && !player.onClimbable() && (!item.isDamageableItem() || item.getMaxDamage() - item.getDamageValue() > 1))
+		if(KardExo.PLAYERS.containsKey(uuid) && KardExo.PLAYERS.get(uuid).isVeinminerEnabled() && player.isShiftKeyDown() && !player.onClimbable() && (!item.isDamageableItem() || item.getMaxDamage() - item.getDamageValue() > 1))
 		{
-			for(Entry<Block, VeinBlockConfig> entry : KardExo.VEINMINER.entrySet())
+			for(Entry<BlockPredicate, VeinConfig> entry : KardExo.VEINMINER.entrySet())
 			{
-				Block block = entry.getKey();
-				VeinBlockConfig config = entry.getValue();
+				BlockPredicate predicate = entry.getKey();
+				VeinConfig config = entry.getValue();
 				
-				if(Veinminer.isEqual(state, block.defaultBlockState()) && (isEffectiveTool || !config.doesRequireTool()))
+				if(predicate.matches(level, pos, level.getServer().getTags()) && (isEffectiveTool || !config.doesRequireTool()))
 				{
-					PriorityQueue<BlockPos> queue = Veinminer.calculateVein(player, KardExo.CONFIG.getVeinminerBlockLimit(), config.getRadius(), state, pos, level);
+					PriorityQueue<BlockPos> queue = Veinminer.calculateVein(player, KardExo.CONFIG.getVeinminerBlockLimit(), predicate, config, pos, level);
 					Map<BlockState, Set<BlockPos>> stateMap = new HashMap<BlockState, Set<BlockPos>>();
 					Vein undo = new Vein(player.level.dimension(), stateMap);
 					queue.poll();
@@ -63,7 +67,7 @@ public class Veinminer
 					if(!queue.isEmpty())
 					{
 						BlockState next = state;
-						boolean harvest = harvestBlock.apply(pos, true);
+						boolean harvest = Veinminer.destroyBlock(level, player, gameModeForPlayer, pos, true);
 						
 						if(harvest)
 						{
@@ -83,7 +87,7 @@ public class Veinminer
 								
 								next = level.getBlockState(queue.peek());
 								
-								if(!harvestBlock.apply(queue.peek(), true))
+								if(!Veinminer.destroyBlock(level, player, gameModeForPlayer, queue.peek(), true))
 								{
 									break;
 								}
@@ -93,7 +97,7 @@ public class Veinminer
 							
 							if(Veinminer.count(stateMap.values()) > 1)
 							{
-								Veinminer.HISTORY.add(name, undo);
+								Veinminer.HISTORY.add(uuid, undo);
 							}
 						}
 						
@@ -103,10 +107,10 @@ public class Veinminer
 			}
 		}
 		
-		return harvestBlock.apply(pos, false);
+		return Veinminer.destroyBlock(level, player, gameModeForPlayer, pos, false);
 	}
 	
-	private static PriorityQueue<BlockPos> calculateVein(Player player, int limit, int radius, BlockState state, BlockPos pos, Level level)
+	private static PriorityQueue<BlockPos> calculateVein(Player player, int limit, BlockPredicate predicate, VeinConfig config, BlockPos pos, ServerLevel level)
 	{
 		PriorityQueue<BlockPos> queue = new PriorityQueue<BlockPos>(Veinminer.comparator(pos));
 		Collection<BlockPos> pending = Collections.singleton(pos);
@@ -144,12 +148,12 @@ public class Veinminer
 							
 							BlockPos nextBlock = block.offset(x, y, z);
 							
-							if(nextBlock.distSqr(pos) >= radius * radius)
+							if(nextBlock.distSqr(pos) >= config.getRadius() * config.getRadius())
 							{
 								continue;
 							}
 							
-							if(!Veinminer.isEqual(state, level.getBlockState(nextBlock)))
+							if(!predicate.matches(level, nextBlock, level.getServer().getTags()))
 							{
 								continue;
 							}
@@ -176,11 +180,6 @@ public class Veinminer
 		return queue;
 	}
 	
-	private static boolean isEqual(BlockState a, BlockState b)
-	{
-		return a.getBlock().equals(b.getBlock());
-	}
-	
 	private static final Comparator<BlockPos> comparator(BlockPos origin)
 	{
 		return (a, b) -> (int) (a.distSqr(origin) - b.distSqr(origin));
@@ -188,7 +187,7 @@ public class Veinminer
 	
 	public static int undo(ServerPlayer player, MinecraftServer server) throws Exception
 	{
-		Vein undo = Veinminer.HISTORY.peek(player.getGameProfile().getName());
+		Vein undo = Veinminer.HISTORY.peek(player.getUUID());
 		Set<BlockPos> positions = undo.getAllPositions();
 		ServerLevel level = server.getLevel(undo.getLevel());
 		Block block = undo.getBlock();
@@ -216,7 +215,7 @@ public class Veinminer
 				player.getInventory().clearOrCountMatchingItems(stack -> stack.getItem().equals(block.asItem()), count, player.inventoryMenu.getCraftSlots());
 			}
 			
-			Veinminer.HISTORY.pop(player.getName().getString());
+			Veinminer.HISTORY.pop(player.getUUID());
 			
 			return count;
 		}
@@ -293,8 +292,62 @@ public class Veinminer
 		return true;
 	}
 	
-	public static boolean hasUndo(String player)
+	public static boolean hasUndo(UUID uuid)
 	{
-		return Veinminer.HISTORY.hasUndo(player);
+		return Veinminer.HISTORY.hasUndo(uuid);
+	}
+	
+	private static boolean destroyBlock(ServerLevel level, ServerPlayer player, GameType gameModeForPlayer, BlockPos blockPos, boolean dropAtPlayer)
+	{
+		BlockState blockState = level.getBlockState(blockPos);
+		
+		if(!player.getMainHandItem().getItem().canAttackBlock(blockState, level, blockPos, player))
+		{
+			return false;
+		}
+		else
+		{
+			BlockEntity blockEntity = level.getBlockEntity(blockPos);
+			Block block = blockState.getBlock();
+			
+			if(block instanceof GameMasterBlock && !player.canUseGameMasterBlocks())
+			{
+				level.sendBlockUpdated(blockPos, blockState, blockState, 3);
+				return false;
+			}
+			else if(player.blockActionRestricted(level, blockPos, gameModeForPlayer))
+			{
+				return false;
+			}
+			else
+			{
+				block.playerWillDestroy(level, blockPos, blockState, player);
+				boolean canRemove = level.removeBlock(blockPos, false);
+				
+				if(canRemove)
+				{
+					block.destroy(level, blockPos, blockState);
+				}
+				
+				if(gameModeForPlayer.isCreative())
+				{
+					return true;
+				}
+				else
+				{
+					ItemStack mainItemStack = player.getMainHandItem();
+					ItemStack mainItemStackCopy = mainItemStack.copy();
+					boolean correctToolForDrops = player.hasCorrectToolForDrops(blockState);
+					mainItemStack.mineBlock(level, blockState, blockPos, player);
+					
+					if(canRemove && correctToolForDrops)
+					{
+						block.playerDestroy(level, player, dropAtPlayer ? player.blockPosition() : blockPos, blockState, blockEntity, mainItemStackCopy);
+					}
+					
+					return true;
+				}
+			}
+		}
 	}
 }

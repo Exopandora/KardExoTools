@@ -2,19 +2,8 @@ package net.kardexo.kardexotools.config;
 
 public class PlayerConfig
 {
-	private final String player;
 	private boolean veinminer;
 	private PlayerHome home;
-	
-	public PlayerConfig(String player)
-	{
-		this.player = player;
-	}
-	
-	public String getPlayer()
-	{
-		return this.player;
-	}
 	
 	public boolean isVeinminerEnabled()
 	{

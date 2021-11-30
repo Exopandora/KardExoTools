@@ -2,10 +2,11 @@ package net.kardexo.kardexotools.veinminer;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class PlayerHistory<T>
 {
-	private final Map<String, LimitedStack<T>> history = new HashMap<String, LimitedStack<T>>();
+	private final Map<UUID, LimitedStack<T>> history = new HashMap<UUID, LimitedStack<T>>();
 	private final int size;
 	
 	public PlayerHistory(int size)
@@ -13,36 +14,36 @@ public class PlayerHistory<T>
 		this.size = size;
 	}
 	
-	public T peek(String player)
+	public T peek(UUID uuid)
 	{
-		return this.history.get(player).peek();
+		return this.history.get(uuid).peek();
 	}
 	
-	public T pop(String player)
+	public T pop(UUID uuid)
 	{
-		LimitedStack<T> stack = this.history.get(player);
+		LimitedStack<T> stack = this.history.get(uuid);
 		T result = stack.pop();
 		
 		if(stack.isEmpty())
 		{
-			this.history.remove(player);
+			this.history.remove(uuid);
 		}
 		
 		return result;
 	}
 	
-	public void add(String player, T entry)
+	public void add(UUID uuid, T entry)
 	{
-		this.history.computeIfAbsent(player, key -> new LimitedStack<T>(this.size)).push(entry);
+		this.history.computeIfAbsent(uuid, key -> new LimitedStack<T>(this.size)).push(entry);
 	}
 	
-	public LimitedStack<T> remove(String player)
+	public LimitedStack<T> remove(UUID uuid)
 	{
-		return this.history.remove(player);
+		return this.history.remove(uuid);
 	}
 	
-	public boolean hasUndo(String player)
+	public boolean hasUndo(UUID uuid)
 	{
-		return this.history.containsKey(player);
+		return this.history.containsKey(uuid);
 	}
 }

@@ -1,82 +1,77 @@
 package net.kardexo.kardexotools.property;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
-import java.util.function.Consumer;
+import java.util.UUID;
 
-import com.google.common.collect.Lists;
+import org.jetbrains.annotations.Nullable;
+import org.spongepowered.include.com.google.common.base.Objects;
 
 import net.kardexo.kardexotools.KardExo;
-import net.kardexo.kardexotools.config.DataFile;
+import net.kardexo.kardexotools.command.CommandUtils;
+import net.kardexo.kardexotools.config.MapFile;
 import net.kardexo.kardexotools.tasks.TickableBases;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ColumnPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
 public class PropertyHelper
 {
-	public static void add(String id, ServerLevel dimension, ColumnPos from, ColumnPos to, String owner, String title, DataFile<Property, String> data) throws IllegalStateException
+	public static void add(String id, ServerLevel dimension, BoundingBox boundingBox, @Nullable UUID owner, @Nullable Component displayName, MapFile<String, Property> data) throws IllegalStateException
 	{
 		if(data.containsKey(id))
 		{
 			throw new IllegalStateException();
 		}
 		
-		double xMin = Math.min(from.x, to.x);
-		double zMin = Math.min(from.z, to.z);
-		double xMax = Math.max(from.x, to.x);
-		double zMax = Math.max(from.z, to.z);
+		Map<UUID, OwnerConfig> owners = null;
 		
-		Property property = new Property(id, title, Lists.newArrayList(new PropertyOwner(owner, true, true, null, null)), dimension.dimension().location(), xMin, zMin, xMax, zMax);
+		if(owner != null)
+		{
+			owners = new HashMap<UUID, OwnerConfig>();
+			owners.put(owner, new OwnerConfig(true, true, null, null));
+		}
 		
+		Property property = new Property(displayName, owners, dimension.dimension().location(), boundingBox);
 		data.put(id, property);
 		data.save();
 	}
 	
-	public static void remove(String id, DataFile<Property, String> data) throws NoSuchElementException
+	public static void remove(String id, MapFile<String, Property> data) throws NoSuchElementException
 	{
 		Property property = data.get(id);
 		
-		if(property != null)
-		{
-			TickableBases.remove(property);
-			data.remove(id);
-			data.save();
-		}
-		else
+		if(property == null)
 		{
 			throw new NoSuchElementException();
 		}
+		
+		TickableBases.remove(property);
+		data.remove(id);
+		data.save();
 	}
 	
-	public static void addChild(Property parent, String id, ServerLevel dimension, ColumnPos from, ColumnPos to, String title, DataFile<Property, String> data) throws IllegalStateException
+	public static void addChild(Property parent, String id, ServerLevel dimension, BoundingBox boundingBox, Component title, MapFile<String, Property> data) throws IllegalStateException
 	{
-		double xMin = Math.min(from.x, to.x);
-		double zMin = Math.min(from.z, to.z);
-		double xMax = Math.max(from.x, to.x);
-		double zMax = Math.max(from.z, to.z);
-		
-		Property property = new Property(id, title, Collections.emptyList(), dimension.dimension().location(), xMin, zMin, xMax, zMax);
+		Property property = new Property(title, null, dimension.dimension().location(), boundingBox);
 		
 		if(property.getChild(id) != null)
 		{
 			throw new IllegalStateException();
 		}
 		
-		parent.addChild(property);
+		parent.addChild(id, property);
 		data.save();
 	}
 	
-	public static void removeChild(Property parent, String id, DataFile<Property, String> data) throws NoSuchElementException
+	public static void removeChild(Property parent, String id, MapFile<String, Property> data) throws NoSuchElementException
 	{
 		Property child = parent.getChild(id);
 		
@@ -85,60 +80,57 @@ public class PropertyHelper
 			throw new NoSuchElementException();
 		}
 		
-		parent.removeChild(child);
+		parent.removeChild(id);
 		data.save();
 	}
 	
-	public static boolean isCreator(String name, String id, Map<String, Property> data)
+	public static boolean isCreator(UUID uuid, String id, Map<String, Property> data)
 	{
 		Property property = data.get(id);
 		
-		if(property != null)
+		if(property == null)
 		{
-			return property.isCreator(name);
+			return false;
 		}
 		
-		return false;
+		return property.isCreator(uuid);
 	}
 	
-	public static boolean isOwner(String name, String id, Map<String, Property> data)
+	public static boolean isOwner(UUID uuid, String id, Map<String, Property> data)
 	{
 		Property property = data.get(id);
 		
-		if(property != null)
+		if(property == null)
 		{
-			return property.isOwner(name);
+			return false;
 		}
 		
-		return false;
+		return property.isOwner(uuid);
 	}
 	
-	public static PropertyOwner getOwner(String id, String name, Map<String, Property> data)
+	public static OwnerConfig getOwnerConfig(String id, UUID uuid, Map<String, Property> data)
 	{
-		for(PropertyOwner owner : data.get(id).getAllOwners())
+		Property property = data.get(id);
+		
+		if(property == null)
 		{
-			if(owner.getName().equals(name))
+			return null;
+		}
+		
+		for(Entry<UUID, OwnerConfig> owner : property.getOwners().entrySet())
+		{
+			if(Objects.equal(owner.getKey(), uuid))
 			{
-				return owner;
+				return owner.getValue();
 			}
 		}
 		
 		return null;
 	}
 	
-	public static void forOwner(String id, Player player, Map<String, Property> data, Consumer<PropertyOwner> callback)
-	{
-		PropertyOwner owner = getOwner(id, player.getGameProfile().getName(), data);
-		
-		if(owner != null && callback != null)
-		{
-			callback.accept(owner);
-		}
-	}
-	
 	public static boolean hasPermission(CommandSourceStack source, String id, Player target, Map<String, Property> data)
 	{
-		return source.hasPermission(4) || isCreator(source.getTextName(), id, data) || target != null && isOwner(source.getTextName(), id, data) && target.equals(source.getEntity());
+		return source.hasPermission(4) || isCreator(CommandUtils.getUUID(source), id, data) || target != null && isOwner(CommandUtils.getUUID(source), id, data) && target.equals(source.getEntity());
 	}
 	
 	public static Property getProperty(String id, Map<String, Property> data) throws NoSuchElementException
@@ -155,11 +147,11 @@ public class PropertyHelper
 	
 	private static boolean isProtected(Player player, BlockPos pos, Map<String, Property> data)
 	{
-		String name = player.getGameProfile().getName();
+		UUID uuid = player.getUUID();
 		
 		for(Property property : data.values())
 		{
-			if(property.isProtected() && !property.isOwner(name) && property.isInside(pos, player.level.dimension().location()))
+			if(property.isProtected() && !property.isOwner(uuid) && property.isInside(pos, player.level.dimension().location()))
 			{
 				return true;
 			}
@@ -186,11 +178,5 @@ public class PropertyHelper
 	public static boolean canInteractWithEntity(Player player, Entity entity)
 	{
 		return entity instanceof Monster && !entity.hasCustomName() || !isProtected(player, entity);
-	}
-	
-	public static boolean cancelBlockInteraction(ServerPlayer player)
-	{
-		player.getServer().getPlayerList().sendAllPlayerInfo(player);
-		return true;
 	}
 }

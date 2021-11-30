@@ -1,0 +1,20 @@
+{
+	"required": true,
+	"minVersion": "0.8",
+	"package": "net.kardexo.kardexotools.mixin",
+	"compatibilityLevel": "JAVA_16",
+	"mixins": [],
+	"client": [],
+	"server": [
+		"MinecraftServerAccessor",
+		"MixinCropBlock",
+		"MixinDedicatedServer",
+		"MixinMinecraftServer",
+		"MixinNetherWartBlock",
+		"MixinServerPlayer",
+		"MixinServerPlayerGameMode"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

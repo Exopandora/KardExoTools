@@ -1,19 +1,19 @@
 package net.kardexo.kardexotools.tasks;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 
 import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.property.BaseAccess;
+import net.kardexo.kardexotools.property.OwnerConfig;
 import net.kardexo.kardexotools.property.Property;
-import net.kardexo.kardexotools.property.PropertyOwner;
 import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -32,15 +32,27 @@ public class TickableBases implements Runnable
 	@Override
 	public void run()
 	{
-		for(Property base : KardExo.BASES.values())
+		if(this.server.getPlayerList().getPlayers().isEmpty())
 		{
-			List<PropertyOwner> notifyList = new ArrayList<PropertyOwner>();
+			return;
+		}
+		
+		for(Entry<String, Property> entry : KardExo.BASES.entrySet())
+		{
+			Property base = entry.getValue();
 			
-			for(PropertyOwner owner : base.getAllOwners())
+			if(base.getOwners() == null)
 			{
-				if(owner.doNotify())
+				continue;
+			}
+			
+			Map<UUID, OwnerConfig> notifyList = new HashMap<UUID, OwnerConfig>();
+			
+			for(Entry<UUID, OwnerConfig> owner : base.getOwners().entrySet())
+			{
+				if(owner.getValue().doNotify())
 				{
-					notifyList.add(owner);
+					notifyList.put(owner.getKey(), owner.getValue());
 				}
 			}
 			
@@ -48,53 +60,50 @@ public class TickableBases implements Runnable
 			{
 				Set<String> visitors = BASE_VISITORS.computeIfAbsent(base, key -> new HashSet<String>());
 				String name = player.getGameProfile().getName();
-				
 				boolean inside = base.isInside(player);
 				boolean contains = visitors.contains(name);
 				
 				if(!inside && contains)
 				{
 					visitors.remove(name);
-					this.notifyOwners(base, notifyList, player, BaseAccess.LEAVE);
+					this.notifyOwners(entry.getKey(), base, notifyList, player, BaseAccess.LEAVE);
 				}
 				else if(inside && !contains)
 				{
 					visitors.add(name);
-					this.notifyOwners(base, notifyList, player, BaseAccess.ENTER);
+					this.notifyOwners(entry.getKey(), base, notifyList, player, BaseAccess.ENTER);
 				}
 			}
 		}
 	}
 	
-	private void notifyOwners(Property base, List<PropertyOwner> notify, ServerPlayer player, BaseAccess access)
+	private void notifyOwners(String id, Property base, Map<UUID, OwnerConfig> notify, ServerPlayer player, BaseAccess access)
 	{
-		String name = player.getGameProfile().getName();
-		
-		if(!base.isOwner(name))
+		if(!base.isOwner(player.getGameProfile().getId()))
 		{
 			switch(access)
 			{
 				case ENTER:
-					this.server.sendMessage(new TextComponent(name + " has entered base with id " + base.getTitle()), null);;
+					this.server.sendMessage(((MutableComponent) player.getDisplayName()).append(" has entered base with id " + base.getDisplayName(id)), null);
 					break;
 				case LEAVE:
-					this.server.sendMessage(new TextComponent(name + " has left base with id " + base.getTitle()), null);
+					this.server.sendMessage(((MutableComponent) player.getDisplayName()).append(" has left base with id " + base.getDisplayName(id)), null);
 					break;
 			}
 			
-			for(PropertyOwner owner : notify)
+			for(Entry<UUID, OwnerConfig> entry : notify.entrySet())
 			{
-				ServerPlayer playerOwner = this.server.getPlayerList().getPlayerByName(owner.getName());
+				ServerPlayer playerOwner = this.server.getPlayerList().getPlayer(entry.getKey());
 				
 				if(playerOwner != null)
 				{
-					playerOwner.sendMessage(this.getFormattedMessage(player, base, owner, access), Util.NIL_UUID);
+					playerOwner.sendMessage(this.getFormattedMessage(id, player, base, entry.getValue(), access), Util.NIL_UUID);
 				}
 			}
 		}
 	}
 	
-	private Component getFormattedMessage(ServerPlayer player, Property base, PropertyOwner owner, BaseAccess access)
+	private Component getFormattedMessage(String id, ServerPlayer player, Property base, OwnerConfig owner, BaseAccess access)
 	{
 		String format = null;
 		
@@ -110,15 +119,15 @@ public class TickableBases implements Runnable
 		
 		if(format != null)
 		{
-			return new TranslatableComponent(format.replace("&name", "%1$s").replace("&base", "%2$s"), new Object[]{player.getDisplayName(), base.getDisplayName()});
+			return new TranslatableComponent(format.replace("&name", "%1$s").replace("&base", "%2$s"), new Object[]{player.getDisplayName(), base.getDisplayName(id, player.getServer().getProfileCache())});
 		}
 		
 		switch(access)
 		{
 			case ENTER:
-				return new TranslatableComponent(KardExo.CONFIG.getPropertyDefaultEnterMessage(), new Object[]{player.getDisplayName(), base.getDisplayName()});
+				return new TranslatableComponent(KardExo.CONFIG.getPropertyDefaultEnterMessage(), new Object[]{player.getDisplayName(), base.getDisplayName(id, player.getServer().getProfileCache())});
 			case LEAVE:
-				return new TranslatableComponent(KardExo.CONFIG.getPropertyDefaultExitMessage(), new Object[]{player.getDisplayName(), base.getDisplayName()});
+				return new TranslatableComponent(KardExo.CONFIG.getPropertyDefaultExitMessage(), new Object[]{player.getDisplayName(), base.getDisplayName(id, player.getServer().getProfileCache())});
 		}
 		
 		return null;

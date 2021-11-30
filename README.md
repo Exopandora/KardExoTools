@@ -49,18 +49,14 @@ Once activated you can mine veins of blocks (configurable) by sneaking. It only 
 
 ## Prerequisites ##
 
-1. Java 16
-
-## Setup ##
-
-1. Run `gradlew setup`
+1. Java 17
 
 ## Build ##
 
-1. Run `gradlew createServer`
-2. The server jar can be found in `build/distributions/`
+1. Run `gradlew build`
+2. The server jar can be found in `build/libs/`
 
 ## Configure (Optional) ##
 
 1. Run the server once
-2. Edit generated json files in `config/`
+2. Edit generated json files in `config/kardexotools/`

@@ -5,17 +5,17 @@ import java.util.Stack;
 @SuppressWarnings("serial")
 public class LimitedStack<T> extends Stack<T>
 {
-	private final int size;
+	private final int limit;
 	
-	public LimitedStack(int size)
+	public LimitedStack(int limit)
 	{
-		this.size = size;
+		this.limit = limit;
 	}
 	
 	@Override
 	public T push(T entry)
 	{
-		if(this.size() == this.size)
+		if(this.size() == this.limit)
 		{
 			this.remove(0);
 		}
