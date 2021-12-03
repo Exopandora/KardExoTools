@@ -20,6 +20,7 @@
 	moonphase   | Print current moon phase                                      | Everyone
 	places      | Configure places                                              | Everyone
 	resource    | Calculate resources needed for specified area                 | Everyone
+	setbiome    | Set a biome for specified area                                | Everyone
 	sethome     | Set home location                                             | Everyone
 	spawn       | Teleport to spawn location                                    | Everyone
 	undo        | Undo last veinmine                                            | Everyone
