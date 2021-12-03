@@ -3,11 +3,15 @@
 # Features #
 
 ## Server management ##
-	* Scheduled saving
-	* Scheduled backup
+
+* Scheduled saving
+* Scheduled backup
+
 ## Comfort features ##
-	* Print death location upon respawn
-	* Crops can be harvested with a right-click when fully grown
+
+* Print death location upon respawn
+* Crops can be harvested with a right-click when fully grown
+
 ## Commands ##
 
 Command     | Feature                                                             | Permissions
