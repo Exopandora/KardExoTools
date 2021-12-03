@@ -13,7 +13,7 @@
 	Command     | Feature                                                       | Permissions
 	----------- | ------------------------------------------------------------- | -----------
 	backup      | Force world backup                                            | Admin
-	bases       | Configure bases                                               | Everyone
+	bases       | Configure bases (options depend on ownership of the base)     | Everyone
 	calc        | Calculate mathematical expressions                            | Everyone
 	home        | Teleport to home location                                     | Everyone
 	kardexo     | Print version and commands depending on your permission level | Everyone
@@ -45,7 +45,7 @@ Bases can be used by players to receive a notification when a player enters or l
 
 Once activated you can mine veins of blocks (configurable) by sneaking. It only works with an appropiate tool that has more than one durability and the blocks are in radius of the configured size. There is also a maximum (configurable) amount of blocks you can mine at once. You can undo the last (configurable amount) veinmine as long as you have the applicable blocks in your inventory and there is no living entity or block (except fluids) in the area you mined out. Durability will not be refunded.
 
-# Installation #
+# Building #
 
 ## Prerequisites ##
 
@@ -54,7 +54,7 @@ Once activated you can mine veins of blocks (configurable) by sneaking. It only 
 ## Build ##
 
 1. Run `gradlew build`
-2. The server jar can be found in `build/libs/`
+2. The mod jar can be found in `build/libs/`
 
 ## Configure (Optional) ##
 
