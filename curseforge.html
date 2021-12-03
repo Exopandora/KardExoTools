@@ -1,0 +1,108 @@
+<h1>KardExoTools</h1>
+<h2>Features</h2>
+<h3>Server management</h3>
+<ul>
+	<li>Scheduled saving</li>
+	<li>Scheduled backup</li>
+</ul>
+<h3>Comfort features</h3>
+<ul>
+	<li>Print death location upon respawn</li>
+	<li>Crops can be harvested with a right-click when fully grown</li>
+</ul>
+<h3>Commands</h3>
+<table>
+	<thead>
+		<tr>
+			<th>Command</th>
+			<th>Feature</th>
+			<th>Permissions</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>backup</td>
+			<td>Force world backup</td>
+			<td>Admin</td>
+		</tr>
+		<tr>
+			<td>bases</td>
+			<td>Configure bases (options depend on ownership and permission level)</td>
+			<td>Everyone</td>
+		</tr>
+		<tr>
+			<td>calc</td>
+			<td>Calculate mathematical expressions</td>
+			<td>Everyone</td>
+		</tr>
+		<tr>
+			<td>home</td>
+			<td>Teleport to home location</td>
+			<td>Everyone</td>
+		</tr>
+		<tr>
+			<td>kardexo</td>
+			<td>Print version and commands depending on your permission level</td>
+			<td>Everyone</td>
+		</tr>
+		<tr>
+			<td>moonphase</td>
+			<td>Print current moon phase</td>
+			<td>Everyone</td>
+		</tr>
+		<tr>
+			<td>places</td>
+			<td>Configure places (options depend on ownership and permission level)</td>
+			<td>Everyone</td>
+		</tr>
+		<tr>
+			<td>resource</td>
+			<td>Calculate resources needed for specified area</td>
+			<td>Everyone</td>
+		</tr>
+		<tr>
+			<td>setbiome</td>
+			<td>Set biome for specified area</td>
+			<td>Everyone</td>
+		</tr>
+		<tr>
+			<td>sethome</td>
+			<td>Set home location</td>
+			<td>Everyone</td>
+		</tr>
+		<tr>
+			<td>spawn</td>
+			<td>Teleport to spawn location</td>
+			<td>Everyone</td>
+		</tr>
+		<tr>
+			<td>undo</td>
+			<td>Undo last veinmine</td>
+			<td>Everyone</td>
+		</tr>
+		<tr>
+			<td>veinminer</td>
+			<td>Toggle veinminer and display vein blocks</td>
+			<td>Everyone</td>
+		</tr>
+		<tr>
+			<td>whereis</td>
+			<td>Locate players</td>
+			<td>Everyone</td>
+		</tr>
+		<tr>
+			<td>worldtime</td>
+			<td>Print current world time</td>
+			<td>Everyone</td>
+		</tr>
+	</tbody>
+</table>
+<h2>Concepts</h2>
+<h3>Property</h3>
+<p>A property is an abstract object for a specified area. It can either be a base or place with at least one creator and a set of owners.</p>
+<h4>Place</h4>
+<p>Places are used by whereis to provide a more specific context of the given position.</p>
+<h4>Base</h4>
+<p>Bases can be used by players to receive a notification when a player enters or leaves their base. It is also used by whereis to provide a more specific context of the given position. The notifications can be customized or turned off by each player individually for a specific base. Creators and owners will not trigger a notification.</p>
+<h4>Veinminer</h4>
+<p>Once activated you can mine veins of blocks (configurable) by sneaking. It only works with an appropiate tool that has more than one durability and the blocks are in radius of the configured size. There is also a maximum (configurable) amount of blocks you can mine at once. You can undo the last (configurable amount) veinmine as long as you have the applicable blocks in your inventory and there is no living entity or block (except fluids) in the area you mined out. Durability will not be refunded.</p>
