@@ -32,8 +32,6 @@ veinminer   | Toggle veinminer and display vein blocks                          
 whereis     | Locate players                                                      | Everyone
 worldtime   | Print current world time                                            | Everyone
 
-# Concepts #
-
 ## Property ##
 
 A property is an abstract object for a specified area. It can either be a base or place with at least one creator and a set of owners.
