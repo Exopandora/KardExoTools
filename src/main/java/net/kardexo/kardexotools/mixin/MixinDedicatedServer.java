@@ -2,11 +2,12 @@ package net.kardexo.kardexotools.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.kardexo.kardexotools.KardExo;
-import net.kardexo.kardexotools.property.PropertyHelper;
+import net.kardexo.kardexotools.util.PropertyUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.level.ServerLevel;
@@ -25,9 +26,24 @@ public class MixinDedicatedServer
 			target = "Lnet/minecraft/server/dedicated/DedicatedServer;loadLevel()V"
 		)
 	)
-	private void init(CallbackInfoReturnable<Boolean> info)
+	private void preInit(CallbackInfoReturnable<Boolean> info)
 	{
-		KardExo.init((DedicatedServer) (Object) this);
+		KardExo.preInit((DedicatedServer) (Object) this);
+	}
+	
+	@Inject
+	(
+		method = "initServer()Z",
+		at = @At
+		(
+			value = "INVOKE",
+			target = "Lnet/minecraft/server/dedicated/DedicatedServer;loadLevel()V",
+			shift = Shift.AFTER
+		)
+	)
+	private void postInit(CallbackInfoReturnable<Boolean> info)
+	{
+		KardExo.postInit((DedicatedServer) (Object) this);
 	}
 	
 	@Inject
@@ -38,7 +54,7 @@ public class MixinDedicatedServer
 	)
 	private void isUnderSpawnProtection(ServerLevel serverLevel, BlockPos blockPos, Player player, CallbackInfoReturnable<Boolean> info)
 	{
-		if(!PropertyHelper.canHarvestBlock(player, blockPos))
+		if(!PropertyUtils.canHarvestBlock(player, blockPos))
 		{
 			player.getServer().getPlayerList().sendAllPlayerInfo((ServerPlayer) player);
 			info.setReturnValue(true);

@@ -35,14 +35,7 @@ public class ResourceCommand
 			
 			if(!location.equals(Blocks.AIR.getDescriptionId()))
 			{
-				if(!map.containsKey(location))
-				{
-					map.put(location, 1);
-				}
-				else
-				{
-					map.put(location, map.get(location) + 1);
-				}
+				map.compute(location, (key, value) -> value == null ? 0 : value + 1);
 			}
 		}
 		

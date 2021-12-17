@@ -5,12 +5,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
 import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.mixin.MinecraftServerAccessor;
+import net.kardexo.kardexotools.util.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.HoverEvent.Action;
@@ -19,33 +21,28 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 
-public class TaskBackup extends AbstractTask
+public class BackupTask implements ITask
 {
 	private static boolean backupInProgress;
 	
-	public TaskBackup(MinecraftServer server)
-	{
-		super(server);
-	}
-	
 	@Override
-	public void run()
+	public void execute(MinecraftServer server)
 	{
-		if(TaskBackup.backupInProgress)
+		if(BackupTask.backupInProgress)
 		{
-			KardExo.broadcastMessage(this.server, new TextComponent("Backup already in progress"));
+			Util.broadcastMessage(server, new TextComponent("Backup already in progress"));
 		}
 		else
 		{
-			TaskBackup.backupInProgress = true;
+			BackupTask.backupInProgress = true;
 			long start = System.currentTimeMillis();
 			
-			KardExo.broadcastMessage(this.server, new TextComponent("Starting backup..."));
-			KardExo.saveLevels(this.server, false);
+			Util.broadcastMessage(server, new TextComponent("Starting backup..."));
+			Util.saveLevels(server, false);
 			
 			LocalDateTime date = LocalDateTime.now();
 			
-			String folderName = ((MinecraftServerAccessor) this.server).getStorageSource().getLevelId();
+			String folderName = ((MinecraftServerAccessor) server).getStorageSource().getLevelId();
 			String time = String.format("%02d_%02d_%04d-%02d_%02d_%02d", date.getDayOfMonth(), date.getMonthValue(), date.getYear(), date.getHour(), date.getMinute(), date.getSecond());
 			String fileName = folderName + "-" + time;
 			
@@ -54,8 +51,8 @@ public class TaskBackup extends AbstractTask
 			
 			ZipThread zipper = new ZipThread("backup", Paths.get(folderName), KardExo.CONFIG.getBackupDirectory().toPath().resolve(fileName + ".zip"), file ->
 			{
-				this.printResult(file, start);
-				TaskBackup.backupInProgress = false;
+				this.printResult(server, file, start);
+				BackupTask.backupInProgress = false;
 			});
 			zipper.start();
 		}
@@ -101,7 +98,7 @@ public class TaskBackup extends AbstractTask
 		}
 	}
 	
-	private void printResult(File file, long start)
+	private void printResult(MinecraftServer server, File file, long start)
 	{
 		if(file != null)
 		{
@@ -110,11 +107,11 @@ public class TaskBackup extends AbstractTask
 			TextComponent size = new TextComponent(FileUtils.byteCountToDisplaySize(bytes));
 			Component hover = new TranslatableComponent("%s\n%s bytes\n%s", file.getName(), String.format("%,d", bytes), DurationFormatUtils.formatDuration(duration, "HH:mm:ss"));
 			size.setStyle(Style.EMPTY.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, hover)));
-			KardExo.broadcastMessage(this.server, new TranslatableComponent("Backup Complete (%s)", size));
+			Util.broadcastMessage(server, new TranslatableComponent("Backup Complete (%s)", size));
 		}
 		else
 		{
-			KardExo.broadcastMessage(this.server, new TextComponent("Backup Failed"));
+			Util.broadcastMessage(server, new TextComponent("Backup Failed"));
 		}
 	}
 	
@@ -125,14 +122,56 @@ public class TaskBackup extends AbstractTask
 	}
 	
 	@Override
-	public String getWarningMessage(long seconds)
+	public long getOffset()
 	{
-		return String.format(KardExo.CONFIG.getBackupWarningMessage(), seconds);
+		return KardExo.CONFIG.getBackupOffset();
 	}
 	
 	@Override
-	public boolean requiresPlayers()
+	public TimeUnit getOffsetTimeUnit()
 	{
-		return true;
+		return TimeUnit.SECONDS;
+	}
+	
+	@Override
+	public long getInterval()
+	{
+		return KardExo.CONFIG.getBackupInterval();
+	}
+	
+	@Override
+	public TimeUnit getIntervalTimeUnit()
+	{
+		return TimeUnit.SECONDS;
+	}
+	
+	@Override
+	public long[] getWarningTimes()
+	{
+		return KardExo.CONFIG.getBackupWarningTimes();
+	}
+	
+	@Override
+	public TimeUnit getWarningTimesUnit()
+	{
+		return TimeUnit.SECONDS;
+	}
+	
+	@Override
+	public String getWarningMessage(long millis)
+	{
+		return String.format(KardExo.CONFIG.getBackupWarningMessage(), TimeUnit.MILLISECONDS.convert(millis, this.getWarningTimesUnit()));
+	}
+	
+	@Override
+	public int getPriority()
+	{
+		return 100;
+	}
+	
+	@Override
+	public boolean isEnabled()
+	{
+		return KardExo.CONFIG.isBackupEnabled();
 	}
 }

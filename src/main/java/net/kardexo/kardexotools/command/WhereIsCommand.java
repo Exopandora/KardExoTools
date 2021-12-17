@@ -67,7 +67,7 @@ public class WhereIsCommand
 		return 1;
 	}
 	
-	private static final record PropertyEntry(String id, Property property)
+	private final record PropertyEntry(String id, Property property)
 	{
 		public PropertyEntry(Entry<String, Property> entry)
 		{

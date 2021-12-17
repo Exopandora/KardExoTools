@@ -1,4 +1,4 @@
-package net.kardexo.kardexotools.property;
+package net.kardexo.kardexotools.config;
 
 import org.jetbrains.annotations.Nullable;
 

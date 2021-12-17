@@ -13,7 +13,8 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
 import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.property.Property;
-import net.kardexo.kardexotools.property.PropertyHelper;
+import net.kardexo.kardexotools.util.CommandUtils;
+import net.kardexo.kardexotools.util.PropertyUtils;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
@@ -78,7 +79,7 @@ public class PlacesCommand
 	{
 		try
 		{
-			PropertyHelper.add(id, dimension, boundingBox, null, displayName, KardExo.PLACES_FILE);
+			PropertyUtils.add(id, dimension, boundingBox, null, displayName, KardExo.PLACES_FILE);
 			source.sendSuccess(new TextComponent("Added base with id " + id), false);
 		}
 		catch(IllegalStateException e)
@@ -95,7 +96,7 @@ public class PlacesCommand
 		
 		try
 		{
-			PropertyHelper.remove(id, KardExo.PLACES_FILE);
+			PropertyUtils.remove(id, KardExo.PLACES_FILE);
 			source.sendSuccess(new TextComponent("Removed base with id " + id), false);
 		}
 		catch(NoSuchElementException e)
@@ -110,7 +111,7 @@ public class PlacesCommand
 	{
 		try
 		{
-			return PropertyCommandUtils.list(source, KardExo.PLACES);
+			return PropertyCommand.list(source, KardExo.PLACES);
 		}
 		catch(NoSuchElementException e)
 		{
@@ -140,7 +141,7 @@ public class PlacesCommand
 		
 		try
 		{
-			PropertyHelper.addChild(parent, child, dimension, boundingBox, displayName, KardExo.PLACES_FILE);
+			PropertyUtils.addChild(parent, child, dimension, boundingBox, displayName, KardExo.PLACES_FILE);
 			source.sendSuccess(new TextComponent("Added child with id " + child + " to place with id " + id), false);
 		}
 		catch(IllegalStateException e)
@@ -158,7 +159,7 @@ public class PlacesCommand
 		
 		try
 		{
-			PropertyHelper.removeChild(parent, child, KardExo.PLACES_FILE);
+			PropertyUtils.removeChild(parent, child, KardExo.PLACES_FILE);
 			source.sendSuccess(new TextComponent("Removed child with id " + child + " from place with id " + id), false);
 		}
 		catch(NoSuchElementException e)
@@ -173,7 +174,7 @@ public class PlacesCommand
 	{
 		try
 		{
-			return PropertyCommandUtils.list(source, getPlace(id).getChildren());
+			return PropertyCommand.list(source, getPlace(id).getChildren());
 		}
 		catch(NoSuchElementException e)
 		{
@@ -201,7 +202,7 @@ public class PlacesCommand
 	
 	private static void ensurePermission(CommandSourceStack source, String id, Player target) throws CommandSyntaxException
 	{
-		if(!PropertyHelper.hasPermission(source, id, target, KardExo.PLACES))
+		if(!PropertyUtils.hasPermission(source, id, target, KardExo.PLACES))
 		{
 			throw CommandUtils.simpleException("You must be a creator of place with id " + id);
 		}
@@ -211,7 +212,7 @@ public class PlacesCommand
 	{
 		try
 		{
-			return PropertyHelper.getProperty(id, KardExo.PLACES);
+			return PropertyUtils.getProperty(id, KardExo.PLACES);
 		}
 		catch(NoSuchElementException e)
 		{
@@ -226,6 +227,6 @@ public class PlacesCommand
 	
 	private static CompletableFuture<Suggestions> getChildSuggestions(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) throws CommandSyntaxException
 	{
-		return PropertyCommandUtils.getChildSuggestions(KardExo.PLACES_FILE, context, builder, StringArgumentType.getString(context, "id"));
+		return PropertyCommand.getChildSuggestions(KardExo.PLACES_FILE, context, builder, StringArgumentType.getString(context, "id"));
 	}
 }

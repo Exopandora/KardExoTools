@@ -27,7 +27,7 @@ public class VeinConfig
 	
 	public boolean doesRequireTool()
 	{
-		return requiresTool;
+		return this.requiresTool;
 	}
 	
 	public void setRequiresTool(boolean requiresTool)

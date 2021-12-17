@@ -8,8 +8,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import net.kardexo.kardexotools.KardExo;
+import net.kardexo.kardexotools.config.OwnerConfig;
 import net.kardexo.kardexotools.property.BaseAccess;
-import net.kardexo.kardexotools.property.OwnerConfig;
 import net.kardexo.kardexotools.property.Property;
 import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
@@ -18,13 +18,13 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
-public class TickableBases implements Runnable
+public class BasesTickable implements Runnable
 {
 	private static final Map<Property, Set<String>> BASE_VISITORS = new HashMap<Property, Set<String>>();
 	
 	private final MinecraftServer server;
 	
-	public TickableBases(MinecraftServer dedicatedserver)
+	public BasesTickable(MinecraftServer dedicatedserver)
 	{
 		this.server = dedicatedserver;
 	}

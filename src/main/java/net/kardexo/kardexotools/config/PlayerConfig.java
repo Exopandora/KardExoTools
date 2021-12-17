@@ -1,8 +1,12 @@
 package net.kardexo.kardexotools.config;
 
+import com.google.gson.annotations.SerializedName;
+
 public class PlayerConfig
 {
+	@SerializedName("veinminer")
 	private boolean veinminer;
+	@SerializedName("home")
 	private PlayerHome home;
 	
 	public boolean isVeinminerEnabled()

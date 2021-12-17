@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.kardexo.kardexotools.property.PropertyHelper;
+import net.kardexo.kardexotools.util.PropertyUtils;
 import net.minecraft.Util;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
@@ -24,7 +24,7 @@ public class MixinServerPlayer
 	)
 	private void attack(Entity entity, CallbackInfo info)
 	{
-		if(!PropertyHelper.canInteractWithEntity((ServerPlayer) (Object) this, entity))
+		if(!PropertyUtils.canInteractWithEntity((ServerPlayer) (Object) this, entity))
 		{
 			info.cancel();
 		}

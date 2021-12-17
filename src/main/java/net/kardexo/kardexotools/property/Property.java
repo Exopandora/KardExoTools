@@ -12,6 +12,7 @@ import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
 import com.mojang.authlib.GameProfile;
 
+import net.kardexo.kardexotools.config.OwnerConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;

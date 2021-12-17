@@ -15,7 +15,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.ComponentUtils;
 
-public abstract class PropertyCommandUtils
+public abstract class PropertyCommand
 {
 	public static int list(CommandSourceStack source, Map<String, Property> properties) throws NoSuchElementException
 	{

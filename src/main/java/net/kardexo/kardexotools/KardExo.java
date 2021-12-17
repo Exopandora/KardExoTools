@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,23 +30,22 @@ import net.kardexo.kardexotools.command.UndoCommand;
 import net.kardexo.kardexotools.command.VeinminerCommand;
 import net.kardexo.kardexotools.command.WhereIsCommand;
 import net.kardexo.kardexotools.command.WorldTimeCommand;
-import net.kardexo.kardexotools.config.BlockPredicate;
 import net.kardexo.kardexotools.config.Config;
 import net.kardexo.kardexotools.config.ConfigFile;
 import net.kardexo.kardexotools.config.MapFile;
 import net.kardexo.kardexotools.config.PlayerConfig;
 import net.kardexo.kardexotools.config.VeinConfig;
 import net.kardexo.kardexotools.property.Property;
-import net.kardexo.kardexotools.tasks.TaskBackup;
-import net.kardexo.kardexotools.tasks.TaskSave;
+import net.kardexo.kardexotools.tasks.BackupTask;
+import net.kardexo.kardexotools.tasks.BasesTickable;
+import net.kardexo.kardexotools.tasks.ITask;
+import net.kardexo.kardexotools.tasks.SaveTask;
+import net.kardexo.kardexotools.tasks.ShutdownTask;
+import net.kardexo.kardexotools.tasks.TaskDispatcher;
 import net.kardexo.kardexotools.tasks.TaskScheduler;
-import net.kardexo.kardexotools.tasks.TickableBases;
-import net.minecraft.Util;
+import net.kardexo.kardexotools.util.BlockPredicate;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.Registry;
-import net.minecraft.network.chat.ChatType;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
@@ -57,11 +55,10 @@ import net.minecraft.world.level.block.Blocks;
 
 public class KardExo
 {
-	public static final String VERSION = "1.18.1-2.44";
+	public static final String VERSION = "1.18.1-2.45";
 	public static final Logger LOGGER = LogManager.getLogger("KardExo");
 	
 	private static final File CONFIG_DIRECTORY = new File("config/kardexotools");
-	private static final TaskScheduler TASK_SCHEDULER = new TaskScheduler();
 	
 	public static final ConfigFile<Config> CONFIG_FILE = new ConfigFile<Config>(new File(CONFIG_DIRECTORY, "config.json"), new TypeToken<Config>() {}, Config::new);
 	public static final MapFile<String, Property> BASES_FILE = new MapFile<String, Property>(new File(CONFIG_DIRECTORY, "bases.json"), new TypeToken<Map<String, Property>>() {});
@@ -77,15 +74,34 @@ public class KardExo
 	
 	private static final List<ConfigFile<?>> CONFIG_FILES = Lists.newArrayList(CONFIG_FILE, BASES_FILE, PLACES_FILE, PLAYERS_FILE, VEINMINER_FILE);
 	
-	public static void init(MinecraftServer server)
+	public static final ITask TASK_SAVE = new SaveTask();
+	public static final ITask TASK_BACKUP = new BackupTask();
+	public static final ITask TASK_SHUTDOWN = new ShutdownTask();
+	
+	public static void preInit(MinecraftServer server)
 	{
-		LOGGER.info("Loading KardExoTools " + KardExo.VERSION);
-		setupLevelSaving(server);
+		LOGGER.info("KardExoTools " + KardExo.VERSION);
 		createConfigDirectory();
 		readAllFiles();
+		
+		if(CONFIG.isDisableAutoSaving())
+		{
+			disableLevelSaving(server);
+		}
+		
 		registerTickables(server);
 		registerCommands(server.getCommands().getDispatcher());
-		registerTasks(server, CONFIG, TASK_SCHEDULER);
+	}
+	
+	public static void postInit(MinecraftServer server)
+	{
+		LOGGER.info("Starting tasks");
+		TaskScheduler scheduler = new TaskScheduler(new TaskDispatcher(server));
+		scheduler.registerTask(TASK_SAVE);
+		scheduler.registerTask(TASK_BACKUP);
+		scheduler.registerTask(TASK_SHUTDOWN);
+		scheduler.setDaemon(true);
+		scheduler.start();
 	}
 	
 	public static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher)
@@ -107,69 +123,24 @@ public class KardExo
 		SetBiomeCommand.register(dispatcher);
 	}
 	
-	public static void registerTasks(MinecraftServer server, Config config, TaskScheduler scheduler)
-	{
-		scheduler.schedule(new TaskSave(server), config.getSaveOffset(), TimeUnit.MINUTES, config.getSaveInterval(), TimeUnit.MINUTES, config.getSaveWarningTimes(), TimeUnit.SECONDS);
-		scheduler.schedule(new TaskBackup(server), config.getBackupOffset(), TimeUnit.MINUTES, config.getBackupInterval(), TimeUnit.MINUTES, config.getBackupWarningTimes(), TimeUnit.SECONDS);
-	}
-	
 	public static void registerTickables(MinecraftServer server)
 	{
-		server.addTickable(new TickableBases(server));
+		server.addTickable(new BasesTickable(server));
 	}
 	
-	private static void setupLevelSaving(MinecraftServer server)
+	private static void disableLevelSaving(MinecraftServer server)
 	{
-		if(CONFIG.doDisableAutoSaving())
+		for(ServerLevel worldserver : server.getAllLevels())
 		{
-			for(ServerLevel worldserver : server.getAllLevels())
+			if(worldserver != null && !worldserver.noSave)
 			{
-				if(worldserver != null && !worldserver.noSave)
-				{
-					worldserver.noSave = true;
-				}
+				worldserver.noSave = true;
 			}
-		}
-	}
-	
-	public static void broadcastMessage(MinecraftServer server, Component message)
-	{
-		if(server.getPlayerList() != null)
-		{
-			server.getPlayerList().broadcastMessage(message, ChatType.SYSTEM, Util.NIL_UUID);
-		}
-	}
-	
-	public static synchronized void saveLevels(MinecraftServer server)
-	{
-		saveLevels(server, true);
-	}
-	
-	public static synchronized void saveLevels(MinecraftServer server, boolean displayMessages)
-	{
-		if(displayMessages)
-		{
-			broadcastMessage(server, new TranslatableComponent("commands.save.saving", new Object[0]));
-		}
-		
-		if(server.getPlayerList() != null)
-		{
-			server.getPlayerList().saveAll();
-		}
-		
-		if(server.saveAllChunks(true, true, false) && displayMessages)
-		{
-			broadcastMessage(server, new TranslatableComponent("commands.save.success", new Object[0]));
-		}
-		else if(displayMessages)
-		{
-			broadcastMessage(server, new TranslatableComponent("commands.save.failed"));
 		}
 	}
 	
 	public static void stop()
 	{
-		TASK_SCHEDULER.stop();
 		saveAllFiles();
 	}
 	

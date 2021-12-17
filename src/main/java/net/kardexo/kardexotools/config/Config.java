@@ -1,30 +1,48 @@
 package net.kardexo.kardexotools.config;
 
 import java.io.File;
+import java.time.Duration;
 
 import com.google.gson.annotations.SerializedName;
 
 public class Config
 {
+	@SerializedName("backup_enabled")
+	private boolean backupEnabled = true;
 	@SerializedName("backup_files")
-	private int backupFiles = 10;
+	private int backupFiles = 24;
 	@SerializedName("backup_directory")
 	private String backupDirectory = "backup";
 	@SerializedName("backup_interval")
-	private int backupInterval = 20;
+	private long backupInterval = Duration.ofHours(3).toSeconds();
 	@SerializedName("backup_offset")
-	private int backupOffset = 20;
+	private long backupOffset = Duration.ofHours(3).toSeconds();
 	@SerializedName("backup_warning_times")
-	private int[] backupWarningTimes = {5, 10};
+	private long[] backupWarningTimes = {5, 10};
 	@SerializedName("backup_warning_message")
 	private String backupWarningMessage = "Starting backup in %d seconds";
 	
+	@SerializedName("shutdown_enabled")
+	private boolean shutdownEnabled = false;
+	@SerializedName("shutdown_backup")
+	private boolean shutdownBackup = true;
+	@SerializedName("shutdown_offset")
+	private long shutdownOffset = Duration.ofHours(6).toSeconds();
+	@SerializedName("shutdown_warning_times")
+	private long[] shutdownWarningTimes = {1, 5, 10};
+	@SerializedName("shutdown_warning_message")
+	private String shutdownWarningMessage = "Shutting down in %d minutes";
+	
+	@SerializedName("save_enabled")
+	private boolean saveEnabled = true;
+	@SerializedName("save_flush")
+	private boolean saveFlush = true;
 	@SerializedName("save_interval")
-	private int saveInterval = 20;
+	private long saveInterval = Duration.ofMinutes(30).toSeconds();
 	@SerializedName("save_offset")
-	private int saveOffset = 10;
+	private long saveOffset = Duration.ofMinutes(30).toSeconds();
 	@SerializedName("save_warning_times")
-	private int[] saveWarningTimes = {5, 10};
+	private long[] saveWarningTimes = {5, 10};
 	@SerializedName("save_warning_message")
 	private String saveWarningMessage = "Saving in %d seconds";
 	
@@ -41,42 +59,62 @@ public class Config
 	@SerializedName("property_default_exit_message")
 	private String propertyDefaultExitMessage = "%1$s has left your base (%2$s)";
 	
+	public boolean isBackupEnabled()
+	{
+		return this.backupEnabled;
+	}
+	
+	public void setBackupEnabled(boolean backupEnabled)
+	{
+		this.backupEnabled = backupEnabled;
+	}
+	
+	public int getBackupFiles()
+	{
+		return this.backupFiles;
+	}
+	
+	public void setBackupFiles(int backupFiles)
+	{
+		this.backupFiles = backupFiles;
+	}
+	
 	public File getBackupDirectory()
 	{
 		return new File(this.backupDirectory);
 	}
 	
-	public void setBackupDirectory(File backupDirectory)
+	public void setBackupDirectory(String backupDirectory)
 	{
-		this.backupDirectory = backupDirectory.getName();
+		this.backupDirectory = backupDirectory;
 	}
 	
-	public int getBackupInterval()
+	public long getBackupInterval()
 	{
 		return this.backupInterval;
 	}
 	
-	public void setBackupInterval(int backupInterval)
+	public void setBackupInterval(long backupInterval)
 	{
 		this.backupInterval = backupInterval;
 	}
 	
-	public int getBackupOffset()
+	public long getBackupOffset()
 	{
 		return this.backupOffset;
 	}
 	
-	public void setBackupOffset(int backupOffset)
+	public void setBackupOffset(long backupOffset)
 	{
 		this.backupOffset = backupOffset;
 	}
 	
-	public int[] getBackupWarningTimes()
+	public long[] getBackupWarningTimes()
 	{
 		return this.backupWarningTimes;
 	}
 	
-	public void setBackupWarningTimes(int[] backupWarningTimes)
+	public void setBackupWarningTimes(long[] backupWarningTimes)
 	{
 		this.backupWarningTimes = backupWarningTimes;
 	}
@@ -91,32 +129,102 @@ public class Config
 		this.backupWarningMessage = backupWarningMessage;
 	}
 	
-	public int getSaveInterval()
+	public boolean isShutdownEnabled()
+	{
+		return this.shutdownEnabled;
+	}
+	
+	public void setShutdownEnabled(boolean shutdownEnabled)
+	{
+		this.shutdownEnabled = shutdownEnabled;
+	}
+	
+	public boolean isShutdownBackup()
+	{
+		return this.shutdownBackup;
+	}
+	
+	public void setShutdownBackup(boolean shutdownBackup)
+	{
+		this.shutdownBackup = shutdownBackup;
+	}
+	
+	public long getShutdownOffset()
+	{
+		return this.shutdownOffset;
+	}
+	
+	public void setShutdownOffset(long shutdownOffset)
+	{
+		this.shutdownOffset = shutdownOffset;
+	}
+	
+	public long[] getShutdownWarningTimes()
+	{
+		return this.shutdownWarningTimes;
+	}
+	
+	public void setShutdownWarningTimes(long[] shutdownWarningTimes)
+	{
+		this.shutdownWarningTimes = shutdownWarningTimes;
+	}
+	
+	public String getShutdownWarningMessage()
+	{
+		return this.shutdownWarningMessage;
+	}
+	
+	public void setShutdownWarningMessage(String shutdownWarningMessage)
+	{
+		this.shutdownWarningMessage = shutdownWarningMessage;
+	}
+	
+	public boolean isSaveEnabled()
+	{
+		return this.saveEnabled;
+	}
+	
+	public void setSaveEnabled(boolean saveEnabled)
+	{
+		this.saveEnabled = saveEnabled;
+	}
+	
+	public boolean isSaveFlush()
+	{
+		return this.saveFlush;
+	}
+	
+	public void setSaveFlush(boolean saveFlush)
+	{
+		this.saveFlush = saveFlush;
+	}
+	
+	public long getSaveInterval()
 	{
 		return this.saveInterval;
 	}
 	
-	public void setSaveInterval(int saveInterval)
+	public void setSaveInterval(long saveInterval)
 	{
 		this.saveInterval = saveInterval;
 	}
 	
-	public int getSaveOffset()
+	public long getSaveOffset()
 	{
 		return this.saveOffset;
 	}
 	
-	public void setSaveOffset(int saveOffset)
+	public void setSaveOffset(long saveOffset)
 	{
 		this.saveOffset = saveOffset;
 	}
 	
-	public int[] getSaveWarningTimes()
+	public long[] getSaveWarningTimes()
 	{
 		return this.saveWarningTimes;
 	}
 	
-	public void setSaveWarningTimes(int[] saveWarningTimes)
+	public void setSaveWarningTimes(long[] saveWarningTimes)
 	{
 		this.saveWarningTimes = saveWarningTimes;
 	}
@@ -131,17 +239,7 @@ public class Config
 		this.saveWarningMessage = saveWarningMessage;
 	}
 	
-	public int getBackupFiles()
-	{
-		return this.backupFiles;
-	}
-	
-	public void setBackupFiles(int backupFiles)
-	{
-		this.backupFiles = backupFiles;
-	}
-	
-	public boolean doDisableAutoSaving()
+	public boolean isDisableAutoSaving()
 	{
 		return this.disableAutoSaving;
 	}
@@ -176,7 +274,7 @@ public class Config
 		return this.propertyDefaultEnterMessage;
 	}
 	
-	public void setPropertydefaultEnterMessage(String propertyDefaultEnterMessage)
+	public void setPropertyDefaultEnterMessage(String propertyDefaultEnterMessage)
 	{
 		this.propertyDefaultEnterMessage = propertyDefaultEnterMessage;
 	}

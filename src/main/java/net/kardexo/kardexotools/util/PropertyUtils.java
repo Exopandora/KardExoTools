@@ -1,4 +1,4 @@
-package net.kardexo.kardexotools.property;
+package net.kardexo.kardexotools.util;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,9 +10,10 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.include.com.google.common.base.Objects;
 
 import net.kardexo.kardexotools.KardExo;
-import net.kardexo.kardexotools.command.CommandUtils;
 import net.kardexo.kardexotools.config.MapFile;
-import net.kardexo.kardexotools.tasks.TickableBases;
+import net.kardexo.kardexotools.config.OwnerConfig;
+import net.kardexo.kardexotools.property.Property;
+import net.kardexo.kardexotools.tasks.BasesTickable;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -22,7 +23,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
-public class PropertyHelper
+public class PropertyUtils
 {
 	public static void add(String id, ServerLevel dimension, BoundingBox boundingBox, @Nullable UUID owner, @Nullable Component displayName, MapFile<String, Property> data) throws IllegalStateException
 	{
@@ -53,7 +54,7 @@ public class PropertyHelper
 			throw new NoSuchElementException();
 		}
 		
-		TickableBases.remove(property);
+		BasesTickable.remove(property);
 		data.remove(id);
 		data.save();
 	}

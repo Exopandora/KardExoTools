@@ -17,10 +17,11 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
 import net.kardexo.kardexotools.KardExo;
-import net.kardexo.kardexotools.property.OwnerConfig;
+import net.kardexo.kardexotools.config.OwnerConfig;
 import net.kardexo.kardexotools.property.Property;
-import net.kardexo.kardexotools.property.PropertyHelper;
-import net.kardexo.kardexotools.tasks.TickableBases;
+import net.kardexo.kardexotools.tasks.BasesTickable;
+import net.kardexo.kardexotools.util.CommandUtils;
+import net.kardexo.kardexotools.util.PropertyUtils;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
@@ -129,7 +130,7 @@ public class BasesCommand
 	{
 		try
 		{
-			PropertyHelper.add(id, dimension, boundingBox, owner.getUUID(), displayName, KardExo.BASES_FILE);
+			PropertyUtils.add(id, dimension, boundingBox, owner.getUUID(), displayName, KardExo.BASES_FILE);
 			source.sendSuccess(new TextComponent("Added base with id " + id), false);
 		}
 		catch(IllegalStateException e)
@@ -146,7 +147,7 @@ public class BasesCommand
 		
 		try
 		{
-			PropertyHelper.remove(id, KardExo.BASES_FILE);
+			PropertyUtils.remove(id, KardExo.BASES_FILE);
 			source.sendSuccess(new TextComponent("Removed base with id " + id), false);
 		}
 		catch(NoSuchElementException e)
@@ -196,7 +197,7 @@ public class BasesCommand
 		ensurePermission(source, id, player);
 		ensureOwner(player, id);
 		
-		OwnerConfig owner = PropertyHelper.getOwnerConfig(id, player.getUUID(), KardExo.BASES);
+		OwnerConfig owner = PropertyUtils.getOwnerConfig(id, player.getUUID(), KardExo.BASES);
 		
 		if(owner != null)
 		{
@@ -209,7 +210,7 @@ public class BasesCommand
 	{
 		ensurePermission(source, id, null);
 		
-		if(PropertyHelper.isOwner(player.getUUID(), id, KardExo.BASES))
+		if(PropertyUtils.isOwner(player.getUUID(), id, KardExo.BASES))
 		{
 			throw CommandUtils.simpleException(((MutableComponent) player.getDisplayName()).append(" already is an owner of base with id " + id));
 		}
@@ -315,7 +316,7 @@ public class BasesCommand
 		
 		try
 		{
-			PropertyHelper.addChild(parent, child, dimension, boundingBox, displayName, KardExo.BASES_FILE);
+			PropertyUtils.addChild(parent, child, dimension, boundingBox, displayName, KardExo.BASES_FILE);
 			source.sendSuccess(new TextComponent("Added child with id " + child + " to base with id " + id), false);
 		}
 		catch(IllegalStateException e)
@@ -333,7 +334,7 @@ public class BasesCommand
 		
 		try
 		{
-			PropertyHelper.removeChild(parent, child, KardExo.BASES_FILE);
+			PropertyUtils.removeChild(parent, child, KardExo.BASES_FILE);
 			source.sendSuccess(new TextComponent("Removed child with id " + child + " from base with id " + id), false);
 		}
 		catch(NoSuchElementException e)
@@ -348,7 +349,7 @@ public class BasesCommand
 	{
 		try
 		{
-			return PropertyCommandUtils.list(source, getBase(id).getChildren());
+			return PropertyCommand.list(source, getBase(id).getChildren());
 		}
 		catch(NoSuchElementException e)
 		{
@@ -378,7 +379,7 @@ public class BasesCommand
 	{
 		try
 		{
-			return PropertyCommandUtils.list(source, KardExo.BASES);
+			return PropertyCommand.list(source, KardExo.BASES);
 		}
 		catch(NoSuchElementException e)
 		{
@@ -388,7 +389,7 @@ public class BasesCommand
 	
 	private static int reload(CommandSourceStack source) throws CommandSyntaxException
 	{
-		TickableBases.reload();
+		BasesTickable.reload();
 		
 		try
 		{
@@ -405,7 +406,7 @@ public class BasesCommand
 	
 	private static void ensurePermission(CommandSourceStack source, String id, Player target) throws CommandSyntaxException
 	{
-		if(!PropertyHelper.hasPermission(source, id, target, KardExo.BASES))
+		if(!PropertyUtils.hasPermission(source, id, target, KardExo.BASES))
 		{
 			throw CommandUtils.simpleException("You must be a creator of base with id " + id);
 		}
@@ -413,7 +414,7 @@ public class BasesCommand
 	
 	private static void ensureOwner(Player player, String id) throws CommandSyntaxException
 	{
-		if(!PropertyHelper.isOwner(player.getUUID(), id, KardExo.BASES))
+		if(!PropertyUtils.isOwner(player.getUUID(), id, KardExo.BASES))
 		{
 			throw CommandUtils.simpleException(((MutableComponent) player.getDisplayName()).append(" is not an owner of base with id " + id));
 		}
@@ -423,7 +424,7 @@ public class BasesCommand
 	{
 		try
 		{
-			return PropertyHelper.getProperty(id, KardExo.BASES);
+			return PropertyUtils.getProperty(id, KardExo.BASES);
 		}
 		catch(NoSuchElementException e)
 		{
@@ -438,6 +439,6 @@ public class BasesCommand
 	
 	private static CompletableFuture<Suggestions> getChildSuggestions(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) throws CommandSyntaxException
 	{
-		return PropertyCommandUtils.getChildSuggestions(KardExo.BASES_FILE, context, builder, StringArgumentType.getString(context, "id"));
+		return PropertyCommand.getChildSuggestions(KardExo.BASES_FILE, context, builder, StringArgumentType.getString(context, "id"));
 	}
 }

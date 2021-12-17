@@ -4,7 +4,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import net.kardexo.kardexotools.property.PropertyHelper;
+import net.kardexo.kardexotools.util.PropertyUtils;
 import net.kardexo.kardexotools.veinminer.Veinminer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -37,6 +37,6 @@ public abstract class MixinServerPlayerGameMode
 	@Overwrite
 	public boolean destroyBlock(BlockPos blockPos)
 	{
-		return PropertyHelper.canHarvestBlock(this.player, blockPos) && Veinminer.mine(blockPos, this.player, this.level, this.gameModeForPlayer);
+		return PropertyUtils.canHarvestBlock(this.player, blockPos) && Veinminer.mine(blockPos, this.player, this.level, this.gameModeForPlayer);
 	}
 }

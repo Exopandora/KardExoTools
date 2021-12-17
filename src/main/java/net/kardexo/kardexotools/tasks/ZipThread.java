@@ -47,7 +47,6 @@ public class ZipThread extends Thread
 		ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(outputFile.toFile()));
 	    ZipThread.zip(sourceDir, zip);
 		IOUtils.closeQuietly(zip);
-		
 		return outputFile.toFile();
 	}
 	

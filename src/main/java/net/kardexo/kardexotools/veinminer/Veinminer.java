@@ -16,9 +16,9 @@ import java.util.stream.Stream;
 import com.google.common.collect.Sets;
 
 import net.kardexo.kardexotools.KardExo;
-import net.kardexo.kardexotools.config.BlockPredicate;
 import net.kardexo.kardexotools.config.VeinConfig;
-import net.kardexo.kardexotools.property.PropertyHelper;
+import net.kardexo.kardexotools.util.BlockPredicate;
+import net.kardexo.kardexotools.util.PropertyUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.MinecraftServer;
@@ -163,7 +163,7 @@ public class Veinminer
 								continue;
 							}
 							
-							if(!PropertyHelper.canHarvestBlock(player, nextBlock))
+							if(!PropertyUtils.canHarvestBlock(player, nextBlock))
 							{
 								continue;
 							}

@@ -1,4 +1,4 @@
-package net.kardexo.kardexotools.config;
+package net.kardexo.kardexotools.util;
 
 import java.lang.reflect.Type;
 import java.util.AbstractMap.SimpleEntry;

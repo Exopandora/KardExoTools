@@ -18,6 +18,7 @@ import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 
 import net.kardexo.kardexotools.KardExo;
+import net.kardexo.kardexotools.util.BlockPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
