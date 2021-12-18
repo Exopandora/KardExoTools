@@ -231,27 +231,26 @@ public class Veinminer
 		}
 		
 		Inventory inventory = player.getInventory();
-		List<NonNullList<ItemStack>> inventories = Arrays.<NonNullList<ItemStack>>asList(inventory.items, inventory.armor, inventory.offhand);
-		
+		List<NonNullList<ItemStack>> inventories = Arrays.asList(inventory.items, inventory.armor, inventory.offhand);
 		int count = 0;
 		
 		for(List<ItemStack> list : inventories)
 		{
 			for(ItemStack stack : list)
 			{
-				if(stack.getItem().equals(item) /*&& stack.func_77976_d() == metadata*/)
+				if(stack.getItem().equals(item))
 				{
 					count += stack.getCount();
 				}
 			}
 		}
 		
-		if(count >= amount)
+		if(count < amount)
 		{
-			return true;
+			throw new Exception("You do not have enough items");
 		}
 		
-		throw new Exception("You do not have enough items");
+		return true;
 	}
 	
 	private static boolean hasSpace(Level level, Set<BlockPos> positions) throws Exception

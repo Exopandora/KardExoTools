@@ -24,9 +24,9 @@ public class BasesTickable implements Runnable
 	
 	private final MinecraftServer server;
 	
-	public BasesTickable(MinecraftServer dedicatedserver)
+	public BasesTickable(MinecraftServer server)
 	{
-		this.server = dedicatedserver;
+		this.server = server;
 	}
 	
 	@Override
