@@ -25,5 +25,6 @@
 		"java": ">=17"
 	},
 	"suggests": {
-	}
+	},
+	"accessWidener": "kardexotools.accesswidener"
 }

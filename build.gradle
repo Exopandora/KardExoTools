@@ -23,6 +23,10 @@ dependencies {
 	shade "ch.obermuhlner:big-math:2.3.+"
 }
 
+loom {
+	accessWidenerPath = file("src/main/resources/kardexotools.accesswidener")
+}
+
 processResources {
 	inputs.property "version", project.version
 	
