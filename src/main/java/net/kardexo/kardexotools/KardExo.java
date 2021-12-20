@@ -203,6 +203,7 @@ public class KardExo
 		addVein(Blocks.CLAY, 4, true, config);
 		
 		addVein(BlockTags.COAL_ORES, 17, true, config);
+		addVein(BlockTags.COPPER_ORES, 17, true, config);
 		addVein(BlockTags.IRON_ORES, 9, false, config);
 		addVein(BlockTags.GOLD_ORES, 9, true, config);
 		addVein(Blocks.GILDED_BLACKSTONE, 9, true, config);
