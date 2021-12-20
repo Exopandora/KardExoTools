@@ -63,7 +63,7 @@ public class ShutdownTask implements ITask
 	@Override
 	public String getWarningMessage(long millis)
 	{
-		return String.format(KardExo.CONFIG.getShutdownWarningMessage(), TimeUnit.MILLISECONDS.convert(millis, this.getWarningTimesUnit()));
+		return String.format(KardExo.CONFIG.getShutdownWarningMessage(), this.getWarningTimesUnit().convert(millis, TimeUnit.MILLISECONDS));
 	}
 	
 	@Override

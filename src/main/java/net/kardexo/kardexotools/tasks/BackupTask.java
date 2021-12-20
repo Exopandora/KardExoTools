@@ -160,7 +160,7 @@ public class BackupTask implements ITask
 	@Override
 	public String getWarningMessage(long millis)
 	{
-		return String.format(KardExo.CONFIG.getBackupWarningMessage(), TimeUnit.MILLISECONDS.convert(millis, this.getWarningTimesUnit()));
+		return String.format(KardExo.CONFIG.getBackupWarningMessage(), this.getWarningTimesUnit().convert(millis, TimeUnit.MILLISECONDS));
 	}
 	
 	@Override

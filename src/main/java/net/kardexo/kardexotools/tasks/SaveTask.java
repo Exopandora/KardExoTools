@@ -59,7 +59,7 @@ public class SaveTask implements ITask
 	@Override
 	public String getWarningMessage(long millis)
 	{
-		return String.format(KardExo.CONFIG.getSaveWarningMessage(), TimeUnit.MILLISECONDS.convert(millis, this.getWarningTimesUnit()));
+		return String.format(KardExo.CONFIG.getSaveWarningMessage(), this.getWarningTimesUnit().convert(millis, TimeUnit.MILLISECONDS));
 	}
 	
 	@Override
