@@ -3,6 +3,7 @@ package net.kardexo.kardexotools;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -225,6 +226,6 @@ public class KardExo
 	
 	private static void addVein(Tag.Named<Block> tag, int radius, boolean requiresTool, Map<BlockPredicate, VeinConfig> map)
 	{
-		map.put(new BlockPredicate(tag.getName(), null, null, true), new VeinConfig(radius, requiresTool));
+		map.put(new BlockPredicate(tag.getName(), Collections.emptyMap(), null, true), new VeinConfig(radius, requiresTool));
 	}
 }
