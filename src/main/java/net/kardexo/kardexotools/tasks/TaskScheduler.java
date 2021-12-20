@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import net.kardexo.kardexotools.KardExo;
 
@@ -81,7 +80,7 @@ public class TaskScheduler extends Thread
 						waitingTime -= times[times.length - state + 1];
 					}
 					
-					this.dispatcher.warn(task, task.getWarningTimesUnit().convert(current, TimeUnit.MILLISECONDS));
+					this.dispatcher.warn(task, current);
 					states.put(task, state - 1);
 					events.add(new Event(task, event.timestamp() + waitingTime));
 					Collections.sort(events);
