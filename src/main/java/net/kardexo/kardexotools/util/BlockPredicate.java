@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.JsonDeserializationContext;
@@ -72,20 +73,23 @@ public class BlockPredicate
 				return false;
 			}
 			
-			for(Map.Entry<String, String> entry : this.properties.entrySet())
+			if(this.properties != null)
 			{
-				Property<?> property = blockState.getBlock().getStateDefinition().getProperty(entry.getKey());
-				
-				if(property == null)
+				for(Entry<String, String> entry : this.properties.entrySet())
 				{
-					return false;
-				}
-				
-				Comparable<?> comparable = property.getValue(entry.getValue()).orElse(null);
-				
-				if(comparable == null || blockState.getValue(property) != comparable)
-				{
-					return false;
+					Property<?> property = blockState.getBlock().getStateDefinition().getProperty(entry.getKey());
+					
+					if(property == null)
+					{
+						return false;
+					}
+					
+					Comparable<?> comparable = property.getValue(entry.getValue()).orElse(null);
+					
+					if(comparable == null || blockState.getValue(property) != comparable)
+					{
+						return false;
+					}
 				}
 			}
 			
@@ -105,13 +109,16 @@ public class BlockPredicate
 			return false;
 		}
 		
-		Map<String, String> properties = propertiesToString(blockState.getValues());
-		
-		for(Entry<String, String> property : this.properties.entrySet())
+		if(this.properties != null)
 		{
-			if(!property.getValue().equals(properties.get(property.getKey())))
+			Map<String, String> properties = propertiesToString(blockState.getValues());
+			
+			for(Entry<String, String> property : this.properties.entrySet())
 			{
-				return false;
+				if(!property.getValue().equals(properties.get(property.getKey())))
+				{
+					return false;
+				}
 			}
 		}
 		
@@ -129,6 +136,7 @@ public class BlockPredicate
 		return this.block;
 	}
 	
+	@NotNull
 	public Map<String, String> getProperties()
 	{
 		if(this.properties == null)
