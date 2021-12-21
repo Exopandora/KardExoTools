@@ -14,7 +14,7 @@ public class ShutdownTask implements ITask
 		
 		if(KardExo.CONFIG.isShutdownBackup())
 		{
-			server.execute(() -> KardExo.TASK_BACKUP.execute(server));
+			KardExo.TASK_BACKUP.execute(server);
 		}
 	}
 	
