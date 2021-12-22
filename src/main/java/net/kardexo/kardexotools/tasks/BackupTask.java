@@ -49,7 +49,7 @@ public class BackupTask implements ITask
 			this.createDirectories();
 			this.purgeFiles(folderName);
 			
-			ZipThread zipper = new ZipThread("backup", Paths.get(folderName), KardExo.CONFIG.getBackupDirectory().toPath().resolve(fileName + ".zip"), file ->
+			ZipThread zipper = new ZipThread("backup", Paths.get(folderName), KardExo.CONFIG.getData().getBackupDirectory().toPath().resolve(fileName + ".zip"), file ->
 			{
 				this.printResult(server, file, start);
 				BackupTask.backupInProgress = false;
@@ -62,7 +62,7 @@ public class BackupTask implements ITask
 	{
 		try
 		{
-			Files.createDirectories(KardExo.CONFIG.getBackupDirectory().toPath());
+			Files.createDirectories(KardExo.CONFIG.getData().getBackupDirectory().toPath());
 		}
 		catch(IOException e)
 		{
@@ -72,9 +72,9 @@ public class BackupTask implements ITask
 	
 	private void purgeFiles(String folderName)
 	{
-		File backupDirectory = KardExo.CONFIG.getBackupDirectory();
+		File backupDirectory = KardExo.CONFIG.getData().getBackupDirectory();
 		
-		if(backupDirectory.exists() && backupDirectory.canWrite() && backupDirectory.listFiles().length >= KardExo.CONFIG.getBackupFiles())
+		if(backupDirectory.exists() && backupDirectory.canWrite() && backupDirectory.listFiles().length >= KardExo.CONFIG.getData().getBackupFiles())
 		{
 			File purgeFile = null;
 			long lastMod = Long.MAX_VALUE;
@@ -124,7 +124,7 @@ public class BackupTask implements ITask
 	@Override
 	public long getOffset()
 	{
-		return KardExo.CONFIG.getBackupOffset();
+		return KardExo.CONFIG.getData().getBackupOffset();
 	}
 	
 	@Override
@@ -136,7 +136,7 @@ public class BackupTask implements ITask
 	@Override
 	public long getInterval()
 	{
-		return KardExo.CONFIG.getBackupInterval();
+		return KardExo.CONFIG.getData().getBackupInterval();
 	}
 	
 	@Override
@@ -148,7 +148,7 @@ public class BackupTask implements ITask
 	@Override
 	public long[] getWarningTimes()
 	{
-		return KardExo.CONFIG.getBackupWarningTimes();
+		return KardExo.CONFIG.getData().getBackupWarningTimes();
 	}
 	
 	@Override
@@ -160,7 +160,7 @@ public class BackupTask implements ITask
 	@Override
 	public String getWarningMessage(long millis)
 	{
-		return String.format(KardExo.CONFIG.getBackupWarningMessage(), this.getWarningTimesUnit().convert(millis, TimeUnit.MILLISECONDS));
+		return String.format(KardExo.CONFIG.getData().getBackupWarningMessage(), this.getWarningTimesUnit().convert(millis, TimeUnit.MILLISECONDS));
 	}
 	
 	@Override
@@ -172,6 +172,6 @@ public class BackupTask implements ITask
 	@Override
 	public boolean isEnabled()
 	{
-		return KardExo.CONFIG.isBackupEnabled();
+		return KardExo.CONFIG.getData().isBackupEnabled();
 	}
 }

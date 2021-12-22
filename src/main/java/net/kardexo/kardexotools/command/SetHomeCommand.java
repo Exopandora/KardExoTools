@@ -26,8 +26,8 @@ public class SetHomeCommand
 		ServerPlayer sender = source.getPlayerOrException();
 		BlockPos pos = sender.blockPosition();
 		
-		KardExo.PLAYERS.computeIfAbsent(CommandUtils.getUUID(source), key -> new PlayerConfig()).setHome(new PlayerHome(pos, sender.level.dimension().location()));
-		KardExo.PLAYERS_FILE.save();
+		KardExo.PLAYERS.getData().computeIfAbsent(CommandUtils.getUUID(source), key -> new PlayerConfig()).setHome(new PlayerHome(pos, sender.level.dimension().location()));
+		KardExo.PLAYERS.save();
 		
 		source.sendSuccess(new TextComponent("Home set to " + pos.getX() + " " + pos.getY() + " " + pos.getZ()), false);
 		return 1;

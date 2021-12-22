@@ -60,19 +60,13 @@ public class KardExo
 	
 	private static final File CONFIG_DIRECTORY = new File("config/kardexotools");
 	
-	public static final ConfigFile<Config> CONFIG_FILE = new ConfigFile<Config>(new File(CONFIG_DIRECTORY, "config.json"), new TypeToken<Config>() {}, Config::new);
-	public static final MapFile<String, Property> BASES_FILE = new MapFile<String, Property>(new File(CONFIG_DIRECTORY, "bases.json"), new TypeToken<Map<String, Property>>() {});
-	public static final MapFile<String, Property> PLACES_FILE = new MapFile<String, Property>(new File(CONFIG_DIRECTORY, "places.json"), new TypeToken<Map<String, Property>>() {});
-	public static final MapFile<UUID, PlayerConfig> PLAYERS_FILE = new MapFile<UUID, PlayerConfig>(new File(CONFIG_DIRECTORY, "playerdata.json"), new TypeToken<Map<UUID, PlayerConfig>>() {});
-	public static final MapFile<BlockPredicate, VeinConfig> VEINMINER_FILE = new MapFile<BlockPredicate, VeinConfig>(new File(CONFIG_DIRECTORY, "veinminer.json"), new TypeToken<Map<BlockPredicate, VeinConfig>>() {}, KardExo::defaultVeinminerConfig);
+	public static final ConfigFile<Config> CONFIG = new ConfigFile<Config>(new File(CONFIG_DIRECTORY, "config.json"), new TypeToken<Config>() {}, Config::new);
+	public static final MapFile<String, Property> BASES = new MapFile<String, Property>(new File(CONFIG_DIRECTORY, "bases.json"), new TypeToken<Map<String, Property>>() {});
+	public static final MapFile<String, Property> PLACES = new MapFile<String, Property>(new File(CONFIG_DIRECTORY, "places.json"), new TypeToken<Map<String, Property>>() {});
+	public static final MapFile<UUID, PlayerConfig> PLAYERS = new MapFile<UUID, PlayerConfig>(new File(CONFIG_DIRECTORY, "playerdata.json"), new TypeToken<Map<UUID, PlayerConfig>>() {});
+	public static final MapFile<BlockPredicate, VeinConfig> VEINMINER = new MapFile<BlockPredicate, VeinConfig>(new File(CONFIG_DIRECTORY, "veinminer.json"), new TypeToken<Map<BlockPredicate, VeinConfig>>() {}, KardExo::defaultVeinminerConfig);
 	
-	public static final Config CONFIG = CONFIG_FILE.getData();
-	public static final Map<String, Property> BASES = BASES_FILE.getData();
-	public static final Map<String, Property> PLACES = PLACES_FILE.getData();
-	public static final Map<UUID, PlayerConfig> PLAYERS = PLAYERS_FILE.getData();
-	public static final Map<BlockPredicate, VeinConfig> VEINMINER = VEINMINER_FILE.getData();
-	
-	private static final List<ConfigFile<?>> CONFIG_FILES = Lists.newArrayList(CONFIG_FILE, BASES_FILE, PLACES_FILE, PLAYERS_FILE, VEINMINER_FILE);
+	private static final List<ConfigFile<?>> CONFIG_FILES = Lists.newArrayList(CONFIG, BASES, PLACES, PLAYERS, VEINMINER);
 	
 	public static final ITask TASK_SAVE = new SaveTask();
 	public static final ITask TASK_BACKUP = new BackupTask();
@@ -84,7 +78,7 @@ public class KardExo
 		createConfigDirectory();
 		readAllFiles();
 		
-		if(CONFIG.isDisableAutoSaving())
+		if(CONFIG.getData().isDisableAutoSaving())
 		{
 			disableLevelSaving(server);
 		}

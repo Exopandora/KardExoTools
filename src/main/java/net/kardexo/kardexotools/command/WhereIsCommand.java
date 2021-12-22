@@ -38,7 +38,7 @@ public class WhereIsCommand
 		GameProfileCache profileCache = source.getServer().getProfileCache();
 		Set<PropertyEntry> properties = new HashSet<PropertyEntry>();
 		
-		for(Entry<String, Property> entry : KardExo.BASES.entrySet())
+		for(Entry<String, Property> entry : KardExo.BASES.getData().entrySet())
 		{
 			if(entry.getValue().isInside(target))
 			{
@@ -46,7 +46,7 @@ public class WhereIsCommand
 			}
 		}
 		
-		for(Entry<String, Property> entry : KardExo.PLACES.entrySet())
+		for(Entry<String, Property> entry : KardExo.PLACES.getData().entrySet())
 		{
 			if(entry.getValue().isInside(target))
 			{

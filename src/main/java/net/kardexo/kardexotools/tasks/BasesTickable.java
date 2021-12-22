@@ -37,7 +37,7 @@ public class BasesTickable implements Runnable
 			return;
 		}
 		
-		for(Entry<String, Property> entry : KardExo.BASES.entrySet())
+		for(Entry<String, Property> entry : KardExo.BASES.getData().entrySet())
 		{
 			Property base = entry.getValue();
 			
@@ -125,9 +125,9 @@ public class BasesTickable implements Runnable
 		switch(access)
 		{
 			case ENTER:
-				return new TranslatableComponent(KardExo.CONFIG.getPropertyDefaultEnterMessage(), new Object[]{player.getDisplayName(), base.getDisplayName(id, player.getServer().getProfileCache())});
+				return new TranslatableComponent(KardExo.CONFIG.getData().getPropertyDefaultEnterMessage(), new Object[]{player.getDisplayName(), base.getDisplayName(id, player.getServer().getProfileCache())});
 			case LEAVE:
-				return new TranslatableComponent(KardExo.CONFIG.getPropertyDefaultExitMessage(), new Object[]{player.getDisplayName(), base.getDisplayName(id, player.getServer().getProfileCache())});
+				return new TranslatableComponent(KardExo.CONFIG.getData().getPropertyDefaultExitMessage(), new Object[]{player.getDisplayName(), base.getDisplayName(id, player.getServer().getProfileCache())});
 		}
 		
 		return null;

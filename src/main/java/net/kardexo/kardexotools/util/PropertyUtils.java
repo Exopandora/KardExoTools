@@ -163,12 +163,12 @@ public class PropertyUtils
 	
 	public static boolean isProtected(Player player, BlockPos pos)
 	{
-		return isProtected(player, pos, KardExo.BASES) || isProtected(player, pos, KardExo.PLACES);
+		return isProtected(player, pos, KardExo.BASES.getData()) || isProtected(player, pos, KardExo.PLACES.getData());
 	}
 	
 	private static boolean isProtected(Player player, Entity entity)
 	{
-		return isProtected(player, entity.blockPosition(), KardExo.BASES) || isProtected(player, entity.blockPosition(), KardExo.PLACES);
+		return isProtected(player, entity.blockPosition(), KardExo.BASES.getData()) || isProtected(player, entity.blockPosition(), KardExo.PLACES.getData());
 	}
 	
 	public static boolean canHarvestBlock(Player player, BlockPos pos)

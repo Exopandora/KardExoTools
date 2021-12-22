@@ -41,7 +41,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 
 public class Veinminer
 {
-	private static final PlayerHistory<Vein> HISTORY = new PlayerHistory<Vein>(KardExo.CONFIG.getVeinminerHistorySize());
+	private static final PlayerHistory<Vein> HISTORY = new PlayerHistory<Vein>(KardExo.CONFIG.getData().getVeinminerHistorySize());
 	
 	public static boolean mine(BlockPos pos, ServerPlayer player, ServerLevel level, GameType gameModeForPlayer)
 	{
@@ -50,16 +50,16 @@ public class Veinminer
 		BlockState state = level.getBlockState(pos);
 		boolean isEffectiveTool = item.getDestroySpeed(state) > 1.0F;
 		
-		if(KardExo.PLAYERS.containsKey(uuid) && KardExo.PLAYERS.get(uuid).isVeinminerEnabled() && player.isShiftKeyDown() && !player.onClimbable() && (!item.isDamageableItem() || item.getMaxDamage() - item.getDamageValue() > 1))
+		if(KardExo.PLAYERS.getData().containsKey(uuid) && KardExo.PLAYERS.get(uuid).isVeinminerEnabled() && player.isShiftKeyDown() && !player.onClimbable() && (!item.isDamageableItem() || item.getMaxDamage() - item.getDamageValue() > 1))
 		{
-			for(Entry<BlockPredicate, VeinConfig> entry : KardExo.VEINMINER.entrySet())
+			for(Entry<BlockPredicate, VeinConfig> entry : KardExo.VEINMINER.getData().entrySet())
 			{
 				BlockPredicate predicate = entry.getKey();
 				VeinConfig config = entry.getValue();
 				
 				if(predicate.matches(level, pos, level.getServer().getTags()) && (isEffectiveTool || !config.doesRequireTool()))
 				{
-					PriorityQueue<BlockPos> queue = Veinminer.calculateVein(player, KardExo.CONFIG.getVeinminerBlockLimit(), predicate, config, pos, level);
+					PriorityQueue<BlockPos> queue = Veinminer.calculateVein(player, KardExo.CONFIG.getData().getVeinminerBlockLimit(), predicate, config, pos, level);
 					Map<BlockState, Set<BlockPos>> stateMap = new HashMap<BlockState, Set<BlockPos>>();
 					Vein undo = new Vein(player.level.dimension(), stateMap);
 					queue.poll();
@@ -73,7 +73,7 @@ public class Veinminer
 						{
 							stateMap.put(next, Sets.newHashSet(pos));
 							
-							for(int x = 0; x < KardExo.CONFIG.getVeinminerBlockLimit(); x++)
+							for(int x = 0; x < KardExo.CONFIG.getData().getVeinminerBlockLimit(); x++)
 							{
 								if(item.isDamageableItem() && item.getMaxDamage() > 0 && item.getMaxDamage() - item.getDamageValue() == 1)
 								{

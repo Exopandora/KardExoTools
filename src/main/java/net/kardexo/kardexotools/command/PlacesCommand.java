@@ -79,7 +79,7 @@ public class PlacesCommand
 	{
 		try
 		{
-			PropertyUtils.add(id, dimension, boundingBox, null, displayName, KardExo.PLACES_FILE);
+			PropertyUtils.add(id, dimension, boundingBox, null, displayName, KardExo.PLACES);
 			source.sendSuccess(new TextComponent("Added base with id " + id), false);
 		}
 		catch(IllegalStateException e)
@@ -96,7 +96,7 @@ public class PlacesCommand
 		
 		try
 		{
-			PropertyUtils.remove(id, KardExo.PLACES_FILE);
+			PropertyUtils.remove(id, KardExo.PLACES);
 			source.sendSuccess(new TextComponent("Removed base with id " + id), false);
 		}
 		catch(NoSuchElementException e)
@@ -111,7 +111,7 @@ public class PlacesCommand
 	{
 		try
 		{
-			return PropertyCommand.list(source, KardExo.PLACES);
+			return PropertyCommand.list(source, KardExo.PLACES.getData());
 		}
 		catch(NoSuchElementException e)
 		{
@@ -123,7 +123,7 @@ public class PlacesCommand
 	{
 		try
 		{
-			KardExo.PLACES_FILE.read();
+			KardExo.PLACES.read();
 			source.sendSuccess(new TextComponent("Successfully reloaded places"), false);
 		}
 		catch(Exception e)
@@ -131,7 +131,7 @@ public class PlacesCommand
 			throw CommandUtils.simpleException("Could not reload places");
 		}
 		
-		return KardExo.PLACES.size();
+		return KardExo.PLACES.getData().size();
 	}
 	
 	private static int addChild(CommandSourceStack source, String id, String child, ServerLevel dimension, BoundingBox boundingBox, Component displayName) throws CommandSyntaxException
@@ -141,7 +141,7 @@ public class PlacesCommand
 		
 		try
 		{
-			PropertyUtils.addChild(parent, child, dimension, boundingBox, displayName, KardExo.PLACES_FILE);
+			PropertyUtils.addChild(parent, child, dimension, boundingBox, displayName, KardExo.PLACES);
 			source.sendSuccess(new TextComponent("Added child with id " + child + " to place with id " + id), false);
 		}
 		catch(IllegalStateException e)
@@ -159,7 +159,7 @@ public class PlacesCommand
 		
 		try
 		{
-			PropertyUtils.removeChild(parent, child, KardExo.PLACES_FILE);
+			PropertyUtils.removeChild(parent, child, KardExo.PLACES);
 			source.sendSuccess(new TextComponent("Removed child with id " + child + " from place with id " + id), false);
 		}
 		catch(NoSuchElementException e)
@@ -186,7 +186,7 @@ public class PlacesCommand
 	{
 		ensurePermission(source, id, null);
 		getPlace(id).setProtected(enabled);
-		KardExo.PLACES_FILE.save();
+		KardExo.PLACES.save();
 		
 		if(enabled)
 		{
@@ -202,7 +202,7 @@ public class PlacesCommand
 	
 	private static void ensurePermission(CommandSourceStack source, String id, Player target) throws CommandSyntaxException
 	{
-		if(!PropertyUtils.hasPermission(source, id, target, KardExo.PLACES))
+		if(!PropertyUtils.hasPermission(source, id, target, KardExo.PLACES.getData()))
 		{
 			throw CommandUtils.simpleException("You must be a creator of place with id " + id);
 		}
@@ -212,7 +212,7 @@ public class PlacesCommand
 	{
 		try
 		{
-			return PropertyUtils.getProperty(id, KardExo.PLACES);
+			return PropertyUtils.getProperty(id, KardExo.PLACES.getData());
 		}
 		catch(NoSuchElementException e)
 		{
@@ -222,11 +222,11 @@ public class PlacesCommand
 	
 	private static CompletableFuture<Suggestions> getSuggestions(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) throws CommandSyntaxException
 	{
-		return SharedSuggestionProvider.suggest(KardExo.PLACES.keySet(), builder);
+		return SharedSuggestionProvider.suggest(KardExo.PLACES.getData().keySet(), builder);
 	}
 	
 	private static CompletableFuture<Suggestions> getChildSuggestions(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) throws CommandSyntaxException
 	{
-		return PropertyCommand.getChildSuggestions(KardExo.PLACES_FILE, context, builder, StringArgumentType.getString(context, "id"));
+		return PropertyCommand.getChildSuggestions(KardExo.PLACES, context, builder, StringArgumentType.getString(context, "id"));
 	}
 }

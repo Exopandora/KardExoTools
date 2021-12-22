@@ -15,7 +15,7 @@ public class Util
 			broadcastMessage(server, new TranslatableComponent("commands.save.saving", new Object[0]));
 		}
 		
-		boolean success = server.saveEverything(true, KardExo.CONFIG.isSaveFlush(), false);
+		boolean success = server.saveEverything(true, KardExo.CONFIG.getData().isSaveFlush(), false);
 		
 		if(displayMessages)
 		{

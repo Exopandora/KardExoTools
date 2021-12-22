@@ -33,8 +33,8 @@ public class VeinminerCommand
 	
 	private static int setVeinminer(CommandSourceStack source, boolean enabled) throws CommandSyntaxException
 	{
-		KardExo.PLAYERS.computeIfAbsent(CommandUtils.getUUID(source), key -> new PlayerConfig()).setVeinminerEnabled(enabled);
-		KardExo.PLAYERS_FILE.save();
+		KardExo.PLAYERS.getData().computeIfAbsent(CommandUtils.getUUID(source), key -> new PlayerConfig()).setVeinminerEnabled(enabled);
+		KardExo.PLAYERS.save();
 		
 		if(enabled)
 		{
@@ -50,9 +50,9 @@ public class VeinminerCommand
 	
 	private static int list(CommandSourceStack source) throws CommandSyntaxException
 	{
-		List<Component> list = new ArrayList<Component>(KardExo.VEINMINER.size());
+		List<Component> list = new ArrayList<Component>(KardExo.VEINMINER.getData().size());
 		
-		for(Entry<BlockPredicate, VeinConfig> config : KardExo.VEINMINER.entrySet())
+		for(Entry<BlockPredicate, VeinConfig> config : KardExo.VEINMINER.getData().entrySet())
 		{
 			list.add(new TranslatableComponent("%s = %s", config.getKey().toString(), config.getValue().getRadius()));
 		}

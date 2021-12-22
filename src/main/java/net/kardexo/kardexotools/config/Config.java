@@ -32,6 +32,8 @@ public class Config
 	private long[] shutdownWarningTimes = {1, 5, 10};
 	@SerializedName("shutdown_warning_message")
 	private String shutdownWarningMessage = "Shutting down in %d minutes";
+	@SerializedName("shutdown_message")
+	private String shutdownMessage = "multiplayer.disconnect.server_shutdown";
 	
 	@SerializedName("save_enabled")
 	private boolean saveEnabled = true;
@@ -177,6 +179,16 @@ public class Config
 	public void setShutdownWarningMessage(String shutdownWarningMessage)
 	{
 		this.shutdownWarningMessage = shutdownWarningMessage;
+	}
+	
+	public String getShutdownMessage()
+	{
+		return this.shutdownMessage;
+	}
+	
+	public void setShutdownMessage(String shutdownMessage)
+	{
+		this.shutdownMessage = shutdownMessage;
 	}
 	
 	public boolean isSaveEnabled()

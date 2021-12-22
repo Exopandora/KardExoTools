@@ -23,7 +23,7 @@ public class SaveTask implements ITask
 	@Override
 	public long getOffset()
 	{
-		return KardExo.CONFIG.getSaveOffset();
+		return KardExo.CONFIG.getData().getSaveOffset();
 	}
 	
 	@Override
@@ -35,7 +35,7 @@ public class SaveTask implements ITask
 	@Override
 	public long getInterval()
 	{
-		return KardExo.CONFIG.getSaveInterval();
+		return KardExo.CONFIG.getData().getSaveInterval();
 	}
 	
 	@Override
@@ -47,7 +47,7 @@ public class SaveTask implements ITask
 	@Override
 	public long[] getWarningTimes()
 	{
-		return KardExo.CONFIG.getSaveWarningTimes();
+		return KardExo.CONFIG.getData().getSaveWarningTimes();
 	}
 	
 	@Override
@@ -59,7 +59,7 @@ public class SaveTask implements ITask
 	@Override
 	public String getWarningMessage(long millis)
 	{
-		return String.format(KardExo.CONFIG.getSaveWarningMessage(), this.getWarningTimesUnit().convert(millis, TimeUnit.MILLISECONDS));
+		return String.format(KardExo.CONFIG.getData().getSaveWarningMessage(), this.getWarningTimesUnit().convert(millis, TimeUnit.MILLISECONDS));
 	}
 	
 	@Override
@@ -71,6 +71,6 @@ public class SaveTask implements ITask
 	@Override
 	public boolean isEnabled()
 	{
-		return KardExo.CONFIG.isSaveEnabled();
+		return KardExo.CONFIG.getData().isSaveEnabled();
 	}
 }
