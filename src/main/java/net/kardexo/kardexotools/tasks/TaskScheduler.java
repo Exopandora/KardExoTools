@@ -33,7 +33,6 @@ public class TaskScheduler extends Thread
 				{
 					int initialState = this.initialState(task, task.getOffsetMillis());
 					states.put(task, initialState);
-					System.out.println(task.getName() + " " + (task.getOffsetMillis() - this.getMaxWarningDurationMillis(task, initialState)));
 					events.add(new Event(task, time + task.getOffsetMillis() - this.getMaxWarningDurationMillis(task, initialState)));
 				}
 			}
