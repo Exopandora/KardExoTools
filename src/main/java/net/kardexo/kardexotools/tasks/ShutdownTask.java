@@ -14,7 +14,7 @@ public class ShutdownTask implements ITask
 	{
 		if(server.getPlayerList() != null)
 		{
-			for(ServerPlayer player :server.getPlayerList().getPlayers())
+			for(ServerPlayer player : server.getPlayerList().getPlayers())
 			{
 				player.connection.disconnect(new TranslatableComponent(KardExo.CONFIG.getData().getShutdownMessage()));
 			}
