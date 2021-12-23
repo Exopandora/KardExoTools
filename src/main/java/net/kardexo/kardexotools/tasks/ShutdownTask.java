@@ -1,5 +1,7 @@
 package net.kardexo.kardexotools.tasks;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import net.kardexo.kardexotools.KardExo;
@@ -14,7 +16,9 @@ public class ShutdownTask implements ITask
 	{
 		if(server.getPlayerList() != null)
 		{
-			for(ServerPlayer player : server.getPlayerList().getPlayers())
+			List<ServerPlayer> players = new ArrayList<ServerPlayer>(server.getPlayerList().getPlayers());
+			
+			for(ServerPlayer player : players)
 			{
 				player.connection.disconnect(new TranslatableComponent(KardExo.CONFIG.getData().getShutdownMessage()));
 			}
