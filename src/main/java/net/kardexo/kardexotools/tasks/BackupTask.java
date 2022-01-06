@@ -52,7 +52,7 @@ public class BackupTask implements ITask
 			ZipThread zipper = new ZipThread("backup", Paths.get(folderName), KardExo.CONFIG.getData().getBackupDirectory().toPath().resolve(fileName + ".zip"), file ->
 			{
 				this.printResult(server, file, start);
-				server.execute(() -> KardExo.setLevelSaving(server, true));
+				server.execute(() -> KardExo.setLevelSaving(server, !KardExo.CONFIG.getData().isDisableAutoSaving()));
 				BackupTask.backupInProgress = false;
 			});
 			zipper.start();
