@@ -39,9 +39,9 @@ public class BackupTask implements ITask
 			
 			Util.broadcastMessage(server, new TextComponent("Starting backup..."));
 			Util.saveLevels(server, false);
+			KardExo.setLevelSaving(server, false);
 			
 			LocalDateTime date = LocalDateTime.now();
-			
 			String folderName = ((MinecraftServerAccessor) server).getStorageSource().getLevelId();
 			String time = String.format("%02d_%02d_%04d-%02d_%02d_%02d", date.getDayOfMonth(), date.getMonthValue(), date.getYear(), date.getHour(), date.getMinute(), date.getSecond());
 			String fileName = folderName + "-" + time;
@@ -52,6 +52,7 @@ public class BackupTask implements ITask
 			ZipThread zipper = new ZipThread("backup", Paths.get(folderName), KardExo.CONFIG.getData().getBackupDirectory().toPath().resolve(fileName + ".zip"), file ->
 			{
 				this.printResult(server, file, start);
+				server.execute(() -> KardExo.setLevelSaving(server, true));
 				BackupTask.backupInProgress = false;
 			});
 			zipper.start();

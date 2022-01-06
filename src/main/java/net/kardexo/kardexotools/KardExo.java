@@ -77,12 +77,7 @@ public class KardExo
 		LOGGER.info("KardExoTools " + KardExo.VERSION);
 		createConfigDirectory();
 		readAllFiles();
-		
-		if(CONFIG.getData().isDisableAutoSaving())
-		{
-			disableLevelSaving(server);
-		}
-		
+		setLevelSaving(server, !CONFIG.getData().isDisableAutoSaving());
 		registerTickables(server);
 		registerCommands(server.getCommands().getDispatcher());
 	}
@@ -122,13 +117,13 @@ public class KardExo
 		server.addTickable(new BasesTickable(server));
 	}
 	
-	private static void disableLevelSaving(MinecraftServer server)
+	public static void setLevelSaving(MinecraftServer server, boolean save)
 	{
 		for(ServerLevel worldserver : server.getAllLevels())
 		{
 			if(worldserver != null && !worldserver.noSave)
 			{
-				worldserver.noSave = true;
+				worldserver.noSave = !save;
 			}
 		}
 	}
