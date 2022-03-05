@@ -49,13 +49,13 @@ import net.minecraft.core.Registry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
 public class KardExo
 {
-	public static final String VERSION = "1.18.1-2.46.4";
+	public static final String VERSION = "1.18.2-2.46.4";
 	public static final Logger LOGGER = LogManager.getLogger("KardExo");
 	
 	private static final File CONFIG_DIRECTORY = new File("config/kardexotools");
@@ -213,8 +213,8 @@ public class KardExo
 		map.put(new BlockPredicate(Registry.BLOCK.getKey(block), null, null, false), new VeinConfig(radius, requiresTool));
 	}
 	
-	private static void addVein(Tag.Named<Block> tag, int radius, boolean requiresTool, Map<BlockPredicate, VeinConfig> map)
+	private static void addVein(TagKey<Block> tag, int radius, boolean requiresTool, Map<BlockPredicate, VeinConfig> map)
 	{
-		map.put(new BlockPredicate(tag.getName(), null, null, true), new VeinConfig(radius, requiresTool));
+		map.put(new BlockPredicate(tag.location(), null, null, true), new VeinConfig(radius, requiresTool));
 	}
 }

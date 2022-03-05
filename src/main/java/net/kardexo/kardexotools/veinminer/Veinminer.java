@@ -57,7 +57,7 @@ public class Veinminer
 				BlockPredicate predicate = entry.getKey();
 				VeinConfig config = entry.getValue();
 				
-				if(predicate.matches(level, pos, level.getServer().getTags()) && (isEffectiveTool || !config.doesRequireTool()))
+				if(predicate.matches(level, pos) && (isEffectiveTool || !config.doesRequireTool()))
 				{
 					PriorityQueue<BlockPos> queue = Veinminer.calculateVein(player, KardExo.CONFIG.getData().getVeinminerBlockLimit(), predicate, config, pos, level);
 					Map<BlockState, Set<BlockPos>> stateMap = new HashMap<BlockState, Set<BlockPos>>();
@@ -153,7 +153,7 @@ public class Veinminer
 								continue;
 							}
 							
-							if(!predicate.matches(level, nextBlock, level.getServer().getTags()))
+							if(!predicate.matches(level, nextBlock))
 							{
 								continue;
 							}

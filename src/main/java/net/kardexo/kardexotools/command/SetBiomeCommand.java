@@ -2,18 +2,22 @@ package net.kardexo.kardexotools.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.commands.synchronization.SuggestionProviders;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.commands.LocateBiomeCommand;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -23,6 +27,15 @@ import net.minecraft.world.level.chunk.LevelChunkSection;
 
 public class SetBiomeCommand
 {
+	public static final SuggestionProvider<CommandSourceStack> AVAILABLE_BIOMES = SuggestionProviders.register(new ResourceLocation("available_biomes"), (context, builder) ->
+	{
+		return SharedSuggestionProvider.suggestResource(context.getSource().registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).keySet(), builder);
+	});
+	private static final DynamicCommandExceptionType ERROR_BIOME_NOT_FOUND = new DynamicCommandExceptionType((p_137846_) ->
+	{
+		return new TranslatableComponent("commands.locatebiome.notFound", p_137846_);
+	});
+	
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
 	{
 		dispatcher.register(Commands.literal("setbiome")
@@ -30,7 +43,7 @@ public class SetBiomeCommand
 					.then(Commands.argument("from", BlockPosArgument.blockPos())
 						.then(Commands.argument("to", BlockPosArgument.blockPos())
 							.then(Commands.argument("biome", ResourceLocationArgument.id())
-								.suggests(SuggestionProviders.AVAILABLE_BIOMES)
+								.suggests(AVAILABLE_BIOMES)
 								.executes(context -> SetBiomeCommand.setBiome(context.getSource(), BlockPosArgument.getLoadedBlockPos(context, "from"), BlockPosArgument.getLoadedBlockPos(context, "to"), ResourceLocationArgument.getId(context, "biome")))))));
 	}
 	
@@ -39,7 +52,8 @@ public class SetBiomeCommand
 		ServerLevel level = source.getLevel();
 		Biome biome = source.getServer().registryAccess().registryOrThrow(Registry.BIOME_REGISTRY)
 				.getOptional(resource)
-				.orElseThrow(() -> LocateBiomeCommand.ERROR_INVALID_BIOME.create(resource));
+				.orElseThrow(() -> ERROR_BIOME_NOT_FOUND.create(resource));
+		Holder<Biome> holder = Holder.direct(biome);
 		
 		int minX = Mth.clamp(Math.min(from.getX(), to.getX()), -30_000_000, 30_000_000);
 		int maxX = Mth.clamp(Math.max(from.getX(), to.getX()), -30_000_000, 30_000_000);
@@ -82,7 +96,7 @@ public class SetBiomeCommand
 							{
 								if(!section.getBiomes().get(x, y, z).equals(biome))
 								{
-									section.getBiomes().getAndSetUnchecked(x, y, z, biome);
+									section.getBiomes().getAndSet(x, y, z, holder);
 									save = true;
 								}
 							}

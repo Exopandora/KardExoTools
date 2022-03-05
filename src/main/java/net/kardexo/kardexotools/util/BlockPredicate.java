@@ -26,8 +26,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.Tag;
-import net.minecraft.tags.TagContainer;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -51,22 +50,13 @@ public class BlockPredicate
 		this.isTag = isTag;
 	}
 	
-	public boolean matches(Level level, BlockPos pos, TagContainer tagContainer)
+	public boolean matches(Level level, BlockPos pos)
 	{
 		BlockState blockState = level.getBlockState(pos);
 		
 		if(this.isTag)
 		{
-			Tag<Block> tag;
-			
-			try
-			{
-				tag = tagContainer.getTagOrThrow(Registry.BLOCK_REGISTRY, this.block, resource -> new Exception());
-			}
-			catch(Exception e)
-			{
-				return false;
-			}
+			TagKey<Block> tag = TagKey.create(Registry.BLOCK_REGISTRY, this.block);
 			
 			if(!blockState.is(tag))
 			{
@@ -96,7 +86,7 @@ public class BlockPredicate
 			if(this.nbt != null)
 			{
 				BlockEntity blockEntity = level.getBlockEntity(pos);
-				return (blockEntity != null && NbtUtils.compareNbt(this.nbt, blockEntity.saveWithFullMetadata(), true));
+				return blockEntity != null && NbtUtils.compareNbt(this.nbt, blockEntity.saveWithFullMetadata(), true);
 			}
 			
 			return true;
@@ -199,7 +189,7 @@ public class BlockPredicate
 					return new BlockPredicate(Registry.BLOCK.getKey(parser.getState().getBlock()), propertiesToString(parser.getProperties()), parser.getNbt(), false);
 				}
 				
-				return new BlockPredicate(parser.getTag(), parser.getVagueProperties(), parser.getNbt(), true);
+				return new BlockPredicate(parser.getTag().location(), parser.getVagueProperties(), parser.getNbt(), true);
 			}
 			catch(CommandSyntaxException e)
 			{
