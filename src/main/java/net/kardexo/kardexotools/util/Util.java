@@ -3,7 +3,6 @@ package net.kardexo.kardexotools.util;
 import net.kardexo.kardexotools.KardExo;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 
 public class Util
@@ -12,7 +11,7 @@ public class Util
 	{
 		if(displayMessages)
 		{
-			broadcastMessage(server, new TranslatableComponent("commands.save.saving", new Object[0]));
+			broadcastMessage(server, Component.translatable("commands.save.saving"));
 		}
 		
 		boolean success = server.saveEverything(true, KardExo.CONFIG.getData().isSaveFlush(), false);
@@ -21,11 +20,11 @@ public class Util
 		{
 			if(success)
 			{
-				broadcastMessage(server, new TranslatableComponent("commands.save.success"));
+				broadcastMessage(server, Component.translatable("commands.save.success"));
 			}
 			else
 			{
-				broadcastMessage(server, new TranslatableComponent("commands.save.failed"));
+				broadcastMessage(server, Component.translatable("commands.save.failed"));
 			}
 		}
 	}
@@ -39,7 +38,7 @@ public class Util
 	{
 		if(server.getPlayerList() != null)
 		{
-			server.getPlayerList().broadcastMessage(message, ChatType.SYSTEM, net.minecraft.Util.NIL_UUID);
+			server.getPlayerList().broadcastSystemMessage(message, ChatType.SYSTEM);
 		}
 	}
 }

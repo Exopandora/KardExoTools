@@ -6,8 +6,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.kardexo.kardexotools.util.PropertyUtils;
-import net.minecraft.Util;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
@@ -43,6 +42,6 @@ public class MixinServerPlayer
 		int y = Mth.floor(player.getY());
 		int z = Mth.floor(player.getZ());
 		
-		player.sendMessage(new TextComponent("You died at " + x + " " + y + " " + z), Util.NIL_UUID);
+		player.sendSystemMessage(Component.literal("You died at " + x + " " + y + " " + z));
 	}
 }

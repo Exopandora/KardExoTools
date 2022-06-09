@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import net.kardexo.kardexotools.KardExo;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -20,7 +20,7 @@ public class ShutdownTask implements ITask
 			
 			for(ServerPlayer player : players)
 			{
-				player.connection.disconnect(new TranslatableComponent(KardExo.CONFIG.getData().getShutdownMessage()));
+				player.connection.disconnect(Component.translatable(KardExo.CONFIG.getData().getShutdownMessage()));
 			}
 		}
 		

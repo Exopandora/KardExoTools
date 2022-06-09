@@ -15,8 +15,6 @@ import net.kardexo.kardexotools.util.CommandUtils;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 
 public class VeinminerCommand
 {
@@ -38,11 +36,11 @@ public class VeinminerCommand
 		
 		if(enabled)
 		{
-			source.sendSuccess(new TextComponent("Veinminer enabled"), false);
+			source.sendSuccess(Component.literal("Veinminer enabled"), false);
 		}
 		else
 		{
-			source.sendSuccess(new TextComponent("Veinminer disabled"), false);
+			source.sendSuccess(Component.literal("Veinminer disabled"), false);
 		}
 		
 		return 1;
@@ -54,7 +52,7 @@ public class VeinminerCommand
 		
 		for(Entry<BlockPredicate, VeinConfig> config : KardExo.VEINMINER.getData().entrySet())
 		{
-			list.add(new TranslatableComponent("%s = %s", config.getKey().toString(), config.getValue().getRadius()));
+			list.add(Component.translatable("%s = %s", config.getKey().toString(), config.getValue().getRadius()));
 		}
 		
 		list.sort((a, b) -> a.toString().compareTo(b.toString()));

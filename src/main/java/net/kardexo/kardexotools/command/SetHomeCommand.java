@@ -10,7 +10,7 @@ import net.kardexo.kardexotools.util.CommandUtils;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
 public class SetHomeCommand
@@ -29,7 +29,7 @@ public class SetHomeCommand
 		KardExo.PLAYERS.getData().computeIfAbsent(CommandUtils.getUUID(source), key -> new PlayerConfig()).setHome(new PlayerHome(pos, sender.level.dimension().location()));
 		KardExo.PLAYERS.save();
 		
-		source.sendSuccess(new TextComponent("Home set to " + pos.getX() + " " + pos.getY() + " " + pos.getZ()), false);
+		source.sendSuccess(Component.literal("Home set to " + pos.getX() + " " + pos.getY() + " " + pos.getZ()), false);
 		return 1;
 	}
 }

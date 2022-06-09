@@ -17,10 +17,8 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import net.minecraft.commands.arguments.blocks.BlockStateParser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
@@ -182,14 +180,7 @@ public class BlockPredicate
 		{
 			try
 			{
-				BlockStateParser parser = new BlockStateParser(new StringReader(element.getAsString()), true).parse(true);
-				
-				if(parser.getState() != null)
-				{
-					return new BlockPredicate(Registry.BLOCK.getKey(parser.getState().getBlock()), propertiesToString(parser.getProperties()), parser.getNbt(), false);
-				}
-				
-				return new BlockPredicate(parser.getTag().location(), parser.getVagueProperties(), parser.getNbt(), true);
+				return SimpleBlockPredicateParser.parse(element.getAsString());
 			}
 			catch(CommandSyntaxException e)
 			{

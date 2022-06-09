@@ -16,9 +16,8 @@ import net.kardexo.kardexotools.util.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.HoverEvent.Action;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 
 public class BackupTask implements ITask
@@ -30,14 +29,14 @@ public class BackupTask implements ITask
 	{
 		if(BackupTask.backupInProgress)
 		{
-			Util.broadcastMessage(server, new TextComponent("Backup already in progress"));
+			Util.broadcastMessage(server, Component.literal("Backup already in progress"));
 		}
 		else
 		{
 			BackupTask.backupInProgress = true;
 			long start = System.currentTimeMillis();
 			
-			Util.broadcastMessage(server, new TextComponent("Starting backup..."));
+			Util.broadcastMessage(server, Component.literal("Starting backup..."));
 			Util.saveLevels(server, false);
 			KardExo.setLevelSaving(server, false);
 			
@@ -105,14 +104,14 @@ public class BackupTask implements ITask
 		{
 			long bytes = file.length();
 			long duration = System.currentTimeMillis() - start;
-			TextComponent size = new TextComponent(FileUtils.byteCountToDisplaySize(bytes));
-			Component hover = new TranslatableComponent("%s\n%s bytes\n%s", file.getName(), String.format("%,d", bytes), DurationFormatUtils.formatDuration(duration, "HH:mm:ss"));
+			MutableComponent size = Component.literal(FileUtils.byteCountToDisplaySize(bytes));
+			Component hover = Component.translatable("%s\n%s bytes\n%s", file.getName(), String.format("%,d", bytes), DurationFormatUtils.formatDuration(duration, "HH:mm:ss"));
 			size.setStyle(Style.EMPTY.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, hover)));
-			Util.broadcastMessage(server, new TranslatableComponent("Backup Complete (%s)", size));
+			Util.broadcastMessage(server, Component.translatable("Backup Complete (%s)", size));
 		}
 		else
 		{
-			Util.broadcastMessage(server, new TextComponent("Backup Failed"));
+			Util.broadcastMessage(server, Component.literal("Backup Failed"));
 		}
 	}
 	

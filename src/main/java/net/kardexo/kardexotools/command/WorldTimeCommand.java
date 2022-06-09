@@ -5,7 +5,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 
 public class WorldTimeCommand
@@ -18,7 +18,7 @@ public class WorldTimeCommand
 	
 	private static int worldtime(CommandSourceStack source) throws CommandSyntaxException
 	{
-		source.sendSuccess(new TextComponent("World time: " + toWorldTime(source.getLevel().getDayTime())), false);
+		source.sendSuccess(Component.literal("World time: " + toWorldTime(source.getLevel().getDayTime())), false);
 		return 1;
 	}
 	

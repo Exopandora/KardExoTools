@@ -11,7 +11,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
@@ -41,7 +41,7 @@ public class ResourceCommand
 		
 		for(Entry<String, Integer> entry : map.entrySet())
 		{
-			source.sendSuccess(new TranslatableComponent("x" + entry.getValue() + " %s", new TranslatableComponent(entry.getKey())), false);
+			source.sendSuccess(Component.translatable("x" + entry.getValue() + " %s", Component.translatable(entry.getKey())), false);
 		}
 		
 		return map.values().stream().reduce(Integer::sum).orElse(0);

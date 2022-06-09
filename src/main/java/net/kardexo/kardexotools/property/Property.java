@@ -20,8 +20,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.players.GameProfileCache;
@@ -82,7 +80,7 @@ public class Property
 	
 	public MutableComponent getDisplayName(String id)
 	{
-		return this.displayName != null ? this.displayName.copy() : new TextComponent(id);
+		return this.displayName != null ? this.displayName.copy() : Component.literal(id);
 	}
 	
 	public void setDisplayName(Component displayName)
@@ -242,7 +240,7 @@ public class Property
 	
 	private MutableComponent getDisplayTooltip(String id, GameProfileCache profileCache)
 	{
-		MutableComponent metadata = new TextComponent("\n" + id).withStyle(ChatFormatting.GRAY);
+		MutableComponent metadata = Component.literal("\n" + id).withStyle(ChatFormatting.GRAY);
 		
 		if(this.owners != null && !this.owners.isEmpty())
 		{
@@ -271,7 +269,7 @@ public class Property
 	{
 		return ComponentUtils.formatList(owners.entrySet(), ComponentUtils.DEFAULT_NO_STYLE_SEPARATOR, entry ->
 		{
-			MutableComponent result = new TextComponent(profileCache.get(entry.getKey()).map(GameProfile::getName).orElse(entry.getKey().toString()));
+			MutableComponent result = Component.literal(profileCache.get(entry.getKey()).map(GameProfile::getName).orElse(entry.getKey().toString()));
 			
 			if(entry.getValue().isCreator())
 			{
@@ -289,6 +287,6 @@ public class Property
 	
 	private static MutableComponent formatCoordinate(BlockPos pos)
 	{
-		return ComponentUtils.wrapInSquareBrackets(new TranslatableComponent("chat.coordinates", new Object[]{pos.getX(), pos.getY(), pos.getZ()}));
+		return ComponentUtils.wrapInSquareBrackets(Component.translatable("chat.coordinates", new Object[]{pos.getX(), pos.getY(), pos.getZ()}));
 	}
 }

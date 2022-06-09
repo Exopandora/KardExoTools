@@ -9,7 +9,7 @@ import com.mojang.brigadier.tree.CommandNode;
 import net.kardexo.kardexotools.KardExo;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 
 public class KardExoCommand
 {
@@ -24,13 +24,13 @@ public class KardExoCommand
 	
 	private static int version(CommandSourceStack source)
 	{
-		source.sendSuccess(new TextComponent("Version: " + KardExo.VERSION), false);
+		source.sendSuccess(Component.literal("Version: " + KardExo.VERSION), false);
 		return 1;
 	}
 	
 	private static int commands(CommandSourceStack source) throws CommandSyntaxException
 	{
-		source.sendSuccess(new TextComponent("Commands:"), false);
+		source.sendSuccess(Component.literal("Commands:"), false);
 		
 		CommandDispatcher<CommandSourceStack> dispatcher = new CommandDispatcher<CommandSourceStack>();
 		KardExo.registerCommands(dispatcher);
@@ -38,7 +38,7 @@ public class KardExoCommand
 		
 		for(String command : usage.values())
 		{
-			source.sendSuccess(new TextComponent(" /" + command), false);
+			source.sendSuccess(Component.literal(" /" + command), false);
 		}
 		
 		return usage.values().size();

@@ -5,7 +5,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 
 public class MoonPhaseCommand
@@ -31,7 +31,7 @@ public class MoonPhaseCommand
 	private static int moonPhase(CommandSourceStack source) throws CommandSyntaxException
 	{
 		int phase = source.getServer().getLevel(Level.OVERWORLD).getMoonPhase();
-		source.sendSuccess(new TextComponent(PHASES[phase]), false);
+		source.sendSuccess(Component.literal(PHASES[phase]), false);
 		return phase;
 	}
 }

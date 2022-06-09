@@ -31,7 +31,6 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
@@ -131,7 +130,7 @@ public class BasesCommand
 		try
 		{
 			PropertyUtils.add(id, dimension, boundingBox, owner.getUUID(), displayName, KardExo.BASES);
-			source.sendSuccess(new TextComponent("Added base with id " + id), false);
+			source.sendSuccess(Component.literal("Added base with id " + id), false);
 		}
 		catch(IllegalStateException e)
 		{
@@ -148,7 +147,7 @@ public class BasesCommand
 		try
 		{
 			PropertyUtils.remove(id, KardExo.BASES);
-			source.sendSuccess(new TextComponent("Removed base with id " + id), false);
+			source.sendSuccess(Component.literal("Removed base with id " + id), false);
 		}
 		catch(NoSuchElementException e)
 		{
@@ -163,7 +162,7 @@ public class BasesCommand
 		ensuredForOwner(source, id, player, owner -> 
 		{
 			owner.setEnterMessage(message);
-			source.sendSuccess(new TextComponent("Message upon entrance has been set to \"" + message + "\""), false);
+			source.sendSuccess(Component.literal("Message upon entrance has been set to \"" + message + "\""), false);
 		});
 		
 		return 1;
@@ -174,7 +173,7 @@ public class BasesCommand
 		ensuredForOwner(source, id, player, owner -> 
 		{
 			owner.setExitMessage(message);
-			source.sendSuccess(new TextComponent("Message upon exit has been set to \"" + message + "\""), false);
+			source.sendSuccess(Component.literal("Message upon exit has been set to \"" + message + "\""), false);
 		});
 		
 		return 1;
@@ -186,7 +185,7 @@ public class BasesCommand
 		{
 			owner.setEnterMessage(message);
 			owner.setExitMessage(message);
-			source.sendSuccess(new TextComponent("Both messages have been set to \"" + message + "\""), false);
+			source.sendSuccess(Component.literal("Both messages have been set to \"" + message + "\""), false);
 		});
 		
 		return 1;
@@ -220,11 +219,11 @@ public class BasesCommand
 		
 		if(creator)
 		{
-			source.sendSuccess(new TextComponent("Added ").append(player.getDisplayName()).append(" as a creator to base with id " + id), false);
+			source.sendSuccess(Component.literal("Added ").append(player.getDisplayName()).append(" as a creator to base with id " + id), false);
 		}
 		else
 		{
-			source.sendSuccess(new TextComponent("Added ").append(player.getDisplayName()).append(" as an owner to base with id " + id), false);
+			source.sendSuccess(Component.literal("Added ").append(player.getDisplayName()).append(" as an owner to base with id " + id), false);
 		}
 		
 		return 1;
@@ -236,7 +235,7 @@ public class BasesCommand
 		ensureOwner(player, id);
 		Property property = getBase(id);
 		property.removeOwner(player.getUUID());
-		source.sendSuccess(new TextComponent("Removed ").append(player.getDisplayName()).append(" as an owner of the base with id " + id), false);
+		source.sendSuccess(Component.literal("Removed ").append(player.getDisplayName()).append(" as an owner of the base with id " + id), false);
 		KardExo.BASES.save();
 		return 1;
 	}
@@ -317,7 +316,7 @@ public class BasesCommand
 		try
 		{
 			PropertyUtils.addChild(parent, child, dimension, boundingBox, displayName, KardExo.BASES);
-			source.sendSuccess(new TextComponent("Added child with id " + child + " to base with id " + id), false);
+			source.sendSuccess(Component.literal("Added child with id " + child + " to base with id " + id), false);
 		}
 		catch(IllegalStateException e)
 		{
@@ -335,7 +334,7 @@ public class BasesCommand
 		try
 		{
 			PropertyUtils.removeChild(parent, child, KardExo.BASES);
-			source.sendSuccess(new TextComponent("Removed child with id " + child + " from base with id " + id), false);
+			source.sendSuccess(Component.literal("Removed child with id " + child + " from base with id " + id), false);
 		}
 		catch(NoSuchElementException e)
 		{
@@ -365,11 +364,11 @@ public class BasesCommand
 		
 		if(enabled)
 		{
-			source.sendSuccess(new TextComponent("Enabled protection for base with id " + id), false);
+			source.sendSuccess(Component.literal("Enabled protection for base with id " + id), false);
 		}
 		else
 		{
-			source.sendSuccess(new TextComponent("Disabled protection for base with id " + id), false);
+			source.sendSuccess(Component.literal("Disabled protection for base with id " + id), false);
 		}
 		
 		return 1;
@@ -394,7 +393,7 @@ public class BasesCommand
 		try
 		{
 			KardExo.BASES.save();
-			source.sendSuccess(new TextComponent("Successfully reloaded bases"), false);
+			source.sendSuccess(Component.literal("Successfully reloaded bases"), false);
 		}
 		catch(Exception e)
 		{

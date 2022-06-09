@@ -31,14 +31,14 @@ import net.kardexo.kardexotools.command.CalculateCommand.Expression.ParseExcepti
 import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 
 public class CalculateCommand
 {
 	private static final Map<UUID, BigDecimal> HISTORY = new HashMap<UUID, BigDecimal>();
 	private static final DynamicCommandExceptionType PARSING_EXCEPTION = new DynamicCommandExceptionType(exception -> new LiteralMessage(String.valueOf(exception)));
 	private static final SimpleCommandExceptionType NO_ANS_STORED = new SimpleCommandExceptionType(new LiteralMessage("No previous value stored for ans"));
-	private static final DynamicCommandExceptionType ERROR_WHILE_COMPUTING = new DynamicCommandExceptionType(cause -> new LiteralMessage("Error while computing result (" + cause + ")"));
+	private static final DynamicCommandExceptionType ERROR_WHILE_COMPUTING = new DynamicCommandExceptionType(cause -> new LiteralMessage("Error while computing result: " + cause));
 	private static final SimpleCommandExceptionType COMPUTATION_TIME_EXCEEDED = new SimpleCommandExceptionType(new LiteralMessage("Computation time exceeded"));
 	private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#0.##########", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 	private static final MathContext MATH_CONTEXT = new MathContext(100);
@@ -72,7 +72,7 @@ public class CalculateCommand
 				try
 				{
 					BigDecimal x = new Expression(expression).eval(HISTORY.get(uuid), mathContext);
-					context.getSource().sendSuccess(new TextComponent(expression + " = " + DECIMAL_FORMAT.format(x)), false);
+					context.getSource().sendSuccess(Component.literal(expression + " = " + DECIMAL_FORMAT.format(x)), false);
 					HISTORY.put(uuid, x);
 					return x;
 				}
@@ -92,7 +92,7 @@ public class CalculateCommand
 		}
 		catch(InterruptedException | ExecutionException e)
 		{
-			throw ERROR_WHILE_COMPUTING.create(e.getMessage());
+			throw ERROR_WHILE_COMPUTING.create(e.getCause().getMessage());
 		}
 	}
 	
@@ -117,7 +117,7 @@ public class CalculateCommand
 			
 			if(parser.getPosition() < this.string.length())
 			{
-				throw new ParseException("Unexpected: " + (char) parser.getChar(), parser.getPosition());
+				throw new ParseException("Unexpected: '" + (char) parser.getChar() + "'", parser.getPosition());
 			}
 			
 			return x;
@@ -166,7 +166,7 @@ public class CalculateCommand
 			{
 				if(!this.consume(c))
 				{
-					throw new ParseException("Expected: " + c, this.getPosition());
+					throw new ParseException("Expected: '" + c + "'", this.getPosition());
 				}
 			}
 			
@@ -229,7 +229,7 @@ public class CalculateCommand
 						}
 						else
 						{
-							throw new ParseException("Unknown operator: " + function, start);
+							throw new ParseException("Unknown operator " + function, start);
 						}
 					}
 					else
@@ -383,6 +383,19 @@ public class CalculateCommand
 							}
 							
 							break;
+						case "ld":
+							x = this.parseArgument();
+							
+							try
+							{
+								x = BigDecimalMath.log2(x, this.context);
+							}
+							catch(ArithmeticException e)
+							{
+								throw new ParseException("Undefined input for function ld: " + DECIMAL_FORMAT.format(x), start);
+							}
+							
+							break;
 						case "sin":
 							x = BigDecimalMath.sin(this.parseArgument(), this.context);
 							break;
@@ -446,12 +459,12 @@ public class CalculateCommand
 							x = this.parseArguments((a, b) -> a.compareTo(b) < 0 ? b : a, true);
 							break;
 						default:
-							throw new ParseException("Unknown function: " + function, start);
+							throw new ParseException("Unknown function " + function, start);
 					}
 				}
 				else
 				{
-					throw new ParseException("Unexpected: " + (char) this.getChar(), this.getPosition());
+					throw new ParseException("Unexpected '" + (char) this.getChar() + "'", this.getPosition());
 				}
 				
 				if(this.consume('^'))

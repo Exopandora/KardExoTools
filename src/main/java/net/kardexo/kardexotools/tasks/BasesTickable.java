@@ -11,10 +11,8 @@ import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.config.OwnerConfig;
 import net.kardexo.kardexotools.property.BaseAccess;
 import net.kardexo.kardexotools.property.Property;
-import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -84,10 +82,10 @@ public class BasesTickable implements Runnable
 			switch(access)
 			{
 				case ENTER:
-					this.server.sendMessage(((MutableComponent) player.getDisplayName()).append(" has entered base with id " + base.getDisplayName(id)), null);
+					this.server.sendSystemMessage(((MutableComponent) player.getDisplayName()).append(" has entered base with id " + base.getDisplayName(id)));
 					break;
 				case LEAVE:
-					this.server.sendMessage(((MutableComponent) player.getDisplayName()).append(" has left base with id " + base.getDisplayName(id)), null);
+					this.server.sendSystemMessage(((MutableComponent) player.getDisplayName()).append(" has left base with id " + base.getDisplayName(id)));
 					break;
 			}
 			
@@ -97,7 +95,7 @@ public class BasesTickable implements Runnable
 				
 				if(playerOwner != null)
 				{
-					playerOwner.sendMessage(this.getFormattedMessage(id, player, base, entry.getValue(), access), Util.NIL_UUID);
+					playerOwner.sendSystemMessage(this.getFormattedMessage(id, player, base, entry.getValue(), access));
 				}
 			}
 		}
@@ -119,15 +117,15 @@ public class BasesTickable implements Runnable
 		
 		if(format != null)
 		{
-			return new TranslatableComponent(format.replace("&name", "%1$s").replace("&base", "%2$s"), new Object[]{player.getDisplayName(), base.getDisplayName(id, player.getServer().getProfileCache())});
+			return Component.translatable(format.replace("&name", "%1$s").replace("&base", "%2$s"), new Object[]{player.getDisplayName(), base.getDisplayName(id, player.getServer().getProfileCache())});
 		}
 		
 		switch(access)
 		{
 			case ENTER:
-				return new TranslatableComponent(KardExo.CONFIG.getData().getPropertyDefaultEnterMessage(), new Object[]{player.getDisplayName(), base.getDisplayName(id, player.getServer().getProfileCache())});
+				return Component.translatable(KardExo.CONFIG.getData().getPropertyDefaultEnterMessage(), new Object[]{player.getDisplayName(), base.getDisplayName(id, player.getServer().getProfileCache())});
 			case LEAVE:
-				return new TranslatableComponent(KardExo.CONFIG.getData().getPropertyDefaultExitMessage(), new Object[]{player.getDisplayName(), base.getDisplayName(id, player.getServer().getProfileCache())});
+				return Component.translatable(KardExo.CONFIG.getData().getPropertyDefaultExitMessage(), new Object[]{player.getDisplayName(), base.getDisplayName(id, player.getServer().getProfileCache())});
 		}
 		
 		return null;

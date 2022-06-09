@@ -1,7 +1,7 @@
 package net.kardexo.kardexotools.tasks;
 
 import net.kardexo.kardexotools.util.Util;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 
 public class TaskDispatcher implements ITaskDispatcher
@@ -22,6 +22,6 @@ public class TaskDispatcher implements ITaskDispatcher
 	@Override
 	public void warn(ITask task, long millis)
 	{
-		Util.broadcastMessage(this.server, new TextComponent(task.getWarningMessage(millis)));
+		Util.broadcastMessage(this.server, Component.literal(task.getWarningMessage(millis)));
 	}
 }

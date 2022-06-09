@@ -10,7 +10,6 @@ import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
 import net.minecraft.network.protocol.game.ClientboundSetExperiencePacket;
 import net.minecraft.server.commands.TeleportCommand;
@@ -21,7 +20,7 @@ public class CommandUtils
 {
 	public static CommandSyntaxException simpleException(String message)
 	{
-		return CommandUtils.simpleException(new TranslatableComponent(message));
+		return CommandUtils.simpleException(Component.translatable(message));
 	}
 	
 	public static CommandSyntaxException simpleException(Component message)
