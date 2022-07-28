@@ -1,7 +1,6 @@
 package net.kardexo.kardexotools.util;
 
 import net.kardexo.kardexotools.KardExo;
-import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 
@@ -38,7 +37,7 @@ public class Util
 	{
 		if(server.getPlayerList() != null)
 		{
-			server.getPlayerList().broadcastSystemMessage(message, ChatType.SYSTEM);
+			server.getPlayerList().broadcastSystemMessage(message, false);
 		}
 	}
 }
