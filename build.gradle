@@ -6,12 +6,16 @@ plugins {
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 archivesBaseName = "${mod_name}-${minecraft_version}"
 
+configurations {
+	shade.extendsFrom(implementation)
+	compileClasspath.extendsFrom(shade)
+}
+
 dependencies {
 	minecraft "com.mojang:minecraft:${minecraft_version}"
 	mappings loom.officialMojangMappings()
 	modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
-	implementation "ch.obermuhlner:big-math:2.3.+"
-	shadow "ch.obermuhlner:big-math:2.3.+"
+	shade "ch.obermuhlner:big-math:${big_math_version}"
 }
 
 loom {
@@ -32,11 +36,11 @@ processResources {
 }
 
 shadowJar {
-	configurations = [project.configurations.compileClasspath]
+	configurations = [project.configurations.shade]
 	from sourceSets.main.output
 	duplicatesStrategy = 'exclude'
 	exclude('META-INF/**')
-	relocate 'ch.obermuhlner', 'net.kardexo.kardexotools.include.ch.obermuhlner'
+	relocate 'ch.obermuhlner' , 'net.kardexo.kardexotools.include.ch.obermuhlner'
 	classifier 'dev'
 }
 
