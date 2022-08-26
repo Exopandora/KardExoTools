@@ -24,6 +24,7 @@ public class MixinServerPlayerGameMode
 	protected ServerPlayer player;
 	
 	private boolean isVeinMining = false;
+	private boolean dropAtPlayer = false;
 	
 	@Inject
 	(
@@ -38,7 +39,11 @@ public class MixinServerPlayerGameMode
 			if(!this.isVeinMining)
 			{
 				this.isVeinMining = true;
-				info.setReturnValue(Veinminer.mine((ServerPlayerGameMode) (Object) this, blockPos, this.player, this.level));
+				this.dropAtPlayer = false;
+				info.setReturnValue(Veinminer.mine((ServerPlayerGameMode) (Object) this, blockPos, this.player, this.level, dropAtPlayer ->
+				{
+					this.dropAtPlayer = dropAtPlayer;
+				}));
 				this.isVeinMining = false;
 				info.cancel();
 			}
@@ -62,6 +67,6 @@ public class MixinServerPlayerGameMode
 	)
 	private BlockPos changeDropPos(BlockPos blockPos)
 	{
-		return this.isVeinMining ? this.player.blockPosition() : blockPos;
+		return this.dropAtPlayer ? this.player.blockPosition() : blockPos;
 	}
 }

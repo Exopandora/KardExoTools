@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import com.google.common.collect.Sets;
@@ -41,7 +42,7 @@ public class Veinminer
 {
 	private static final PlayerHistory<Vein> HISTORY = new PlayerHistory<Vein>(KardExo.CONFIG.getData().getVeinminerHistorySize());
 	
-	public static boolean mine(ServerPlayerGameMode gameMode, BlockPos pos, ServerPlayer player, ServerLevel level)
+	public static boolean mine(ServerPlayerGameMode gameMode, BlockPos pos, ServerPlayer player, ServerLevel level, Consumer<Boolean> dropAtPlayer)
 	{
 		UUID uuid = player.getUUID();
 		ItemStack item = player.getMainHandItem();
@@ -64,6 +65,7 @@ public class Veinminer
 					
 					if(!queue.isEmpty())
 					{
+						dropAtPlayer.accept(true);
 						BlockState next = state;
 						boolean harvest = gameMode.destroyBlock(pos);
 						
