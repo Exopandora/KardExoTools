@@ -24,17 +24,15 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.GameMasterBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -43,7 +41,7 @@ public class Veinminer
 {
 	private static final PlayerHistory<Vein> HISTORY = new PlayerHistory<Vein>(KardExo.CONFIG.getData().getVeinminerHistorySize());
 	
-	public static boolean mine(BlockPos pos, ServerPlayer player, ServerLevel level, GameType gameModeForPlayer)
+	public static boolean mine(ServerPlayerGameMode gameMode, BlockPos pos, ServerPlayer player, ServerLevel level)
 	{
 		UUID uuid = player.getUUID();
 		ItemStack item = player.getMainHandItem();
@@ -67,7 +65,7 @@ public class Veinminer
 					if(!queue.isEmpty())
 					{
 						BlockState next = state;
-						boolean harvest = Veinminer.destroyBlock(level, player, gameModeForPlayer, pos, true);
+						boolean harvest = gameMode.destroyBlock(pos);
 						
 						if(harvest)
 						{
@@ -87,7 +85,7 @@ public class Veinminer
 								
 								next = level.getBlockState(queue.peek());
 								
-								if(!Veinminer.destroyBlock(level, player, gameModeForPlayer, queue.peek(), true))
+								if(!gameMode.destroyBlock(queue.peek()))
 								{
 									break;
 								}
@@ -107,7 +105,7 @@ public class Veinminer
 			}
 		}
 		
-		return Veinminer.destroyBlock(level, player, gameModeForPlayer, pos, false);
+		return gameMode.destroyBlock(pos);
 	}
 	
 	private static PriorityQueue<BlockPos> calculateVein(Player player, int limit, BlockPredicate predicate, VeinConfig config, BlockPos pos, ServerLevel level)
@@ -294,59 +292,5 @@ public class Veinminer
 	public static boolean hasUndo(UUID uuid)
 	{
 		return Veinminer.HISTORY.hasUndo(uuid);
-	}
-	
-	private static boolean destroyBlock(ServerLevel level, ServerPlayer player, GameType gameModeForPlayer, BlockPos blockPos, boolean dropAtPlayer)
-	{
-		BlockState blockState = level.getBlockState(blockPos);
-		
-		if(!player.getMainHandItem().getItem().canAttackBlock(blockState, level, blockPos, player))
-		{
-			return false;
-		}
-		else
-		{
-			BlockEntity blockEntity = level.getBlockEntity(blockPos);
-			Block block = blockState.getBlock();
-			
-			if(block instanceof GameMasterBlock && !player.canUseGameMasterBlocks())
-			{
-				level.sendBlockUpdated(blockPos, blockState, blockState, 3);
-				return false;
-			}
-			else if(player.blockActionRestricted(level, blockPos, gameModeForPlayer))
-			{
-				return false;
-			}
-			else
-			{
-				block.playerWillDestroy(level, blockPos, blockState, player);
-				boolean canRemove = level.removeBlock(blockPos, false);
-				
-				if(canRemove)
-				{
-					block.destroy(level, blockPos, blockState);
-				}
-				
-				if(gameModeForPlayer.isCreative())
-				{
-					return true;
-				}
-				else
-				{
-					ItemStack mainItemStack = player.getMainHandItem();
-					ItemStack mainItemStackCopy = mainItemStack.copy();
-					boolean correctToolForDrops = player.hasCorrectToolForDrops(blockState);
-					mainItemStack.mineBlock(level, blockState, blockPos, player);
-					
-					if(canRemove && correctToolForDrops)
-					{
-						block.playerDestroy(level, player, dropAtPlayer ? player.blockPosition() : blockPos, blockState, blockEntity, mainItemStackCopy);
-					}
-					
-					return true;
-				}
-			}
-		}
 	}
 }

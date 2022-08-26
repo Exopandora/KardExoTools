@@ -1,8 +1,11 @@
 package net.kardexo.kardexotools.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.kardexo.kardexotools.util.PropertyUtils;
 import net.kardexo.kardexotools.veinminer.Veinminer;
@@ -10,10 +13,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
-import net.minecraft.world.level.GameType;
 
 @Mixin(ServerPlayerGameMode.class)
-public abstract class MixinServerPlayerGameMode
+public class MixinServerPlayerGameMode
 {
 	@Shadow
 	protected ServerLevel level;
@@ -21,22 +23,45 @@ public abstract class MixinServerPlayerGameMode
 	@Shadow
 	protected ServerPlayer player;
 	
-	@Shadow
-	private GameType gameModeForPlayer;
+	private boolean isVeinMining = false;
 	
-	@Shadow
-	public abstract boolean isCreative();
-	
-	/**
-	 * Destroys the vein at the given position and drops the resulting items at the position.
-	 * 
-	 * @author Exopandora
-	 * @reason Used to implement veinminer functionality
-	 * @return <code>true</code> if the block was harvested, otherwise <code>false</code>
-	 */
-	@Overwrite
-	public boolean destroyBlock(BlockPos blockPos)
+	@Inject
+	(
+		method = "destroyBlock",
+		at = @At("HEAD"),
+		cancellable = true
+	)
+	public void destroyBlock(BlockPos blockPos, CallbackInfoReturnable<Boolean> info)
 	{
-		return PropertyUtils.canHarvestBlock(this.player, blockPos) && Veinminer.mine(blockPos, this.player, this.level, this.gameModeForPlayer);
+		if(PropertyUtils.canHarvestBlock(this.player, blockPos))
+		{
+			if(!this.isVeinMining)
+			{
+				this.isVeinMining = true;
+				info.setReturnValue(Veinminer.mine((ServerPlayerGameMode) (Object) this, blockPos, this.player, this.level));
+				this.isVeinMining = false;
+				info.cancel();
+			}
+		}
+		else
+		{
+			info.setReturnValue(false);
+			info.cancel();
+		}
+	}
+	
+	@ModifyArg
+	(
+		method = "destroyBlock",
+		at = @At
+		(
+			value = "INVOKE",
+			target = "net/minecraft/world/level/block/Block.playerDestroy(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/item/ItemStack;)V"
+		),
+		index = 2
+	)
+	private BlockPos changeDropPos(BlockPos blockPos)
+	{
+		return this.isVeinMining ? this.player.blockPosition() : blockPos;
 	}
 }
