@@ -13,7 +13,7 @@ public class Util
 			broadcastMessage(server, Component.translatable("commands.save.saving"));
 		}
 		
-		boolean success = server.saveEverything(true, KardExo.CONFIG.getData().isSaveFlush(), false);
+		boolean success = server.saveEverything(true, KardExo.CONFIG.getData().isSaveFlush(), true);
 		
 		if(displayMessages)
 		{

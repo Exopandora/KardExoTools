@@ -119,11 +119,11 @@ public class KardExo
 	
 	public static void setLevelSaving(MinecraftServer server, boolean save)
 	{
-		for(ServerLevel worldserver : server.getAllLevels())
+		for(ServerLevel level : server.getAllLevels())
 		{
-			if(worldserver != null && !worldserver.noSave)
+			if(level != null)
 			{
-				worldserver.noSave = !save;
+				level.noSave = !save;
 			}
 		}
 	}
