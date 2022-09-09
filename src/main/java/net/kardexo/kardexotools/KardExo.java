@@ -167,6 +167,7 @@ public class KardExo
 		addVein(Blocks.ACACIA_LOG, 10, true, config);
 		addVein(Blocks.CRIMSON_STEM, 26, true, config);
 		addVein(Blocks.WARPED_STEM, 26, true, config);
+		addVein(Blocks.MANGROVE_LOG, 10, true, config);
 		
 		addVein(Blocks.OAK_LEAVES, 5, true, config);
 		addVein(Blocks.SPRUCE_LEAVES, 5, true, config);
@@ -176,6 +177,7 @@ public class KardExo
 		addVein(Blocks.ACACIA_LEAVES, 5, true, config);
 		addVein(Blocks.NETHER_WART_BLOCK, 5, true, config);
 		addVein(Blocks.WARPED_WART_BLOCK, 5, true, config);
+		addVein(Blocks.MANGROVE_LEAVES, 5, true, config);
 		
 		addVein(Blocks.ANDESITE, 15, true, config);
 		addVein(Blocks.DIORITE, 15, true, config);
