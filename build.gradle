@@ -3,6 +3,8 @@ plugins {
 	id 'com.github.johnrengelman.shadow' version '7.1.+'
 }
 
+import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
+
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 archivesBaseName = "${mod_name}-${minecraft_version}"
 
@@ -16,6 +18,7 @@ dependencies {
 	mappings loom.officialMojangMappings()
 	modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
 	shade "ch.obermuhlner:big-math:${big_math_version}"
+	shade "org.apache.commons:commons-compress:${commons_compress_version}"
 }
 
 loom {
@@ -38,11 +41,16 @@ processResources {
 shadowJar {
 	configurations = [project.configurations.shade]
 	from sourceSets.main.output
-	duplicatesStrategy = 'exclude'
-	exclude('META-INF/**')
-	relocate 'ch.obermuhlner' , 'net.kardexo.kardexotools.include.ch.obermuhlner'
+	duplicatesStrategy = 'include'
 	classifier 'dev'
 }
+
+task relocateShadowJar(type: ConfigureShadowRelocation) {
+	target = tasks.shadowJar
+	prefix = "net.kardexo.kardexotools.include"
+}
+
+tasks.shadowJar.dependsOn tasks.relocateShadowJar
 
 remapJar {
 	dependsOn(shadowJar)
