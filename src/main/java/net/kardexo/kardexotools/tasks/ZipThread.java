@@ -1,20 +1,29 @@
 package net.kardexo.kardexotools.tasks;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.parallel.InputStreamSupplier;
+
+import net.kardexo.kardexotools.KardExo;
 
 public class ZipThread extends Thread
 {
+//	private static final ParallelScatterZipCreator SCATTER_ZIP_CREATOR = new ParallelScatterZipCreator();
+	
 	private final Path srcFolder;
 	private final Path destZipFile;
 	private final Consumer<File> callback;
@@ -44,28 +53,52 @@ public class ZipThread extends Thread
 	private static File zip(Path sourceDir, Path outputFile) throws IOException, FileNotFoundException
 	{
 		Files.createDirectories(outputFile.getParent());
-		ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(outputFile.toFile()));
-	    ZipThread.zip(sourceDir, zip);
-		IOUtils.closeQuietly(zip);
+		FileOutputStream outputStream = new FileOutputStream(outputFile.toFile());
+		
+		try(ZipArchiveOutputStream zip = new ZipArchiveOutputStream(outputStream))
+		{
+			ExecutorService executor = Executors.newFixedThreadPool(KardExo.CONFIG.getData().getBackupThreadCount());
+			ParallelScatterZipCreator zipCreator = new ParallelScatterZipCreator(executor);
+			ZipThread.zip(sourceDir.toFile().getAbsolutePath(), sourceDir, zip, zipCreator);
+			
+			try
+			{
+				zipCreator.writeTo(zip);
+			}
+			catch(IOException | InterruptedException | ExecutionException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
 		return outputFile.toFile();
 	}
 	
-	private static void zip(Path sourceDir, ZipOutputStream zip) throws IOException, FileNotFoundException
+	private static void zip(String root, Path sourceDir, ZipArchiveOutputStream zip, ParallelScatterZipCreator zipCreator) throws IOException, FileNotFoundException
 	{
 		for(File file : sourceDir.toFile().listFiles())
 		{
 			if(file.isDirectory())
 			{
-				ZipThread.zip(file.toPath(), zip);
+				ZipThread.zip(root, file.toPath(), zip, zipCreator);
 			}
 			else if(!file.getName().equals("session.lock"))
 			{
-	            ZipEntry entry = new ZipEntry(file.getPath());
-	            zip.putNextEntry(entry);
-	            
-	            FileInputStream input = new FileInputStream(file);
-	            IOUtils.copy(input, zip);
-				IOUtils.closeQuietly(input);
+				String relativePath = file.getAbsolutePath().substring(root.length() + 1);
+				InputStreamSupplier streamSupplier = () ->
+				{
+					try
+					{
+						return Files.newInputStream(file.toPath());
+					}
+					catch(IOException e)
+					{
+						return InputStream.nullInputStream();
+					}
+				};
+				ZipArchiveEntry zipArchiveEntry = new ZipArchiveEntry(relativePath);
+				zipArchiveEntry.setMethod(ZipEntry.DEFLATED);
+				zipCreator.addArchiveEntry(zipArchiveEntry, streamSupplier);
 			}
 		}
 	}

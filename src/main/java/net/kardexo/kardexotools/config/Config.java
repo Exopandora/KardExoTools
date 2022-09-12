@@ -21,6 +21,8 @@ public class Config
 	private long[] backupWarningTimes = {5, 10};
 	@SerializedName("backup_warning_message")
 	private String backupWarningMessage = "Starting backup in %d seconds";
+	@SerializedName("backup_thread_count")
+	private int backupThreadCount = 4;
 	
 	@SerializedName("shutdown_enabled")
 	private boolean shutdownEnabled = false;
@@ -299,5 +301,15 @@ public class Config
 	public void setPropertyDefaultExitMessage(String propertyDefaultExitMessage)
 	{
 		this.propertyDefaultExitMessage = propertyDefaultExitMessage;
+	}
+	
+	public int getBackupThreadCount()
+	{
+		return this.backupThreadCount > 0 ? this.backupThreadCount : Runtime.getRuntime().availableProcessors();
+	}
+	
+	public void setBackupThreadCount(int backupThreadCount)
+	{
+		this.backupThreadCount = backupThreadCount;
 	}
 }
