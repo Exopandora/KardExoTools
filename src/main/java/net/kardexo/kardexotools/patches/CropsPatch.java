@@ -27,25 +27,21 @@ public class CropsPatch
 		
 		List<ItemStack> drops = Block.getDrops(state, (ServerLevel) level, pos, null);
 		
-		for(ItemStack stack : drops)
+		for(ItemStack drop : drops)
 		{
-			if(stack.getItem().equals(seed))
+			if(drop.getItem().equals(seed))
 			{
-				stack.shrink(1);
+				drop.shrink(1);
+			}
+			
+			if(drop.getCount() > 0)
+			{
+				Block.popResource((ServerLevel) level, pos, drop);
 			}
 		}
 		
 		player.awardStat(Stats.BLOCK_MINED.get(block));
 		player.awardStat(Stats.ITEM_USED.get(seed));
-		
-		drops.forEach(drop ->
-		{
-			if(drop.getCount() > 0)
-			{
-				Block.popResource((ServerLevel) level, pos, drop);
-			}
-		});
-		
 		level.setBlock(pos, defaultState, 2);
 		return InteractionResult.CONSUME;
 	}
