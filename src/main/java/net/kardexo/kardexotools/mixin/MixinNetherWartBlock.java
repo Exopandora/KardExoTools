@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.NetherWartBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
-@Mixin(NetherWartBlock.class)
+@Mixin(value = NetherWartBlock.class, priority = 1001)
 public abstract class MixinNetherWartBlock extends BushBlock
 {
 	protected MixinNetherWartBlock(Properties properties)
@@ -22,8 +22,8 @@ public abstract class MixinNetherWartBlock extends BushBlock
 	}
 	
 	@Override
-	public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult)
+	public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand hand, BlockHitResult hitResult)
 	{
-		return CropsPatch.use(blockState, level, blockPos, player, interactionHand, blockHitResult, (NetherWartBlock) (Object) this, this.asItem(), NetherWartBlock.AGE, NetherWartBlock.MAX_AGE, this.defaultBlockState().setValue(NetherWartBlock.AGE, Integer.valueOf(0)));
+		return CropsPatch.use(blockState, level, blockPos, player, hand, hitResult, (NetherWartBlock) (Object) this, this.asItem(), NetherWartBlock.AGE, NetherWartBlock.MAX_AGE, this.defaultBlockState().setValue(NetherWartBlock.AGE, 0));
 	}
 }
