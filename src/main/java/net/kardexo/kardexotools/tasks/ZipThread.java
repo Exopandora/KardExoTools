@@ -22,8 +22,6 @@ import net.kardexo.kardexotools.KardExo;
 
 public class ZipThread extends Thread
 {
-//	private static final ParallelScatterZipCreator SCATTER_ZIP_CREATOR = new ParallelScatterZipCreator();
-	
 	private final Path srcFolder;
 	private final Path destZipFile;
 	private final Consumer<File> callback;
