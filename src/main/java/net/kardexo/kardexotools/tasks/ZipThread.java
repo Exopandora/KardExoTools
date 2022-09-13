@@ -43,12 +43,12 @@ public class ZipThread extends Thread
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
 			this.callback.accept(null);
+			e.printStackTrace();
 		}
 	}
 	
-	private static File zip(Path sourceDir, Path outputFile) throws IOException, FileNotFoundException
+	private static File zip(Path sourceDir, Path outputFile) throws IOException, FileNotFoundException, InterruptedException, ExecutionException
 	{
 		Files.createDirectories(outputFile.getParent());
 		FileOutputStream outputStream = new FileOutputStream(outputFile.toFile());
@@ -58,15 +58,7 @@ public class ZipThread extends Thread
 			ExecutorService executor = Executors.newFixedThreadPool(KardExo.CONFIG.getData().getBackupThreadCount());
 			ParallelScatterZipCreator zipCreator = new ParallelScatterZipCreator(executor);
 			ZipThread.zip(sourceDir.toFile().getAbsolutePath(), sourceDir, zip, zipCreator);
-			
-			try
-			{
-				zipCreator.writeTo(zip);
-			}
-			catch(IOException | InterruptedException | ExecutionException e)
-			{
-				e.printStackTrace();
-			}
+			zipCreator.writeTo(zip);
 		}
 		
 		return outputFile.toFile();
