@@ -57,14 +57,14 @@ public class ZipThread extends Thread
 		{
 			ExecutorService executor = Executors.newFixedThreadPool(KardExo.CONFIG.getData().getBackupThreadCount());
 			ParallelScatterZipCreator zipCreator = new ParallelScatterZipCreator(executor);
-			ZipThread.zip(sourceDir.toFile().getAbsolutePath(), sourceDir, zip, zipCreator);
+			ZipThread.zip(sourceDir.toAbsolutePath().getParent(), sourceDir, zip, zipCreator);
 			zipCreator.writeTo(zip);
 		}
 		
 		return outputFile.toFile();
 	}
 	
-	private static void zip(String root, Path sourceDir, ZipArchiveOutputStream zip, ParallelScatterZipCreator zipCreator) throws IOException, FileNotFoundException
+	private static void zip(Path root, Path sourceDir, ZipArchiveOutputStream zip, ParallelScatterZipCreator zipCreator) throws IOException, FileNotFoundException
 	{
 		for(File file : sourceDir.toFile().listFiles())
 		{
@@ -74,7 +74,7 @@ public class ZipThread extends Thread
 			}
 			else if(!file.getName().equals("session.lock"))
 			{
-				String relativePath = file.getAbsolutePath().substring(root.length() + 1);
+				String relativePath = file.getAbsolutePath().substring(root.toAbsolutePath().toString().length() + 1);
 				InputStreamSupplier streamSupplier = () ->
 				{
 					try
