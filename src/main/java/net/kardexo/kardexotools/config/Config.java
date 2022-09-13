@@ -305,7 +305,7 @@ public class Config
 	
 	public int getBackupThreadCount()
 	{
-		return this.backupThreadCount > 0 ? this.backupThreadCount : Runtime.getRuntime().availableProcessors();
+		return this.backupThreadCount > 0 ? Math.min(this.backupThreadCount, Runtime.getRuntime().availableProcessors()) : Runtime.getRuntime().availableProcessors();
 	}
 	
 	public void setBackupThreadCount(int backupThreadCount)
