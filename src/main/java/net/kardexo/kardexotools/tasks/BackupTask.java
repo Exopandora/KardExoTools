@@ -3,6 +3,7 @@ package net.kardexo.kardexotools.tasks;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
@@ -44,11 +45,12 @@ public class BackupTask implements ITask
 			String folderName = ((MinecraftServerAccessor) server).getStorageSource().getLevelId();
 			String time = String.format("%02d_%02d_%04d-%02d_%02d_%02d", date.getDayOfMonth(), date.getMonthValue(), date.getYear(), date.getHour(), date.getMinute(), date.getSecond());
 			String fileName = folderName + "-" + time;
+			Path output = KardExo.CONFIG.getData().getBackupDirectory().toPath().resolve(fileName + ".zip");
 			
 			this.createDirectories();
 			this.purgeFiles(folderName);
 			
-			ZipThread zipper = new ZipThread("backup", Paths.get(folderName), KardExo.CONFIG.getData().getBackupDirectory().toPath().resolve(fileName + ".zip"), file ->
+			ZipThread zipper = new ZipThread("backup", Paths.get(folderName), output, file ->
 			{
 				this.printResult(server, file, start);
 				server.execute(() -> KardExo.setLevelSaving(server, !KardExo.CONFIG.getData().isDisableAutoSaving()));
@@ -77,17 +79,14 @@ public class BackupTask implements ITask
 		if(backupDirectory.exists() && backupDirectory.canWrite() && backupDirectory.listFiles().length >= KardExo.CONFIG.getData().getBackupFiles())
 		{
 			File purgeFile = null;
-			long lastMod = Long.MAX_VALUE;
+			long lastModified = Long.MAX_VALUE;
 			
 			for(File file : backupDirectory.listFiles())
 			{
-				if(file.getName().contains(folderName))
+				if(file.getName().contains(folderName) && file.lastModified() < lastModified)
 				{
-					if(file.lastModified() < lastMod)
-					{
-						lastMod = file.lastModified();
-						purgeFile = file;
-					}
+					lastModified = file.lastModified();
+					purgeFile = file;
 				}
 			}
 			
@@ -107,11 +106,11 @@ public class BackupTask implements ITask
 			MutableComponent size = Component.literal(FileUtils.byteCountToDisplaySize(bytes));
 			Component hover = Component.translatable("%s\n%s bytes\n%s", file.getName(), String.format("%,d", bytes), DurationFormatUtils.formatDuration(duration, "HH:mm:ss"));
 			size.setStyle(Style.EMPTY.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, hover)));
-			Util.broadcastMessage(server, Component.translatable("Backup Complete (%s)", size));
+			Util.broadcastMessage(server, Component.translatable("Backup complete (%s)", size));
 		}
 		else
 		{
-			Util.broadcastMessage(server, Component.literal("Backup Failed"));
+			Util.broadcastMessage(server, Component.literal("Backup failed"));
 		}
 	}
 	
