@@ -343,10 +343,10 @@ public class CalculateCommand
 							
 							break;
 						case "ceil":
-							x = this.parseArgument().round(new MathContext(this.context.getPrecision(), RoundingMode.CEILING));
+							x = this.parseArgument().setScale(0, RoundingMode.CEILING);
 							break;
 						case "floor":
-							x = this.parseArgument().round(new MathContext(this.context.getPrecision(), RoundingMode.FLOOR));
+							x = this.parseArgument().setScale(0, RoundingMode.FLOOR);
 							break;
 						case "rad":
 							x = this.parseArgument().multiply(BigDecimalMath.pi(this.context).divide(new BigDecimal(180), this.context), this.context);
@@ -355,7 +355,7 @@ public class CalculateCommand
 							x = this.parseArgument().multiply(new BigDecimal(180).divide(BigDecimalMath.pi(this.context), this.context), this.context);
 							break;
 						case "round":
-							x = this.parseArgument().round(this.context);
+							x = this.parseArgument().setScale(0, RoundingMode.HALF_UP);
 							break;
 						case "log":
 							x = this.parseArgument();
