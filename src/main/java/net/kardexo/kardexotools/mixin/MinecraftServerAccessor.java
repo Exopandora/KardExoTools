@@ -9,6 +9,6 @@ import net.minecraft.world.level.storage.LevelStorageSource.LevelStorageAccess;
 @Mixin(MinecraftServer.class)
 public interface MinecraftServerAccessor
 {
-	@Accessor("storageSource")
-	public LevelStorageAccess getStorageSource();
+	@Accessor
+	LevelStorageAccess getStorageSource();
 }

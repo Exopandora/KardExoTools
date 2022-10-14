@@ -26,16 +26,16 @@ public abstract class MixinCropBlock extends BushBlock implements BonemealableBl
 	}
 	
 	@Shadow
-	protected abstract ItemLike getBaseSeedId();
+	abstract ItemLike getBaseSeedId();
 	
 	@Shadow
-	public abstract IntegerProperty getAgeProperty();
+	abstract IntegerProperty getAgeProperty();
 	
 	@Shadow
-	public abstract int getMaxAge();
+	abstract int getMaxAge();
 	
 	@Shadow
-	public abstract BlockState getStateForAge(int age);
+	abstract BlockState getStateForAge(int age);
 	
 	@Override
 	public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand hand, BlockHitResult hitResult)
