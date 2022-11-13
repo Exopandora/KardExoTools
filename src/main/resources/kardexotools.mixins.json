@@ -12,7 +12,8 @@
 		"MixinMinecraftServer",
 		"MixinNetherWartBlock",
 		"MixinServerPlayer",
-		"MixinServerPlayerGameMode"
+		"MixinServerPlayerGameMode",
+		"MixinSpawnCommand"
 	],
 	"injectors": {
 		"defaultRequire": 1
