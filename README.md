@@ -27,6 +27,7 @@ resource    | Calculate resources needed for specified area                     
 setbiome    | Set biome for specified area                                        | Everyone
 sethome     | Set home location                                                   | Everyone
 spawn       | Teleport to spawn location                                          | Everyone
+stacks      | Calculate boxes/stacks/items needed for a given item count          | Everyone
 undo        | Undo last veinmine                                                  | Everyone
 veinminer   | Toggle veinminer and display vein blocks                            | Everyone
 whereis     | Locate players                                                      | Everyone
