@@ -21,6 +21,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.resources.ResourceLocation;
@@ -48,13 +49,13 @@ public class BlockPredicate
 		this.isTag = isTag;
 	}
 	
-	public boolean matches(Level level, BlockPos pos)
+	public boolean matches(Registry<Block> registry, Level level, BlockPos pos)
 	{
 		BlockState blockState = level.getBlockState(pos);
 		
 		if(this.isTag)
 		{
-			TagKey<Block> tag = TagKey.create(Registry.BLOCK_REGISTRY, this.block);
+			TagKey<Block> tag = TagKey.create(Registries.BLOCK, this.block);
 			
 			if(!blockState.is(tag))
 			{
@@ -90,7 +91,7 @@ public class BlockPredicate
 			return true;
 		}
 		
-		Block block = Registry.BLOCK.get(this.block);
+		Block block = registry.get(this.block);
 		
 		if(!blockState.is(block))
 		{

@@ -9,7 +9,7 @@ import net.kardexo.kardexotools.util.CommandUtils;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -36,7 +36,7 @@ public class HomeCommand
 		}
 		
 		MinecraftServer server = source.getServer();
-		ServerLevel level = server.getLevel(ResourceKey.create(Registry.DIMENSION_REGISTRY, config.getHome().getDimension()));
+		ServerLevel level = server.getLevel(ResourceKey.create(Registries.DIMENSION, config.getHome().getDimension()));
 		BlockPos position = HomeCommand.spawnPosition(level, config.getHome().getPosition());
 		
 		return CommandUtils.teleport(source, sender, level, position);

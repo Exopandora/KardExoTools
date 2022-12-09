@@ -3,7 +3,6 @@ package net.kardexo.kardexotools.config;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import com.google.gson.reflect.TypeToken;
 
@@ -11,12 +10,7 @@ public class MapFile<K, V> extends ConfigFile<Map<K, V>>
 {
 	public MapFile(File file, TypeToken<Map<K, V>> typeToken)
 	{
-		super(file, typeToken, HashMap::new);
-	}
-	
-	public MapFile(File file, TypeToken<Map<K, V>> typeToken, Supplier<Map<K, V>> initial)
-	{
-		super(file, typeToken, initial);
+		super(file, typeToken, new HashMap<K, V>());
 	}
 	
 	@Override

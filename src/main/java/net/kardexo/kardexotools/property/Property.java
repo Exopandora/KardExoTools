@@ -15,7 +15,7 @@ import com.mojang.authlib.GameProfile;
 import net.kardexo.kardexotools.config.OwnerConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.HoverEvent;
@@ -65,7 +65,7 @@ public class Property
 	
 	public ResourceKey<Level> getDimension()
 	{
-		return ResourceKey.create(Registry.DIMENSION_REGISTRY, this.dimension);
+		return ResourceKey.create(Registries.DIMENSION, this.dimension);
 	}
 	
 	public void setDimension(ResourceLocation dimension)

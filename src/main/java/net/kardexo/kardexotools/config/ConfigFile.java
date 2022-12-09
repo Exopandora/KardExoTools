@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.lang.reflect.Type;
-import java.util.function.Supplier;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -49,15 +48,11 @@ public class ConfigFile<T>
 		this(file, typeToken, null);
 	}
 	
-	public ConfigFile(File file, TypeToken<T> typeToken, Supplier<T> initial)
+	protected ConfigFile(File file, TypeToken<T> typeToken, T initial)
 	{
 		this.file = file;
 		this.typeToken = typeToken;
-		
-		if(initial != null)
-		{
-			this.data = initial.get();
-		}
+		this.data = initial;
 	}
 	
 	public T getData()
