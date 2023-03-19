@@ -9,8 +9,10 @@
 		"MinecraftServerAccessor",
 		"MixinCropBlock",
 		"MixinDedicatedServer",
+		"MixinLeashFenceKnotEntity",
 		"MixinMinecraftServer",
 		"MixinNetherWartBlock",
+		"MixinServerGamePacketListenerImpl",
 		"MixinServerPlayer",
 		"MixinServerPlayerGameMode",
 		"MixinSpawnCommand"
