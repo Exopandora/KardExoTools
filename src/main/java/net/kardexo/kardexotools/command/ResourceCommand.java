@@ -12,6 +12,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
@@ -27,21 +28,21 @@ public class ResourceCommand
 	
 	private static int resource(CommandSourceStack source, BoundingBox area) throws CommandSyntaxException
 	{
-		Map<String, Integer> map = new HashMap<String, Integer>();
+		Map<Block, Integer> map = new HashMap<Block, Integer>();
 		
 		for(BlockPos blockpos : BlockPos.MutableBlockPos.betweenClosed(area.minX(), area.minY(), area.minZ(), area.maxX(), area.maxY(), area.maxZ()))
 		{
-			String location = source.getLevel().getBlockState(blockpos).getBlock().getDescriptionId();
+			Block block = source.getLevel().getBlockState(blockpos).getBlock();
 			
-			if(!location.equals(Blocks.AIR.getDescriptionId()))
+			if(!Blocks.AIR.equals(block))
 			{
-				map.compute(location, (key, value) -> value == null ? 0 : value + 1);
+				map.compute(block, (key, value) -> value == null ? 1 : value + 1);
 			}
 		}
 		
-		for(Entry<String, Integer> entry : map.entrySet())
+		for(Entry<Block, Integer> entry : map.entrySet())
 		{
-			source.sendSuccess(Component.translatable("x" + entry.getValue() + " %s", Component.translatable(entry.getKey())), false);
+			source.sendSuccess(Component.translatable("x" + entry.getValue() + " %s", Component.translatable(entry.getKey().getDescriptionId())), false);
 		}
 		
 		return map.values().stream().reduce(Integer::sum).orElse(0);
