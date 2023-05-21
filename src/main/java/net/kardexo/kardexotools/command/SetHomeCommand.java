@@ -18,7 +18,8 @@ public class SetHomeCommand
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
 	{
 		dispatcher.register(Commands.literal("sethome")
-				.executes(context -> setHome(context.getSource())));
+			.requires(source -> KardExo.CONFIG.getData().isSethomeCommandEnabled())
+			.executes(context -> setHome(context.getSource())));
 	}
 	
 	private static int setHome(CommandSourceStack source) throws CommandSyntaxException

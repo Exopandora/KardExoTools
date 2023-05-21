@@ -25,8 +25,9 @@ public class WhereIsCommand
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
 	{
 		dispatcher.register(Commands.literal("whereis")
-				.then(Commands.argument("target", EntityArgument.player())
-					.executes(context -> whereIs(context.getSource(), EntityArgument.getPlayer(context, "target")))));
+			.requires(source -> KardExo.CONFIG.getData().isWhereisCommandEnabled())
+			.then(Commands.argument("target", EntityArgument.player())
+				.executes(context -> whereIs(context.getSource(), EntityArgument.getPlayer(context, "target")))));
 	}
 	
 	private static int whereIs(CommandSourceStack source, Player target) throws CommandSyntaxException

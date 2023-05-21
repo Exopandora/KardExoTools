@@ -3,8 +3,11 @@ package net.kardexo.kardexotools.mixin;
 import java.util.List;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import net.kardexo.kardexotools.KardExo;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
@@ -23,13 +26,22 @@ public abstract class MixinLeashFenceKnotEntity extends HangingEntity
 		super(entityType, level);
 	}
 	
-	@Override
-	@Overwrite
-	public InteractionResult interact(Player player, InteractionHand hand)
+	@Inject
+	(
+		method = "interact(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResult;",
+		at = @At("HEAD"),
+		cancellable = true
+	)
+	public void interact(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> info)
 	{
+		if(!KardExo.CONFIG.getData().doPickupLeashKnots())
+		{
+			return;
+		}
+		
 		if(this.level.isClientSide)
 		{
-			return InteractionResult.SUCCESS;
+			info.setReturnValue(InteractionResult.SUCCESS);
 		}
 		else
 		{
@@ -46,7 +58,7 @@ public abstract class MixinLeashFenceKnotEntity extends HangingEntity
 				{
 					if(mob.isLeashed() && mob.getLeashHolder() == player)
 					{
-						mob.setLeashedTo(this, true);
+						mob.setLeashedTo((LeashFenceKnotEntity) (Object) this, true);
 						playerIsCarryingMobs = true;
 					}
 				}
@@ -57,7 +69,7 @@ public abstract class MixinLeashFenceKnotEntity extends HangingEntity
 					
 					for(Mob mob : entities)
 					{
-						if(mob.isLeashed() && mob.getLeashHolder() == this)
+						if(mob.isLeashed() && mob.getLeashHolder() == (LeashFenceKnotEntity) (Object) this)
 						{
 							mob.setLeashedTo(player, true);
 						}
@@ -72,7 +84,7 @@ public abstract class MixinLeashFenceKnotEntity extends HangingEntity
 				{
 					for(Mob mob : entities)
 					{
-						if(mob.isLeashed() && mob.getLeashHolder() == this)
+						if(mob.isLeashed() && mob.getLeashHolder() == (LeashFenceKnotEntity) (Object) this)
 						{
 							mob.dropLeash(true, false);
 						}
@@ -80,7 +92,7 @@ public abstract class MixinLeashFenceKnotEntity extends HangingEntity
 				}
 			}
 			
-			return InteractionResult.CONSUME;
+			info.setReturnValue(InteractionResult.CONSUME);
 		}
 	}
 }

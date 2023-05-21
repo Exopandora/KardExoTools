@@ -16,10 +16,10 @@ public class KardExoCommand
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
 	{
 		dispatcher.register(Commands.literal("kardexo")
-				.then(Commands.literal("version")
-					.executes(context -> version(context.getSource())))
-				.then(Commands.literal("commands")
-					.executes(context -> commands(context.getSource()))));
+			.then(Commands.literal("version")
+				.executes(context -> version(context.getSource())))
+			.then(Commands.literal("commands")
+				.executes(context -> commands(context.getSource()))));
 	}
 	
 	private static int version(CommandSourceStack source)

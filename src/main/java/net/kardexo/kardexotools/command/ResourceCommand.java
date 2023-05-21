@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import net.kardexo.kardexotools.KardExo;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
@@ -21,9 +22,10 @@ public class ResourceCommand
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
 	{
 		dispatcher.register(Commands.literal("resource")
-				.then(Commands.argument("from", BlockPosArgument.blockPos())
-					.then(Commands.argument("to", BlockPosArgument.blockPos())
-						.executes(context -> resource(context.getSource(), BoundingBox.fromCorners(BlockPosArgument.getLoadedBlockPos(context, "from"), BlockPosArgument.getLoadedBlockPos(context, "to")))))));
+			.requires(source -> KardExo.CONFIG.getData().isResourceCommandEnabled())
+			.then(Commands.argument("from", BlockPosArgument.blockPos())
+				.then(Commands.argument("to", BlockPosArgument.blockPos())
+					.executes(context -> resource(context.getSource(), BoundingBox.fromCorners(BlockPosArgument.getLoadedBlockPos(context, "from"), BlockPosArgument.getLoadedBlockPos(context, "to")))))));
 	}
 	
 	private static int resource(CommandSourceStack source, BoundingBox area) throws CommandSyntaxException

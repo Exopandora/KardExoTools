@@ -21,12 +21,13 @@ public class VeinminerCommand
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
 	{
 		dispatcher.register(Commands.literal("veinminer")
-				.then(Commands.literal("on")
-					.executes(context -> VeinminerCommand.setVeinminer(context.getSource(), true)))
-				.then(Commands.literal("off")
-					.executes(context -> VeinminerCommand.setVeinminer(context.getSource(), false)))
-				.then(Commands.literal("list")
-					.executes(context -> list(context.getSource()))));
+			.requires(source -> KardExo.CONFIG.getData().isVeinminerCommandEnabled())
+			.then(Commands.literal("on")
+				.executes(context -> VeinminerCommand.setVeinminer(context.getSource(), true)))
+			.then(Commands.literal("off")
+				.executes(context -> VeinminerCommand.setVeinminer(context.getSource(), false)))
+			.then(Commands.literal("list")
+				.executes(context -> list(context.getSource()))));
 	}
 	
 	private static int setVeinminer(CommandSourceStack source, boolean enabled) throws CommandSyntaxException

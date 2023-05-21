@@ -3,6 +3,7 @@ package net.kardexo.kardexotools.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import net.kardexo.kardexotools.KardExo;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -25,7 +26,8 @@ public class MoonPhaseCommand
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
 	{
 		dispatcher.register(Commands.literal("moonphase")
-				.executes(context -> moonPhase(context.getSource())));
+			.requires(source -> KardExo.CONFIG.getData().isMoonphaseCommandEnabled())
+			.executes(context -> moonPhase(context.getSource())));
 	}
 	
 	private static int moonPhase(CommandSourceStack source) throws CommandSyntaxException

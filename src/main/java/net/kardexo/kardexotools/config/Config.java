@@ -63,6 +63,41 @@ public class Config
 	@SerializedName("property_default_exit_message")
 	private String propertyDefaultExitMessage = "%1$s has left your base (%2$s)";
 	
+	@SerializedName("backup_command_enabled")
+	private boolean backupCommandEnabled = true;
+	@SerializedName("bases_command_enabled")
+	private boolean basesCommandEnabled = true;
+	@SerializedName("calculate_command_enabled")
+	private boolean calculateCommandEnabled = true;
+	@SerializedName("home_command_enabled")
+	private boolean homeCommandEnabled = true;
+	@SerializedName("moonphase_command_enabled")
+	private boolean moonphaseCommandEnabled = true;
+	@SerializedName("pack_command_enabled")
+	private boolean packCommandEnabled = true;
+	@SerializedName("places_command_enabled")
+	private boolean placesCommandEnabled = true;
+	@SerializedName("resource_command_enabled")
+	private boolean resourceCommandEnabled = true;
+	@SerializedName("sethome_command_enabled")
+	private boolean sethomeCommandEnabled = true;
+	@SerializedName("spawn_command_enabled")
+	private boolean spawnCommandEnabled = true;
+	@SerializedName("undo_command_enabled")
+	private boolean undoCommandEnabled = true;
+	@SerializedName("veinminer_command_enabled")
+	private boolean veinminerCommandEnabled = true;
+	@SerializedName("whereis_command_enabled")
+	private boolean whereisCommandEnabled = true;
+	@SerializedName("worldtime_command_enabled")
+	private boolean worldtimeCommandEnabled = true;
+	
+	@SerializedName("harvest_crops_with_right_click")
+	private boolean harvestCropsWithRightClick = true;
+	
+	@SerializedName("pickup_leash_knots_with_right_click")
+	private boolean pickupLeashKnots = true;
+	
 	public boolean isBackupEnabled()
 	{
 		return this.backupEnabled;
@@ -311,5 +346,165 @@ public class Config
 	public void setBackupThreadCount(int backupThreadCount)
 	{
 		this.backupThreadCount = backupThreadCount;
+	}
+	
+	public boolean isBackupCommandEnabled()
+	{
+		return this.backupCommandEnabled;
+	}
+	
+	public void setBackupCommandEnabled(boolean backupCommandEnabled)
+	{
+		this.backupCommandEnabled = backupCommandEnabled;
+	}
+	
+	public boolean isBasesCommandEnabled()
+	{
+		return this.basesCommandEnabled;
+	}
+	
+	public void setBasesCommandEnabled(boolean basesCommandEnabled)
+	{
+		this.basesCommandEnabled = basesCommandEnabled;
+	}
+	
+	public boolean isCalculateCommandEnabled()
+	{
+		return this.calculateCommandEnabled;
+	}
+	
+	public void setCalculateCommandEnabled(boolean calculateCommandEnabled)
+	{
+		this.calculateCommandEnabled = calculateCommandEnabled;
+	}
+	
+	public boolean isHomeCommandEnabled()
+	{
+		return this.homeCommandEnabled;
+	}
+	
+	public void setHomeCommandEnabled(boolean homeCommandEnabled)
+	{
+		this.homeCommandEnabled = homeCommandEnabled;
+	}
+	
+	public boolean isMoonphaseCommandEnabled()
+	{
+		return this.moonphaseCommandEnabled;
+	}
+	
+	public void setMoonphaseCommandEnabled(boolean moonphaseCommandEnabled)
+	{
+		this.moonphaseCommandEnabled = moonphaseCommandEnabled;
+	}
+	
+	public boolean isPackCommandEnabled()
+	{
+		return this.packCommandEnabled;
+	}
+	
+	public void setPackCommandEnabled(boolean packCommandEnabled)
+	{
+		this.packCommandEnabled = packCommandEnabled;
+	}
+	
+	public boolean isPlacesCommandEnabled()
+	{
+		return this.placesCommandEnabled;
+	}
+	
+	public void setPlacesCommandEnabled(boolean placesCommandEnabled)
+	{
+		this.placesCommandEnabled = placesCommandEnabled;
+	}
+	
+	public boolean isResourceCommandEnabled()
+	{
+		return this.resourceCommandEnabled;
+	}
+	
+	public void setResourceCommandEnabled(boolean resourceCommandEnabled)
+	{
+		this.resourceCommandEnabled = resourceCommandEnabled;
+	}
+	
+	public boolean isSethomeCommandEnabled()
+	{
+		return this.sethomeCommandEnabled;
+	}
+	
+	public void setSethomeCommandEnabled(boolean sethomeCommandEnabled)
+	{
+		this.sethomeCommandEnabled = sethomeCommandEnabled;
+	}
+	
+	public boolean isSpawnCommandEnabled()
+	{
+		return this.spawnCommandEnabled;
+	}
+	
+	public void setSpawnCommandEnabled(boolean spawnCommandEnabled)
+	{
+		this.spawnCommandEnabled = spawnCommandEnabled;
+	}
+	
+	public boolean isUndoCommandEnabled()
+	{
+		return this.undoCommandEnabled;
+	}
+	
+	public void setUndoCommandEnabled(boolean undoCommandEnabled)
+	{
+		this.undoCommandEnabled = undoCommandEnabled;
+	}
+	
+	public boolean isVeinminerCommandEnabled()
+	{
+		return this.veinminerCommandEnabled;
+	}
+	
+	public void setVeinminerCommandEnabled(boolean veinminerCommandEnabled)
+	{
+		this.veinminerCommandEnabled = veinminerCommandEnabled;
+	}
+	
+	public boolean isWhereisCommandEnabled()
+	{
+		return this.whereisCommandEnabled;
+	}
+	
+	public void setWhereisCommandEnabled(boolean whereisCommandEnabled)
+	{
+		this.whereisCommandEnabled = whereisCommandEnabled;
+	}
+	
+	public boolean isWorldtimeCommandEnabled()
+	{
+		return this.worldtimeCommandEnabled;
+	}
+	
+	public void setWorldtimeCommandEnabled(boolean worldtimeCommandEnabled)
+	{
+		this.worldtimeCommandEnabled = worldtimeCommandEnabled;
+	}
+	
+	public boolean doHarvestCropsWithRightClick()
+	{
+		return this.harvestCropsWithRightClick;
+	}
+	
+	public void setHarvestCropsWithRightClick(boolean harvestCropsWithRightClick)
+	{
+		this.harvestCropsWithRightClick = harvestCropsWithRightClick;
+	}
+	
+	public boolean doPickupLeashKnots()
+	{
+		return this.pickupLeashKnots;
+	}
+	
+	public void setPickupLeashKnots(boolean pickupLeashKnots)
+	{
+		this.pickupLeashKnots = pickupLeashKnots;
 	}
 }

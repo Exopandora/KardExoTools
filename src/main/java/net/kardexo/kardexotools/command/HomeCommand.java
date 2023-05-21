@@ -22,6 +22,7 @@ public class HomeCommand
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
 	{
 		dispatcher.register(Commands.literal("home")
+			.requires(source -> KardExo.CONFIG.getData().isHomeCommandEnabled())
 				.executes(context -> execute(context.getSource())));
 	}
 	

@@ -3,6 +3,7 @@ package net.kardexo.kardexotools.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import net.kardexo.kardexotools.KardExo;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -13,7 +14,8 @@ public class WorldTimeCommand
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
 	{
 		dispatcher.register(Commands.literal("worldtime")
-				.executes(context -> worldtime(context.getSource())));
+			.requires(source -> KardExo.CONFIG.getData().isWorldtimeCommandEnabled())
+			.executes(context -> worldtime(context.getSource())));
 	}
 	
 	private static int worldtime(CommandSourceStack source) throws CommandSyntaxException

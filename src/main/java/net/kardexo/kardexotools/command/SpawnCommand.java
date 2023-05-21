@@ -3,6 +3,7 @@ package net.kardexo.kardexotools.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.util.CommandUtils;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -15,7 +16,8 @@ public class SpawnCommand
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
 	{
 		dispatcher.register(Commands.literal("spawn")
-				.executes(context -> execute(context.getSource())));
+			.requires(source -> KardExo.CONFIG.getData().isSpawnCommandEnabled())
+			.executes(context -> execute(context.getSource())));
 	}
 	
 	private static int execute(CommandSourceStack source) throws CommandSyntaxException

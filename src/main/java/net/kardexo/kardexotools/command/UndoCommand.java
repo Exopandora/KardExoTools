@@ -3,6 +3,7 @@ package net.kardexo.kardexotools.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.util.CommandUtils;
 import net.kardexo.kardexotools.veinminer.Veinminer;
 import net.minecraft.commands.CommandSourceStack;
@@ -14,7 +15,8 @@ public class UndoCommand
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
 	{
 		dispatcher.register(Commands.literal("undo")
-				.executes(context -> undo(context.getSource())));
+			.requires(source -> KardExo.CONFIG.getData().isUndoCommandEnabled())
+			.executes(context -> undo(context.getSource())));
 	}
 	
 	private static int undo(CommandSourceStack source) throws CommandSyntaxException

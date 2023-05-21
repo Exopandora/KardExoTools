@@ -27,6 +27,7 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 
 import ch.obermuhlner.math.big.BigDecimalMath;
+import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.command.CalculateCommand.Expression.ParseException;
 import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
@@ -46,14 +47,15 @@ public class CalculateCommand
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
 	{
 		LiteralCommandNode<CommandSourceStack> calculate = dispatcher.register(Commands.literal("calculate")
-				.then(Commands.argument("expression", StringArgumentType.greedyString())
-						.executes(context -> calculate(context, MATH_CONTEXT, StringArgumentType.getString(context, "expression"))))
-				.then(Commands.literal("precise")
-						.then(Commands.argument("precision", IntegerArgumentType.integer(1))
-								.then(Commands.argument("expression", StringArgumentType.greedyString())
-										.executes(context -> calculate(context, new MathContext(IntegerArgumentType.getInteger(context, "precision")), StringArgumentType.getString(context, "expression")))))));
+			.requires(source -> KardExo.CONFIG.getData().isCalculateCommandEnabled())
+			.then(Commands.argument("expression", StringArgumentType.greedyString())
+				.executes(context -> calculate(context, MATH_CONTEXT, StringArgumentType.getString(context, "expression"))))
+			.then(Commands.literal("precise")
+				.then(Commands.argument("precision", IntegerArgumentType.integer(1))
+					.then(Commands.argument("expression", StringArgumentType.greedyString())
+						.executes(context -> calculate(context, new MathContext(IntegerArgumentType.getInteger(context, "precision")), StringArgumentType.getString(context, "expression")))))));
 		dispatcher.register(Commands.literal("calc")
-				.redirect(calculate));
+			.redirect(calculate));
 	}
 	
 	private static int calculate(CommandContext<CommandSourceStack> context, MathContext mathContext, String expression) throws CommandSyntaxException

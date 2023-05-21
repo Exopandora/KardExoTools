@@ -2,6 +2,7 @@ package net.kardexo.kardexotools.patches;
 
 import java.util.List;
 
+import net.kardexo.kardexotools.KardExo;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
@@ -20,7 +21,7 @@ public class CropsPatch
 {
 	public static InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult, Block block, Item seed, IntegerProperty age, int maxAge, BlockState defaultState)
 	{
-		if(level.isClientSide || state.getValue(age) < maxAge)
+		if(level.isClientSide || !KardExo.CONFIG.getData().doHarvestCropsWithRightClick() || state.getValue(age) < maxAge)
 		{
 			return InteractionResult.PASS;
 		}
