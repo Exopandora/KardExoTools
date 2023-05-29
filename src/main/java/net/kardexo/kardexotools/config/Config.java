@@ -85,6 +85,8 @@ public class Config
 	private boolean spawnCommandEnabled = true;
 	@SerializedName("undo_command_enabled")
 	private boolean undoCommandEnabled = true;
+	@SerializedName("uptime_command_enabled")
+	private boolean uptimeCommandEnabled = true;
 	@SerializedName("veinminer_command_enabled")
 	private boolean veinminerCommandEnabled = true;
 	@SerializedName("whereis_command_enabled")
@@ -456,6 +458,16 @@ public class Config
 	public void setUndoCommandEnabled(boolean undoCommandEnabled)
 	{
 		this.undoCommandEnabled = undoCommandEnabled;
+	}
+	
+	public boolean isUptimeCommandEnabled()
+	{
+		return this.uptimeCommandEnabled;
+	}
+	
+	public void setUptimeCommandEnabled(boolean undoCommandEnabled)
+	{
+		this.uptimeCommandEnabled = undoCommandEnabled;
 	}
 	
 	public boolean isVeinminerCommandEnabled()

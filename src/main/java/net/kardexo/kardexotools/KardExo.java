@@ -27,6 +27,7 @@ import net.kardexo.kardexotools.command.ResourceCommand;
 import net.kardexo.kardexotools.command.SetHomeCommand;
 import net.kardexo.kardexotools.command.SpawnCommand;
 import net.kardexo.kardexotools.command.UndoCommand;
+import net.kardexo.kardexotools.command.UptimeCommand;
 import net.kardexo.kardexotools.command.VeinminerCommand;
 import net.kardexo.kardexotools.command.WhereIsCommand;
 import net.kardexo.kardexotools.command.WorldTimeCommand;
@@ -112,6 +113,7 @@ public class KardExo
 		UndoCommand.register(dispatcher);
 		KardExoCommand.register(dispatcher);
 		PackCommand.register(dispatcher);
+		UptimeCommand.register(dispatcher);
 	}
 	
 	public static void registerTickables(MinecraftServer server)
