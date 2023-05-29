@@ -29,6 +29,7 @@ sethome     | Set home location                                                 
 spawn       | Teleport to spawn location                                          | Everyone
 pack        | Calculate boxes/stacks/items needed for a given item count          | Everyone
 undo        | Undo last veinmine                                                  | Everyone
+uptime      | Print server uptime                                                 | Everyone
 veinminer   | Toggle veinminer and display vein blocks                            | Everyone
 whereis     | Locate players                                                      | Everyone
 worldtime   | Print current world time                                            | Everyone
