@@ -32,6 +32,7 @@ public abstract class MixinLeashFenceKnotEntity extends HangingEntity
 		at = @At("HEAD"),
 		cancellable = true
 	)
+	@SuppressWarnings("resource")
 	public void interact(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> info)
 	{
 		if(!KardExo.CONFIG.getData().doPickupLeashKnots())
@@ -39,7 +40,7 @@ public abstract class MixinLeashFenceKnotEntity extends HangingEntity
 			return;
 		}
 		
-		if(this.level.isClientSide)
+		if(this.level().isClientSide)
 		{
 			info.setReturnValue(InteractionResult.SUCCESS);
 		}
@@ -47,7 +48,7 @@ public abstract class MixinLeashFenceKnotEntity extends HangingEntity
 		{
 			double radius = 7.0D;
 			AABB aabb = new AABB(this.getX() - radius, this.getY() - radius, this.getZ() - radius, this.getX() + radius, this.getY() + radius, this.getZ() + radius);
-			List<Mob> entities = this.level.getEntitiesOfClass(Mob.class, aabb);
+			List<Mob> entities = this.level().getEntitiesOfClass(Mob.class, aabb);
 			boolean playerPickup = !player.isShiftKeyDown();
 			
 			if(playerPickup)

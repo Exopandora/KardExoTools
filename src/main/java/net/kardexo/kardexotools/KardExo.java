@@ -57,7 +57,7 @@ import net.minecraft.world.level.block.Blocks;
 
 public class KardExo
 {
-	public static final String VERSION = "1.19.4-2.51";
+	public static final String VERSION = "1.20-2.51";
 	public static final Logger LOGGER = LogManager.getLogger("KardExo");
 	
 	private static final File CONFIG_DIRECTORY = new File("config/kardexotools");
@@ -179,6 +179,7 @@ public class KardExo
 		addVein(Blocks.CRIMSON_STEM, 26, true, registry, config);
 		addVein(Blocks.WARPED_STEM, 26, true, registry, config);
 		addVein(Blocks.MANGROVE_LOG, 10, true, registry, config);
+		addVein(Blocks.CHERRY_LOG, 10, true, registry, config);
 		
 		addVein(Blocks.OAK_LEAVES, 5, true, registry, config);
 		addVein(Blocks.SPRUCE_LEAVES, 5, true, registry, config);
@@ -189,6 +190,7 @@ public class KardExo
 		addVein(Blocks.NETHER_WART_BLOCK, 5, true, registry, config);
 		addVein(Blocks.WARPED_WART_BLOCK, 5, true, registry, config);
 		addVein(Blocks.MANGROVE_LEAVES, 5, true, registry, config);
+		addVein(Blocks.CHERRY_LEAVES, 5, true, registry, config);
 		
 		addVein(Blocks.ANDESITE, 15, true, registry, config);
 		addVein(Blocks.DIORITE, 15, true, registry, config);

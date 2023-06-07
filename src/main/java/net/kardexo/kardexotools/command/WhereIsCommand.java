@@ -33,7 +33,7 @@ public class WhereIsCommand
 	private static int whereIs(CommandSourceStack source, Player target) throws CommandSyntaxException
 	{
 		BlockPos pos = target.blockPosition();
-		String dimension = target.level.dimension().location().toString();
+		String dimension = target.level().dimension().location().toString();
 		GameProfileCache profileCache = source.getServer().getProfileCache();
 		Set<PropertyEntry> properties = new HashSet<PropertyEntry>();
 		
@@ -62,7 +62,7 @@ public class WhereIsCommand
 		}
 		
 		source.getServer().sendSystemMessage(Component.literal("Query: ").append(query));
-		source.sendSuccess(query, false);
+		source.sendSuccess(() -> query, false);
 		return 1;
 	}
 	

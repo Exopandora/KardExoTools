@@ -63,7 +63,7 @@ public class Veinminer
 				{
 					PriorityQueue<BlockPos> queue = Veinminer.calculateVein(registry, player, KardExo.CONFIG.getData().getVeinminerBlockLimit(), predicate, config, pos, level);
 					Map<BlockState, Set<BlockPos>> stateMap = new HashMap<BlockState, Set<BlockPos>>();
-					Vein undo = new Vein(player.level.dimension(), stateMap);
+					Vein undo = new Vein(player.level().dimension(), stateMap);
 					queue.poll();
 					
 					if(!queue.isEmpty())

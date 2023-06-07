@@ -131,7 +131,7 @@ public class BasesCommand
 		try
 		{
 			PropertyUtils.add(id, dimension, boundingBox, owner.getUUID(), displayName, KardExo.BASES);
-			source.sendSuccess(Component.literal("Added base with id " + id), false);
+			source.sendSuccess(() -> Component.literal("Added base with id " + id), false);
 		}
 		catch(IllegalStateException e)
 		{
@@ -148,7 +148,7 @@ public class BasesCommand
 		try
 		{
 			PropertyUtils.remove(id, KardExo.BASES);
-			source.sendSuccess(Component.literal("Removed base with id " + id), false);
+			source.sendSuccess(() -> Component.literal("Removed base with id " + id), false);
 		}
 		catch(NoSuchElementException e)
 		{
@@ -163,7 +163,7 @@ public class BasesCommand
 		ensuredForOwner(source, id, player, owner -> 
 		{
 			owner.setEnterMessage(message);
-			source.sendSuccess(Component.literal("Message upon entrance has been set to \"" + message + "\""), false);
+			source.sendSuccess(() -> Component.literal("Message upon entrance has been set to \"" + message + "\""), false);
 		});
 		
 		return 1;
@@ -174,7 +174,7 @@ public class BasesCommand
 		ensuredForOwner(source, id, player, owner -> 
 		{
 			owner.setExitMessage(message);
-			source.sendSuccess(Component.literal("Message upon exit has been set to \"" + message + "\""), false);
+			source.sendSuccess(() -> Component.literal("Message upon exit has been set to \"" + message + "\""), false);
 		});
 		
 		return 1;
@@ -186,7 +186,7 @@ public class BasesCommand
 		{
 			owner.setEnterMessage(message);
 			owner.setExitMessage(message);
-			source.sendSuccess(Component.literal("Both messages have been set to \"" + message + "\""), false);
+			source.sendSuccess(() -> Component.literal("Both messages have been set to \"" + message + "\""), false);
 		});
 		
 		return 1;
@@ -220,11 +220,11 @@ public class BasesCommand
 		
 		if(creator)
 		{
-			source.sendSuccess(Component.literal("Added ").append(player.getDisplayName()).append(" as a creator to base with id " + id), false);
+			source.sendSuccess(() -> Component.literal("Added ").append(player.getDisplayName()).append(" as a creator to base with id " + id), false);
 		}
 		else
 		{
-			source.sendSuccess(Component.literal("Added ").append(player.getDisplayName()).append(" as an owner to base with id " + id), false);
+			source.sendSuccess(() -> Component.literal("Added ").append(player.getDisplayName()).append(" as an owner to base with id " + id), false);
 		}
 		
 		return 1;
@@ -236,7 +236,7 @@ public class BasesCommand
 		ensureOwner(player, id);
 		Property property = getBase(id);
 		property.removeOwner(player.getUUID());
-		source.sendSuccess(Component.literal("Removed ").append(player.getDisplayName()).append(" as an owner of the base with id " + id), false);
+		source.sendSuccess(() -> Component.literal("Removed ").append(player.getDisplayName()).append(" as an owner of the base with id " + id), false);
 		KardExo.BASES.save();
 		return 1;
 	}
@@ -254,23 +254,23 @@ public class BasesCommand
 				
 				if(config.isCreator() && creator)
 				{
-					source.sendSuccess(((MutableComponent) player.getDisplayName()).append(" is already a creator of base with id " + id), false);
+					source.sendSuccess(() -> ((MutableComponent) player.getDisplayName()).append(" is already a creator of base with id " + id), false);
 				}
 				else if(!config.isCreator() && creator)
 				{
 					config.setCreator(true);
-					source.sendSuccess(((MutableComponent) player.getDisplayName()).append(" is now a creator of base with id " + id), false);
+					source.sendSuccess(() -> ((MutableComponent) player.getDisplayName()).append(" is now a creator of base with id " + id), false);
 					KardExo.BASES.save();
 				}
 				else if(config.isCreator() && !creator)
 				{
 					config.setCreator(false);
-					source.sendSuccess(((MutableComponent) player.getDisplayName()).append(" is now an owner of base with id " + id), false);
+					source.sendSuccess(() -> ((MutableComponent) player.getDisplayName()).append(" is now an owner of base with id " + id), false);
 					KardExo.BASES.save();
 				}
 				else if(!config.isCreator() && !creator)
 				{
-					source.sendSuccess(((MutableComponent) player.getDisplayName()).append(" is already an owner of base with id " + id), false);
+					source.sendSuccess(() -> ((MutableComponent) player.getDisplayName()).append(" is already an owner of base with id " + id), false);
 				}
 				
 				return 1;
@@ -295,11 +295,11 @@ public class BasesCommand
 				
 				if(notify)
 				{
-					source.sendSuccess(((MutableComponent) player.getDisplayName()).append(" will now be notified"), false);
+					source.sendSuccess(() -> ((MutableComponent) player.getDisplayName()).append(" will now be notified"), false);
 				}
 				else
 				{
-					source.sendSuccess(((MutableComponent) player.getDisplayName()).append(" will no longer be notified"), false);
+					source.sendSuccess(() -> ((MutableComponent) player.getDisplayName()).append(" will no longer be notified"), false);
 				}
 				
 				return 1;
@@ -317,7 +317,7 @@ public class BasesCommand
 		try
 		{
 			PropertyUtils.addChild(parent, child, dimension, boundingBox, displayName, KardExo.BASES);
-			source.sendSuccess(Component.literal("Added child with id " + child + " to base with id " + id), false);
+			source.sendSuccess(() -> Component.literal("Added child with id " + child + " to base with id " + id), false);
 		}
 		catch(IllegalStateException e)
 		{
@@ -335,7 +335,7 @@ public class BasesCommand
 		try
 		{
 			PropertyUtils.removeChild(parent, child, KardExo.BASES);
-			source.sendSuccess(Component.literal("Removed child with id " + child + " from base with id " + id), false);
+			source.sendSuccess(() -> Component.literal("Removed child with id " + child + " from base with id " + id), false);
 		}
 		catch(NoSuchElementException e)
 		{
@@ -365,11 +365,11 @@ public class BasesCommand
 		
 		if(enabled)
 		{
-			source.sendSuccess(Component.literal("Enabled protection for base with id " + id), false);
+			source.sendSuccess(() -> Component.literal("Enabled protection for base with id " + id), false);
 		}
 		else
 		{
-			source.sendSuccess(Component.literal("Disabled protection for base with id " + id), false);
+			source.sendSuccess(() -> Component.literal("Disabled protection for base with id " + id), false);
 		}
 		
 		return 1;
@@ -394,7 +394,7 @@ public class BasesCommand
 		try
 		{
 			KardExo.BASES.save();
-			source.sendSuccess(Component.literal("Successfully reloaded bases"), false);
+			source.sendSuccess(() -> Component.literal("Successfully reloaded bases"), false);
 		}
 		catch(Exception e)
 		{

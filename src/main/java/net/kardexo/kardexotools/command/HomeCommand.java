@@ -31,7 +31,7 @@ public class HomeCommand
 		ServerPlayer sender = source.getPlayerOrException();
 		PlayerConfig config = KardExo.PLAYERS.get(CommandUtils.getUUID(source));
 		
-		if(config == null || sender.level == null || config != null && config.getHome() == null || config != null && config.getHome() != null && config.getHome().getPosition() == null)
+		if(config == null || sender.level() == null || config != null && config.getHome() == null || config != null && config.getHome() != null && config.getHome().getPosition() == null)
 		{
 			throw CommandUtils.simpleException("No home set");
 		}
@@ -62,6 +62,6 @@ public class HomeCommand
 	
 	protected static boolean hasRoomForPlayer(BlockGetter getter, BlockPos pos)
 	{
-		return Block.canSupportRigidBlock(getter, pos.below()) && !getter.getBlockState(pos).getMaterial().isSolid() && !getter.getBlockState(pos.above()).getMaterial().isSolid();
+		return Block.canSupportRigidBlock(getter, pos.below()) && !getter.getBlockState(pos).isSolid() && !getter.getBlockState(pos.above()).isSolid();
 	}
 }

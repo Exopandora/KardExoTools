@@ -37,11 +37,11 @@ public class VeinminerCommand
 		
 		if(enabled)
 		{
-			source.sendSuccess(Component.literal("Veinminer enabled"), false);
+			source.sendSuccess(() -> Component.literal("Veinminer enabled"), false);
 		}
 		else
 		{
-			source.sendSuccess(Component.literal("Veinminer disabled"), false);
+			source.sendSuccess(() -> Component.literal("Veinminer disabled"), false);
 		}
 		
 		return 1;
@@ -57,7 +57,7 @@ public class VeinminerCommand
 		}
 		
 		list.sort((a, b) -> a.toString().compareTo(b.toString()));
-		list.forEach(message -> source.sendSuccess(message, false));
+		list.forEach(message -> source.sendSuccess(() -> message, false));
 		
 		return list.size();
 	}

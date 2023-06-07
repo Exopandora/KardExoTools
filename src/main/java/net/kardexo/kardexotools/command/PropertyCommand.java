@@ -24,7 +24,7 @@ public abstract class PropertyCommand
 			throw new NoSuchElementException();
 		}
 		
-		source.sendSuccess(ComponentUtils.formatList(properties.entrySet(), entry -> entry.getValue().getDisplayName(entry.getKey(), source.getServer().getProfileCache())), false);
+		source.sendSuccess(() -> ComponentUtils.formatList(properties.entrySet(), entry -> entry.getValue().getDisplayName(entry.getKey(), source.getServer().getProfileCache())), false);
 		return properties.size();
 	}
 	

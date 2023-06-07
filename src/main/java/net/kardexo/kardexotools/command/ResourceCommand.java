@@ -44,7 +44,7 @@ public class ResourceCommand
 		
 		for(Entry<Block, Integer> entry : map.entrySet())
 		{
-			source.sendSuccess(Component.translatable("x" + entry.getValue() + " %s", Component.translatable(entry.getKey().getDescriptionId())), false);
+			source.sendSuccess(() -> Component.translatable("x" + entry.getValue() + " %s", Component.translatable(entry.getKey().getDescriptionId())), false);
 		}
 		
 		return map.values().stream().reduce(Integer::sum).orElse(0);

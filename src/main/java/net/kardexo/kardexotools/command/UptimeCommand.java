@@ -34,7 +34,7 @@ public class UptimeCommand
 		String formattedStart = DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm:ss")
 			.withZone(ZoneId.systemDefault())
 			.format(start);
-		source.sendSuccess(Component.literal("Uptime: " + fomattedDuration + ", Start time: " + formattedStart), false);
+		source.sendSuccess(() -> Component.literal("Uptime: " + fomattedDuration + ", Start time: " + formattedStart), false);
 		return (int) duration.toSeconds();
 	}
 }

@@ -74,7 +74,7 @@ public class CalculateCommand
 				try
 				{
 					BigDecimal x = new Expression(expression).eval(HISTORY.get(uuid), mathContext);
-					context.getSource().sendSuccess(Component.literal(expression + " = " + DECIMAL_FORMAT.format(x)), false);
+					context.getSource().sendSuccess(() -> Component.literal(expression + " = " + DECIMAL_FORMAT.format(x)), false);
 					HISTORY.put(uuid, x);
 					return x;
 				}

@@ -152,7 +152,7 @@ public class PropertyUtils
 		
 		for(Property property : data.values())
 		{
-			if(property.isProtected() && !property.isOwner(uuid) && property.isInside(pos, player.level.dimension().location()))
+			if(property.isProtected() && !property.isOwner(uuid) && property.isInside(pos, player.level().dimension().location()))
 			{
 				return true;
 			}

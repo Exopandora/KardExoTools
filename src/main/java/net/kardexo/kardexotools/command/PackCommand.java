@@ -31,21 +31,21 @@ public class PackCommand
 		int stacks = (count - boxes * storageBoxItems) / stackSize;
 		int items = count % stackSize;
 		
-		source.sendSuccess(Component.literal(count + " items with a stack size of " + stackSize + " pack into:"), false);
+		source.sendSuccess(() -> Component.literal(count + " items with a stack size of " + stackSize + " pack into:"), false);
 		
 		if(boxes > 0)
 		{
-			source.sendSuccess(Component.literal("  " + boxes + " storage boxes"), false);
+			source.sendSuccess(() -> Component.literal("  " + boxes + " storage boxes"), false);
 		}
 		
 		if(stacks > 0)
 		{
-			source.sendSuccess(Component.literal("  " + stacks + " stacks"), false);
+			source.sendSuccess(() -> Component.literal("  " + stacks + " stacks"), false);
 		}
 		
 		if(items > 0)
 		{
-			source.sendSuccess(Component.literal("  " + items + " items"), false);
+			source.sendSuccess(() -> Component.literal("  " + items + " items"), false);
 		}
 		
 		return count;

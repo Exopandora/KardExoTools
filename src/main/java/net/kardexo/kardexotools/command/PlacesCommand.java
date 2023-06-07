@@ -80,7 +80,7 @@ public class PlacesCommand
 		try
 		{
 			PropertyUtils.add(id, dimension, boundingBox, null, displayName, KardExo.PLACES);
-			source.sendSuccess(Component.literal("Added base with id " + id), false);
+			source.sendSuccess(() -> Component.literal("Added base with id " + id), false);
 		}
 		catch(IllegalStateException e)
 		{
@@ -97,7 +97,7 @@ public class PlacesCommand
 		try
 		{
 			PropertyUtils.remove(id, KardExo.PLACES);
-			source.sendSuccess(Component.literal("Removed base with id " + id), false);
+			source.sendSuccess(() -> Component.literal("Removed base with id " + id), false);
 		}
 		catch(NoSuchElementException e)
 		{
@@ -124,7 +124,7 @@ public class PlacesCommand
 		try
 		{
 			KardExo.PLACES.read();
-			source.sendSuccess(Component.literal("Successfully reloaded places"), false);
+			source.sendSuccess(() -> Component.literal("Successfully reloaded places"), false);
 		}
 		catch(Exception e)
 		{
@@ -142,7 +142,7 @@ public class PlacesCommand
 		try
 		{
 			PropertyUtils.addChild(parent, child, dimension, boundingBox, displayName, KardExo.PLACES);
-			source.sendSuccess(Component.literal("Added child with id " + child + " to place with id " + id), false);
+			source.sendSuccess(() -> Component.literal("Added child with id " + child + " to place with id " + id), false);
 		}
 		catch(IllegalStateException e)
 		{
@@ -160,7 +160,7 @@ public class PlacesCommand
 		try
 		{
 			PropertyUtils.removeChild(parent, child, KardExo.PLACES);
-			source.sendSuccess(Component.literal("Removed child with id " + child + " from place with id " + id), false);
+			source.sendSuccess(() -> Component.literal("Removed child with id " + child + " from place with id " + id), false);
 		}
 		catch(NoSuchElementException e)
 		{
@@ -190,11 +190,11 @@ public class PlacesCommand
 		
 		if(enabled)
 		{
-			source.sendSuccess(Component.literal("Enabled protection for place with id " + id), false);
+			source.sendSuccess(() -> Component.literal("Enabled protection for place with id " + id), false);
 		}
 		else
 		{
-			source.sendSuccess(Component.literal("Disabled protection for place with id " + id), false);
+			source.sendSuccess(() -> Component.literal("Disabled protection for place with id " + id), false);
 		}
 		
 		return 1;

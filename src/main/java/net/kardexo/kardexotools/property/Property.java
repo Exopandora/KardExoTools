@@ -157,7 +157,7 @@ public class Property
 	
 	public boolean isInside(Player player)
 	{
-		return this.isInside(player.blockPosition(), player.level.dimension().location());
+		return this.isInside(player.blockPosition(), player.level().dimension().location());
 	}
 	
 	public boolean isInside(BlockPos pos, ResourceLocation dimension)
@@ -167,7 +167,7 @@ public class Property
 	
 	public boolean isInsideMain(Player player)
 	{
-		return this.isInsideMain(player.blockPosition(), player.level.dimension().location());
+		return this.isInsideMain(player.blockPosition(), player.level().dimension().location());
 	}
 	
 	public boolean isInsideMain(BlockPos pos, ResourceLocation dimension)
@@ -177,7 +177,7 @@ public class Property
 	
 	public boolean isInsideChild(Player player)
 	{
-		return this.isInsideChild(player.blockPosition(), player.level.dimension().location());
+		return this.isInsideChild(player.blockPosition(), player.level().dimension().location());
 	}
 	
 	public boolean isInsideChild(BlockPos pos, ResourceLocation dimension)

@@ -24,13 +24,13 @@ public class KardExoCommand
 	
 	private static int version(CommandSourceStack source)
 	{
-		source.sendSuccess(Component.literal("Version: " + KardExo.VERSION), false);
+		source.sendSuccess(() -> Component.literal("Version: " + KardExo.VERSION), false);
 		return 1;
 	}
 	
 	private static int commands(CommandSourceStack source) throws CommandSyntaxException
 	{
-		source.sendSuccess(Component.literal("Commands:"), false);
+		source.sendSuccess(() -> Component.literal("Commands:"), false);
 		
 		CommandDispatcher<CommandSourceStack> dispatcher = new CommandDispatcher<CommandSourceStack>();
 		KardExo.registerCommands(dispatcher);
@@ -38,7 +38,7 @@ public class KardExoCommand
 		
 		for(String command : usage.values())
 		{
-			source.sendSuccess(Component.literal(" /" + command), false);
+			source.sendSuccess(() -> Component.literal(" /" + command), false);
 		}
 		
 		return usage.values().size();
