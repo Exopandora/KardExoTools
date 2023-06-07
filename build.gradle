@@ -49,7 +49,7 @@ shadowJar {
 	configurations = [project.configurations.shade]
 	from sourceSets.main.output
 	duplicatesStrategy = 'include'
-	classifier 'dev'
+	archiveClassifier = 'dev'
 }
 
 task relocateShadowJar(type: ConfigureShadowRelocation) {
