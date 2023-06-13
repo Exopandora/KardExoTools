@@ -7,7 +7,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelStorageSource.LevelStorageAccess;
 
 @Mixin(MinecraftServer.class)
-public interface MinecraftServerAccessor
+public interface AccessorMinecraftServer
 {
 	@Accessor
 	LevelStorageAccess getStorageSource();

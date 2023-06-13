@@ -12,7 +12,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
 import net.kardexo.kardexotools.KardExo;
-import net.kardexo.kardexotools.mixin.MinecraftServerAccessor;
+import net.kardexo.kardexotools.mixin.AccessorMinecraftServer;
 import net.kardexo.kardexotools.util.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
@@ -42,7 +42,7 @@ public class BackupTask implements ITask
 			KardExo.setLevelSaving(server, false);
 			
 			LocalDateTime date = LocalDateTime.now();
-			String folderName = ((MinecraftServerAccessor) server).getStorageSource().getLevelId();
+			String folderName = ((AccessorMinecraftServer) server).getStorageSource().getLevelId();
 			String time = String.format("%02d_%02d_%04d-%02d_%02d_%02d", date.getDayOfMonth(), date.getMonthValue(), date.getYear(), date.getHour(), date.getMinute(), date.getSecond());
 			String fileName = folderName + "-" + time;
 			Path output = KardExo.CONFIG.getData().getBackupDirectory().toPath().resolve(fileName + ".zip");
