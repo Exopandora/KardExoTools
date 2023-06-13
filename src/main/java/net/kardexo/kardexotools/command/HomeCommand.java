@@ -9,13 +9,16 @@ import net.kardexo.kardexotools.util.CommandUtils;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.vehicle.DismountHelper;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class HomeCommand
 {
@@ -38,30 +41,32 @@ public class HomeCommand
 		
 		MinecraftServer server = source.getServer();
 		ServerLevel level = server.getLevel(ResourceKey.create(Registries.DIMENSION, config.getHome().getDimension()));
-		BlockPos position = HomeCommand.spawnPosition(level, config.getHome().getPosition());
-		
+		BlockPos position = spawnPosition(level, config.getHome().getPosition(), sender);
 		return CommandUtils.teleport(source, sender, level, position);
 	}
 	
-	private static BlockPos spawnPosition(ServerLevel level, BlockPos pos) throws CommandSyntaxException
+	private static BlockPos spawnPosition(ServerLevel serverLevel, BlockPos pos, Entity entity) throws CommandSyntaxException
 	{
-		BlockPos spawn = pos;
-		
-		while(!hasRoomForPlayer(level, spawn))
+		for(BlockPos mutableBlockPos = pos.below(); pos.getY() <= serverLevel.getMaxBuildHeight(); mutableBlockPos = mutableBlockPos.above())
 		{
-			if(spawn.getY() > level.getHeight())
+			BlockState blockState = serverLevel.getBlockState(mutableBlockPos);
+			
+			if(!blockState.getFluidState().isEmpty())
 			{
-				throw CommandUtils.simpleException("Could not find safe position");
+				break;
 			}
 			
-			spawn = spawn.above();
+			if(Block.isFaceFull(blockState.getCollisionShape(serverLevel, mutableBlockPos), Direction.UP))
+			{
+				BlockPos spawn = mutableBlockPos.above();
+				
+				if(DismountHelper.findSafeDismountLocation(entity.getType(), serverLevel, spawn, true) != null)
+				{
+					return spawn;
+				}
+			}
 		}
 		
-		return spawn;
-	}
-	
-	protected static boolean hasRoomForPlayer(BlockGetter getter, BlockPos pos)
-	{
-		return Block.canSupportRigidBlock(getter, pos.below()) && !getter.getBlockState(pos).isSolid() && !getter.getBlockState(pos.above()).isSolid();
+		throw CommandUtils.simpleException("Could not find safe position");
 	}
 }
