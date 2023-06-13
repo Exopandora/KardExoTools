@@ -31,3 +31,6 @@ src/test/
 
 # logs
 logs/
+
+# changelog
+changelog.txt

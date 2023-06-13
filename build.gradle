@@ -1,6 +1,7 @@
 plugins {
 	id 'fabric-loom' version '0.12-SNAPSHOT'
 	id 'com.github.johnrengelman.shadow' version '7.1.+'
+	id 'me.hypherionmc.cursegradle' version '2.+'
 }
 
 repositories {
@@ -12,7 +13,10 @@ repositories {
 import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+javadoc.options.addStringOption('Xdoclint:none', '-quiet')
+
 archivesBaseName = "${mod_name}-${minecraft_version}"
+version = mod_version
 
 configurations {
 	shade.extendsFrom(implementation)
@@ -62,4 +66,25 @@ tasks.shadowJar.dependsOn tasks.relocateShadowJar
 remapJar {
 	dependsOn(shadowJar)
 	input.set shadowJar.archiveFile
+}
+
+curseforge {
+	apiKey = project.hasProperty("curse_api_key") ? curse_api_key : ''
+	project {
+		id = curse_project_id
+		changelog = file('../changelog.txt').canRead() ? file('../changelog.txt').text : ''
+		changelogType = 'text'
+		releaseType = 'release'
+		addGameVersion 'Fabric'
+		compatible_minecraft_versions.split(",").each {
+			addGameVersion(it)
+		}
+		mainArtifact(remapJar) {
+			displayName = "${mod_name}-${minecraft_version}-${mod_version}"
+		}
+	}
+	options {
+		javaVersionAutoDetect = false
+		forgeGradleIntegration = false
+	}
 }
