@@ -1,7 +1,6 @@
 package net.kardexo.kardexotools.config;
 
 import java.io.File;
-import java.time.Duration;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -13,10 +12,8 @@ public class Config
 	private int backupFiles = 24;
 	@SerializedName("backup_directory")
 	private String backupDirectory = "backup";
-	@SerializedName("backup_interval")
-	private long backupInterval = Duration.ofHours(3).toSeconds();
-	@SerializedName("backup_offset")
-	private long backupOffset = Duration.ofHours(3).toSeconds();
+	@SerializedName("backup_times")
+	private String[] backupTimes = {"00:00", "06:00", "12:00", "18:00"};
 	@SerializedName("backup_warning_times")
 	private long[] backupWarningTimes = {5, 10};
 	@SerializedName("backup_warning_message")
@@ -28,8 +25,8 @@ public class Config
 	private boolean shutdownEnabled = false;
 	@SerializedName("shutdown_backup")
 	private boolean shutdownBackup = true;
-	@SerializedName("shutdown_offset")
-	private long shutdownOffset = Duration.ofHours(6).toSeconds();
+	@SerializedName("shutdown_times")
+	private String[] shutdownTimes = {"06:00"};
 	@SerializedName("shutdown_warning_times")
 	private long[] shutdownWarningTimes = {1, 5, 10};
 	@SerializedName("shutdown_warning_message")
@@ -41,10 +38,33 @@ public class Config
 	private boolean saveEnabled = true;
 	@SerializedName("save_flush")
 	private boolean saveFlush = true;
-	@SerializedName("save_interval")
-	private long saveInterval = Duration.ofMinutes(30).toSeconds();
-	@SerializedName("save_offset")
-	private long saveOffset = Duration.ofMinutes(30).toSeconds();
+	@SerializedName("save_times")
+	private String[] saveTimes = {
+		"00:00", "00:30",
+		"01:00", "01:30",
+		"02:00", "02:30",
+		"03:00", "03:30",
+		"04:00", "04:30",
+		"05:00", "05:30",
+		"06:00", "06:30",
+		"07:00", "07:30",
+		"08:00", "08:30",
+		"09:00", "09:30",
+		"10:00", "10:30",
+		"11:00", "11:30",
+		"12:00", "12:30",
+		"13:00", "13:30",
+		"14:00", "14:30",
+		"15:00", "15:30",
+		"16:00", "16:30",
+		"17:00", "17:30",
+		"18:00", "18:30",
+		"19:00", "19:30",
+		"20:00", "20:30",
+		"21:00", "21:30",
+		"22:00", "22:30",
+		"23:00", "23:30"
+	};
 	@SerializedName("save_warning_times")
 	private long[] saveWarningTimes = {5, 10};
 	@SerializedName("save_warning_message")
@@ -130,24 +150,14 @@ public class Config
 		this.backupDirectory = backupDirectory;
 	}
 	
-	public long getBackupInterval()
+	public String[] getBackupTimes()
 	{
-		return this.backupInterval;
+		return this.backupTimes;
 	}
 	
-	public void setBackupInterval(long backupInterval)
+	public void setBackupTimes(String[] backupTimes)
 	{
-		this.backupInterval = backupInterval;
-	}
-	
-	public long getBackupOffset()
-	{
-		return this.backupOffset;
-	}
-	
-	public void setBackupOffset(long backupOffset)
-	{
-		this.backupOffset = backupOffset;
+		this.backupTimes = backupTimes;
 	}
 	
 	public long[] getBackupWarningTimes()
@@ -190,14 +200,14 @@ public class Config
 		this.shutdownBackup = shutdownBackup;
 	}
 	
-	public long getShutdownOffset()
+	public String[] getShutdownTimes()
 	{
-		return this.shutdownOffset;
+		return this.shutdownTimes;
 	}
 	
-	public void setShutdownOffset(long shutdownOffset)
+	public void setShutdownTimes(String[] shutdownTimes)
 	{
-		this.shutdownOffset = shutdownOffset;
+		this.shutdownTimes = shutdownTimes;
 	}
 	
 	public long[] getShutdownWarningTimes()
@@ -250,24 +260,14 @@ public class Config
 		this.saveFlush = saveFlush;
 	}
 	
-	public long getSaveInterval()
+	public String[] getSaveTimes()
 	{
-		return this.saveInterval;
+		return this.saveTimes;
 	}
 	
-	public void setSaveInterval(long saveInterval)
+	public void setSaveTimes(String[] saveTimes)
 	{
-		this.saveInterval = saveInterval;
-	}
-	
-	public long getSaveOffset()
-	{
-		return this.saveOffset;
-	}
-	
-	public void setSaveOffset(long saveOffset)
-	{
-		this.saveOffset = saveOffset;
+		this.saveTimes = saveTimes;
 	}
 	
 	public long[] getSaveWarningTimes()

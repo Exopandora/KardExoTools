@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+
 import net.kardexo.kardexotools.KardExo;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
@@ -11,6 +14,8 @@ import net.minecraft.server.level.ServerPlayer;
 
 public class ShutdownTask implements ITask
 {
+	private final Supplier<long[]> schedules = Suppliers.memoize(() -> ITask.parseSchedules(KardExo.CONFIG.getData().getShutdownTimes()));
+	
 	@Override
 	public void execute(MinecraftServer server)
 	{
@@ -33,33 +38,15 @@ public class ShutdownTask implements ITask
 	}
 	
 	@Override
+	public long[] getSchedules()
+	{
+		return this.schedules.get();
+	}
+	
+	@Override
 	public String getName()
 	{
 		return "shutdown";
-	}
-	
-	@Override
-	public long getOffset()
-	{
-		return KardExo.CONFIG.getData().getShutdownOffset();
-	}
-	
-	@Override
-	public TimeUnit getOffsetTimeUnit()
-	{
-		return TimeUnit.SECONDS;
-	}
-	
-	@Override
-	public long getInterval()
-	{
-		return -1;
-	}
-	
-	@Override
-	public TimeUnit getIntervalTimeUnit()
-	{
-		return null;
 	}
 	
 	@Override
@@ -90,5 +77,11 @@ public class ShutdownTask implements ITask
 	public boolean isEnabled()
 	{
 		return KardExo.CONFIG.getData().isShutdownEnabled();
+	}
+	
+	@Override
+	public boolean isRecurring()
+	{
+		return false;
 	}
 }

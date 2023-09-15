@@ -1,10 +1,15 @@
 package net.kardexo.kardexotools.tasks;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import net.kardexo.kardexotools.KardExo;
 
@@ -23,17 +28,14 @@ public class TaskScheduler extends Thread
 	{
 		try
 		{
-			Map<ITask, Integer> states = new HashMap<ITask, Integer>();
-			ArrayList<Event> events = new ArrayList<Event>();
+			List<Event> events = new ArrayList<Event>();
 			long time = System.currentTimeMillis();
 			
 			for(ITask task : this.tasks)
 			{
 				if(task.isEnabled())
 				{
-					int initialState = this.initialState(task, task.getOffsetMillis());
-					states.put(task, initialState);
-					events.add(new Event(task, time + task.getOffsetMillis() - this.getMaxWarningDurationMillis(task, initialState)));
+					events.add(firstEventForTask(task, time));
 				}
 			}
 			
@@ -41,11 +43,10 @@ public class TaskScheduler extends Thread
 			
 			while(!events.isEmpty())
 			{
-				while(this.reschedule(events, states));
+				while(hasCollisions(events));
 				
 				Event event = events.remove(0);
 				ITask task = event.task();
-				int state = states.get(task);
 				long sleep = Math.max(0, event.timestamp() - System.currentTimeMillis());
 				
 				if(sleep > 0)
@@ -53,36 +54,29 @@ public class TaskScheduler extends Thread
 					Thread.sleep(sleep);
 				}
 				
-				if(state == 0)
+				if(event.state() == 0)
 				{
 					this.dispatcher.dispatch(task);
 					
-					if(task.getInterval() > 0)
+					if(task.isRecurring())
 					{
-						int newState = this.initialState(task, task.getIntervalMillis());
-						states.put(task, newState);
-						events.add(new Event(task, event.timestamp() + task.getIntervalMillis() - this.getMaxWarningDurationMillis(task, newState)));
+						events.add(firstEventForTask(task, event.timestamp()));
 						Collections.sort(events);
-					}
-					else
-					{
-						states.remove(task);
 					}
 				}
 				else
 				{
 					long[] times = task.getWarningTimesMillis();
-					long current = times[times.length - state];
+					long current = times[times.length - event.state()];
 					long waitingTime = current;
 					
-					if(state > 1)
+					if(event.state() > 1)
 					{
-						waitingTime -= times[times.length - state + 1];
+						waitingTime -= times[times.length - event.state() + 1];
 					}
 					
 					this.dispatcher.warn(task, current);
-					states.put(task, state - 1);
-					events.add(new Event(task, event.timestamp() + waitingTime));
+					events.add(new Event(task, event.timestamp() + waitingTime, event.state() - 1));
 					Collections.sort(events);
 				}
 			}
@@ -93,17 +87,22 @@ public class TaskScheduler extends Thread
 		}
 	}
 	
-	private boolean reschedule(ArrayList<Event> events, Map<ITask, Integer> states)
+	public void registerTask(ITask task)
+	{
+		this.tasks.add(task);
+	}
+	
+	private static boolean hasCollisions(List<Event> events)
 	{
 		for(int x = 0; x < events.size(); x++)
 		{
 			Event a = events.get(x);
-			long timeA = this.getExecutionTime(a, states);
+			long timeA = getExecutionTime(a);
 			
 			for(int y = x + 1; y < events.size(); y++)
 			{
 				Event b = events.get(y);
-				long timeB = this.getExecutionTime(b, states);
+				long timeB = getExecutionTime(b);
 				
 				if(timeA == timeB)
 				{
@@ -120,16 +119,10 @@ public class TaskScheduler extends Thread
 						events.remove(y);
 					}
 					
-					if(task.getInterval() > 0)
+					if(task.isRecurring())
 					{
-						int newState = this.initialState(task, task.getIntervalMillis());
-						states.put(task, newState);
-						events.add(new Event(task, timeA + task.getIntervalMillis() - this.getMaxWarningDurationMillis(task, newState)));
+						events.add(firstEventForTask(task, timeA));
 						Collections.sort(events);
-					}
-					else
-					{
-						states.remove(task);
 					}
 					
 					return true;
@@ -144,20 +137,52 @@ public class TaskScheduler extends Thread
 		return false;
 	}
 	
-	private long getExecutionTime(Event event, Map<ITask, Integer> states)
+	private static long getExecutionTime(Event event)
 	{
-		int state = states.get(event.task());
-		
-		if(state > 0)
+		if(event.state() > 0)
 		{
 			long[] times = event.task().getWarningTimesMillis();
-			return event.timestamp() + times[times.length - state];
+			return event.timestamp() + times[times.length - event.state()];
 		}
 		
 		return event.timestamp();
 	}
 	
-	private int initialState(ITask task, long waitTime)
+	private static Event firstEventForTask(ITask task, long time)
+	{
+		long executionTime = nextExecutionTime(task, time);
+		int initialState = initialState(task, executionTime - time);
+		long timestamp = executionTime - maxWarningDurationMillis(task, initialState);
+		return new Event(task, timestamp, initialState);
+	}
+	
+	private static long nextExecutionTime(ITask task, long timestamp)
+	{
+		ZoneId zoneId = ZoneOffset.systemDefault();
+		LocalDateTime last = Instant.ofEpochMilli(timestamp)
+			.atZone(zoneId)
+			.toLocalDateTime();
+		LocalDateTime startOfDay = last.with(LocalTime.MIN);
+		
+		for(long offset : task.getSchedules())
+		{
+			LocalDateTime next = startOfDay.plus(offset, ChronoUnit.MILLIS);
+			
+			if(next.compareTo(last) == 1)
+			{
+				return toMillis(next, zoneId);
+			}
+		}
+		
+		return toMillis(startOfDay.plusDays(1).plus(task.getSchedules()[0], ChronoUnit.MILLIS), zoneId);
+	}
+	
+	private static long toMillis(LocalDateTime localDateTime, ZoneId zoneId)
+	{
+		return ZonedDateTime.of(localDateTime, zoneId).toInstant().toEpochMilli();
+	}
+	
+	private static int initialState(ITask task, long waitTime)
 	{
 		long[] warningTimes = task.getWarningTimesMillis();
 		int state = warningTimes.length;
@@ -170,7 +195,7 @@ public class TaskScheduler extends Thread
 		return state;
 	}
 	
-	private long getMaxWarningDurationMillis(ITask task, int state)
+	private static long maxWarningDurationMillis(ITask task, int state)
 	{
 		if(task.getWarningTimes().length == 0 || state == 0)
 		{
@@ -180,12 +205,7 @@ public class TaskScheduler extends Thread
 		return task.getWarningTimesMillis()[task.getWarningTimes().length - state];
 	}
 	
-	public void registerTask(ITask task)
-	{
-		this.tasks.add(task);
-	}
-	
-	private record Event(ITask task, long timestamp) implements Comparable<Event>
+	private record Event(ITask task, long timestamp, int state) implements Comparable<Event>
 	{
 		@Override
 		public int compareTo(Event event)

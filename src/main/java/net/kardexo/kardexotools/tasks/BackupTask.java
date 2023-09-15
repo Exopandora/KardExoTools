@@ -11,6 +11,9 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+
 import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.mixin.AccessorMinecraftServer;
 import net.kardexo.kardexotools.util.Util;
@@ -24,6 +27,7 @@ import net.minecraft.server.MinecraftServer;
 public class BackupTask implements ITask
 {
 	private static boolean backupInProgress;
+	private final Supplier<long[]> schedules = Suppliers.memoize(() -> ITask.parseSchedules(KardExo.CONFIG.getData().getBackupTimes()));
 	
 	@Override
 	public void execute(MinecraftServer server)
@@ -115,33 +119,15 @@ public class BackupTask implements ITask
 	}
 	
 	@Override
+	public long[] getSchedules()
+	{
+		return this.schedules.get();
+	}
+	
+	@Override
 	public String getName()
 	{
 		return "backup";
-	}
-	
-	@Override
-	public long getOffset()
-	{
-		return KardExo.CONFIG.getData().getBackupOffset();
-	}
-	
-	@Override
-	public TimeUnit getOffsetTimeUnit()
-	{
-		return TimeUnit.SECONDS;
-	}
-	
-	@Override
-	public long getInterval()
-	{
-		return KardExo.CONFIG.getData().getBackupInterval();
-	}
-	
-	@Override
-	public TimeUnit getIntervalTimeUnit()
-	{
-		return TimeUnit.SECONDS;
 	}
 	
 	@Override
@@ -172,5 +158,11 @@ public class BackupTask implements ITask
 	public boolean isEnabled()
 	{
 		return KardExo.CONFIG.getData().isBackupEnabled();
+	}
+	
+	@Override
+	public boolean isRecurring()
+	{
+		return true;
 	}
 }

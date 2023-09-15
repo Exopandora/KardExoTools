@@ -2,12 +2,17 @@ package net.kardexo.kardexotools.tasks;
 
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+
 import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.util.Util;
 import net.minecraft.server.MinecraftServer;
 
 public class SaveTask implements ITask
 {
+	private final Supplier<long[]> schedules = Suppliers.memoize(() -> ITask.parseSchedules(KardExo.CONFIG.getData().getSaveTimes()));
+	
 	@Override
 	public void execute(MinecraftServer server)
 	{
@@ -15,33 +20,15 @@ public class SaveTask implements ITask
 	}
 	
 	@Override
+	public long[] getSchedules()
+	{
+		return this.schedules.get();
+	}
+	
+	@Override
 	public String getName()
 	{
 		return "save";
-	}
-	
-	@Override
-	public long getOffset()
-	{
-		return KardExo.CONFIG.getData().getSaveOffset();
-	}
-	
-	@Override
-	public TimeUnit getOffsetTimeUnit()
-	{
-		return TimeUnit.SECONDS;
-	}
-	
-	@Override
-	public long getInterval()
-	{
-		return KardExo.CONFIG.getData().getSaveInterval();
-	}
-	
-	@Override
-	public TimeUnit getIntervalTimeUnit()
-	{
-		return TimeUnit.SECONDS;
 	}
 	
 	@Override
@@ -72,5 +59,11 @@ public class SaveTask implements ITask
 	public boolean isEnabled()
 	{
 		return KardExo.CONFIG.getData().isSaveEnabled();
+	}
+	
+	@Override
+	public boolean isRecurring()
+	{
+		return true;
 	}
 }
