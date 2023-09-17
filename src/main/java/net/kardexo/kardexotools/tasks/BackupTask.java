@@ -63,12 +63,12 @@ public class BackupTask implements ITask
 			Path output = KardExo.CONFIG.getData().getBackupDirectory().toPath().resolve(fileName + ".zip");
 			
 			this.createDirectories();
-			this.purgeFiles(folderName);
 			
 			ZipThread zipper = new ZipThread("backup", Paths.get(folderName), output, file ->
 			{
 				this.printResult(server, file, start);
 				server.execute(() -> KardExo.setLevelSaving(server, !KardExo.CONFIG.getData().isDisableAutoSaving()));
+				this.purgeFiles(folderName);
 				BackupTask.backupInProgress = false;
 			});
 			zipper.start();
@@ -94,13 +94,11 @@ public class BackupTask implements ITask
 		if(backupDirectory.exists() && backupDirectory.canWrite() && backupDirectory.listFiles().length >= KardExo.CONFIG.getData().getBackupFiles())
 		{
 			File purgeFile = null;
-			long lastModified = Long.MAX_VALUE;
 			
 			for(File file : backupDirectory.listFiles())
 			{
-				if(file.getName().contains(folderName) && file.lastModified() < lastModified)
+				if(file.getName().startsWith(folderName) && file.getName().endsWith(".zip") && (purgeFile == null || file.lastModified() < purgeFile.lastModified()))
 				{
-					lastModified = file.lastModified();
 					purgeFile = file;
 				}
 			}
