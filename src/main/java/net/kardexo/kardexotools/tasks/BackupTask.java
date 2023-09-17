@@ -27,18 +27,29 @@ import net.minecraft.server.MinecraftServer;
 public class BackupTask implements ITask
 {
 	private static boolean backupInProgress;
+	private static boolean playerLoggedOut;
 	private final Supplier<long[]> schedules = Suppliers.memoize(() -> ITask.parseSchedules(KardExo.CONFIG.getData().getBackupTimes()));
 	
 	@Override
 	public void execute(MinecraftServer server)
 	{
+		this.execute(server, false);
+	}
+	
+	public void execute(MinecraftServer server, boolean forced)
+	{
 		if(BackupTask.backupInProgress)
 		{
 			Util.broadcastMessage(server, Component.literal("Backup already in progress"));
 		}
+		else if(!forced && KardExo.CONFIG.getData().doesBackupRequirePlayerActivity() && !BackupTask.playerLoggedOut && server.getPlayerCount() == 0)
+		{
+			KardExo.LOGGER.info("Skipping backup task because there has been no player activity");
+		}
 		else
 		{
 			BackupTask.backupInProgress = true;
+			BackupTask.playerLoggedOut = false;
 			long start = System.currentTimeMillis();
 			
 			Util.broadcastMessage(server, Component.literal("Starting backup..."));
@@ -164,5 +175,10 @@ public class BackupTask implements ITask
 	public boolean isRecurring()
 	{
 		return true;
+	}
+	
+	public static void onPlayerLoggedOut()
+	{
+		BackupTask.playerLoggedOut = true;
 	}
 }

@@ -20,6 +20,8 @@ public class Config
 	private String backupWarningMessage = "Starting backup in %d seconds";
 	@SerializedName("backup_thread_count")
 	private int backupThreadCount = 4;
+	@SerializedName("backup_requires_player_activity")
+	private boolean backupRequiresPlayerActivity = false;
 	
 	@SerializedName("shutdown_enabled")
 	private boolean shutdownEnabled = false;
@@ -348,6 +350,16 @@ public class Config
 	public void setBackupThreadCount(int backupThreadCount)
 	{
 		this.backupThreadCount = backupThreadCount;
+	}
+	
+	public boolean doesBackupRequirePlayerActivity()
+	{
+		return this.backupRequiresPlayerActivity;
+	}
+	
+	public void setBackupRequiresPlayerActivity(boolean backupRequiresPlayerActivity)
+	{
+		this.backupRequiresPlayerActivity = backupRequiresPlayerActivity;
 	}
 	
 	public boolean isBackupCommandEnabled()

@@ -12,6 +12,7 @@
 		"MixinLeashFenceKnotEntity",
 		"MixinMinecraftServer",
 		"MixinNetherWartBlock",
+		"MixinPlayerList",
 		"MixinServerGamePacketListenerImpl",
 		"MixinServerPlayer",
 		"MixinServerPlayerGameMode",

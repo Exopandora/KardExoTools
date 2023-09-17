@@ -39,7 +39,6 @@ import net.kardexo.kardexotools.config.VeinConfig;
 import net.kardexo.kardexotools.property.Property;
 import net.kardexo.kardexotools.tasks.BackupTask;
 import net.kardexo.kardexotools.tasks.BasesTickable;
-import net.kardexo.kardexotools.tasks.ITask;
 import net.kardexo.kardexotools.tasks.SaveTask;
 import net.kardexo.kardexotools.tasks.ShutdownTask;
 import net.kardexo.kardexotools.tasks.TaskDispatcher;
@@ -70,9 +69,9 @@ public class KardExo
 	
 	private static final List<ConfigFile<?>> CONFIG_FILES = Lists.newArrayList(CONFIG, BASES, PLACES, PLAYERS, VEINMINER);
 	
-	public static final ITask TASK_SAVE = new SaveTask();
-	public static final ITask TASK_BACKUP = new BackupTask();
-	public static final ITask TASK_SHUTDOWN = new ShutdownTask();
+	public static final SaveTask TASK_SAVE = new SaveTask();
+	public static final BackupTask TASK_BACKUP = new BackupTask();
+	public static final ShutdownTask TASK_SHUTDOWN = new ShutdownTask();
 	
 	public static void preInit(MinecraftServer server)
 	{
