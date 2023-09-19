@@ -72,7 +72,7 @@ curseforge {
 	apiKey = project.hasProperty("curse_api_key") ? curse_api_key : ''
 	project {
 		id = curse_project_id
-		changelog = file('../changelog.txt').canRead() ? file('../changelog.txt').text : ''
+		changelog = file('./changelog.txt').canRead() ? file('./changelog.txt').text : ''
 		changelogType = 'text'
 		releaseType = 'release'
 		addGameVersion 'Fabric'
