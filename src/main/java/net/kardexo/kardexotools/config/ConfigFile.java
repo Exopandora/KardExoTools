@@ -20,7 +20,6 @@ import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.util.BlockPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.LowerCaseEnumTypeAdapterFactory;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
@@ -32,8 +31,7 @@ public class ConfigFile<T>
 		.registerTypeAdapter(BlockPos.class, new BlockPosTypeAdapter())
 		.registerTypeAdapter(BoundingBox.class, new BoundingBoxTypeAdapter())
 		.registerTypeAdapter(BlockPredicate.class, new BlockPredicate.Serializer())
-        .registerTypeHierarchyAdapter(Component.class, new Component.Serializer())
-        .registerTypeHierarchyAdapter(Style.class, new Style.Serializer())
+        .registerTypeHierarchyAdapter(Component.class, new Component.SerializerAdapter())
         .registerTypeAdapterFactory(new LowerCaseEnumTypeAdapterFactory())
 		.disableHtmlEscaping()
 		.setPrettyPrinting()

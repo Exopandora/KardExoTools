@@ -14,7 +14,6 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.players.GameProfileCache;
@@ -56,7 +55,7 @@ public class WhereIsCommand
 		MutableComponent formattedProperties = (MutableComponent) ComponentUtils.formatList(properties, entry -> entry.getDisplayName(profileCache));
 		MutableComponent query = Component.translatable("%s: x: %s y: %s z: %s d: %s", new Object[] {target.getDisplayName(), pos.getX(), pos.getY(), pos.getZ(), dimension});
 		
-		if(!formattedProperties.getContents().equals(ComponentContents.EMPTY))
+		if(!properties.isEmpty())
 		{
 			query.append(" (").append(formattedProperties).append(")");
 		}

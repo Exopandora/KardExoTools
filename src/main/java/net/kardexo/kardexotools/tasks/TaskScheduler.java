@@ -29,13 +29,13 @@ public class TaskScheduler extends Thread
 		try
 		{
 			List<Event> events = new ArrayList<Event>();
-			long time = System.currentTimeMillis();
+			long timestamp = System.currentTimeMillis();
 			
 			for(ITask task : this.tasks)
 			{
 				if(task.isEnabled())
 				{
-					events.add(firstEventForTask(task, time));
+					events.add(firstEventForTaskAfter(task, timestamp));
 				}
 			}
 			
@@ -43,7 +43,7 @@ public class TaskScheduler extends Thread
 			
 			while(!events.isEmpty())
 			{
-				while(hasCollisions(events));
+				while(resolveCollisions(events));
 				
 				Event event = events.remove(0);
 				ITask task = event.task();
@@ -60,7 +60,7 @@ public class TaskScheduler extends Thread
 					
 					if(task.isRecurring())
 					{
-						events.add(firstEventForTask(task, event.timestamp()));
+						events.add(firstEventForTaskAfter(task, event.timestamp()));
 						Collections.sort(events);
 					}
 				}
@@ -92,7 +92,7 @@ public class TaskScheduler extends Thread
 		this.tasks.add(task);
 	}
 	
-	private static boolean hasCollisions(List<Event> events)
+	private static boolean resolveCollisions(List<Event> events)
 	{
 		for(int x = 0; x < events.size(); x++)
 		{
@@ -121,7 +121,7 @@ public class TaskScheduler extends Thread
 					
 					if(task.isRecurring())
 					{
-						events.add(firstEventForTask(task, timeA));
+						events.add(firstEventForTaskAfter(task, timeA));
 						Collections.sort(events);
 					}
 					
@@ -148,12 +148,12 @@ public class TaskScheduler extends Thread
 		return event.timestamp();
 	}
 	
-	private static Event firstEventForTask(ITask task, long time)
+	private static Event firstEventForTaskAfter(ITask task, long timestamp)
 	{
-		long executionTime = nextExecutionTime(task, time);
-		int initialState = initialState(task, executionTime - time);
-		long timestamp = executionTime - maxWarningDurationMillis(task, initialState);
-		return new Event(task, timestamp, initialState);
+		long executionTime = nextExecutionTime(task, timestamp);
+		int initialState = initialState(task, executionTime - timestamp);
+		long time = executionTime - maxWarningDurationMillis(task, initialState);
+		return new Event(task, time, initialState);
 	}
 	
 	private static long nextExecutionTime(ITask task, long timestamp)

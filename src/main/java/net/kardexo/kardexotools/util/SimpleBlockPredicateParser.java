@@ -2,7 +2,7 @@ package net.kardexo.kardexotools.util;
 
 import java.util.Map;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Maps;
 import com.mojang.brigadier.StringReader;
