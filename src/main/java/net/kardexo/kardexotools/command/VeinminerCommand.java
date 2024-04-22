@@ -1,12 +1,7 @@
 package net.kardexo.kardexotools.command;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
-
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-
 import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.config.PlayerConfig;
 import net.kardexo.kardexotools.config.VeinConfig;
@@ -15,6 +10,10 @@ import net.kardexo.kardexotools.util.CommandUtils;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
 
 public class VeinminerCommand
 {

@@ -1,17 +1,15 @@
 package net.kardexo.kardexotools.util;
 
-import java.util.Map;
-
-import org.jetbrains.annotations.Nullable;
-
 import com.google.common.collect.Maps;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-
 import net.minecraft.commands.arguments.blocks.BlockStateParser;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
 
 public class SimpleBlockPredicateParser
 {

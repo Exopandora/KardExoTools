@@ -1,12 +1,5 @@
 package net.kardexo.kardexotools.tasks;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-
 import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.config.OwnerConfig;
 import net.kardexo.kardexotools.property.BaseAccess;
@@ -15,6 +8,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
 
 public class BasesTickable implements Runnable
 {

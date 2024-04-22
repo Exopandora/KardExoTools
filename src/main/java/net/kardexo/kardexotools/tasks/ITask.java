@@ -1,11 +1,11 @@
 package net.kardexo.kardexotools.tasks;
 
+import net.minecraft.server.MinecraftServer;
+
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import net.minecraft.server.MinecraftServer;
 
 public interface ITask
 {

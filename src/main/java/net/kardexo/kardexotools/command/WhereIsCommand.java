@@ -1,12 +1,7 @@
 package net.kardexo.kardexotools.command;
 
-import java.util.HashSet;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-
 import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.property.Property;
 import net.minecraft.commands.CommandSourceStack;
@@ -18,6 +13,10 @@ import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.players.GameProfileCache;
 import net.minecraft.world.entity.player.Player;
+
+import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class WhereIsCommand
 {

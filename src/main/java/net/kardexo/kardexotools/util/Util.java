@@ -1,11 +1,11 @@
 package net.kardexo.kardexotools.util;
 
-import java.time.Duration;
-import java.util.Locale;
-
 import net.kardexo.kardexotools.KardExo;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
+
+import java.time.Duration;
+import java.util.Locale;
 
 public class Util
 {

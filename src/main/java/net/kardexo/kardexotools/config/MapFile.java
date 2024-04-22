@@ -1,10 +1,10 @@
 package net.kardexo.kardexotools.config;
 
+import com.google.gson.reflect.TypeToken;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.google.gson.reflect.TypeToken;
 
 public class MapFile<K, V> extends ConfigFile<Map<K, V>>
 {

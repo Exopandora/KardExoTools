@@ -1,13 +1,5 @@
 package net.kardexo.kardexotools.command;
 
-import java.util.Map.Entry;
-import java.util.NoSuchElementException;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
-
-import org.spongepowered.include.com.google.common.base.Objects;
-
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -15,7 +7,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-
 import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.config.OwnerConfig;
 import net.kardexo.kardexotools.property.Property;
@@ -34,6 +25,13 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import org.spongepowered.include.com.google.common.base.Objects;
+
+import java.util.Map.Entry;
+import java.util.NoSuchElementException;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 public class BasesCommand
 {

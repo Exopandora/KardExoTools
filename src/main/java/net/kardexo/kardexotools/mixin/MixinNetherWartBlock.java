@@ -1,7 +1,5 @@
 package net.kardexo.kardexotools.mixin;
 
-import org.spongepowered.asm.mixin.Mixin;
-
 import net.kardexo.kardexotools.patches.CropsPatch;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
@@ -12,6 +10,7 @@ import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.NetherWartBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(value = NetherWartBlock.class, priority = 1001)
 public abstract class MixinNetherWartBlock extends BushBlock

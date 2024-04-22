@@ -1,5 +1,11 @@
 package net.kardexo.kardexotools.mixin;
 
+import net.kardexo.kardexotools.util.PropertyUtils;
+import net.kardexo.kardexotools.veinminer.Veinminer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerPlayerGameMode;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -7,13 +13,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import net.kardexo.kardexotools.util.PropertyUtils;
-import net.kardexo.kardexotools.veinminer.Veinminer;
-import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.level.ServerPlayerGameMode;
 
 @Mixin(ServerPlayerGameMode.class)
 public class MixinServerPlayerGameMode

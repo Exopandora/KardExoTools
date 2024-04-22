@@ -1,5 +1,11 @@
 package net.kardexo.kardexotools.tasks;
 
+import net.kardexo.kardexotools.KardExo;
+import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.parallel.InputStreamSupplier;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -12,13 +18,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
-
-import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
-import org.apache.commons.compress.parallel.InputStreamSupplier;
-
-import net.kardexo.kardexotools.KardExo;
 
 public class ZipThread extends Thread
 {

@@ -1,21 +1,19 @@
 package net.kardexo.kardexotools.mixin;
 
-import java.lang.reflect.Field;
-import java.util.function.Predicate;
-
+import carpet.commands.SpawnCommand;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.tree.CommandNode;
 import net.kardexo.kardexotools.KardExo;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.CommandSourceStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.tree.CommandNode;
-
-import carpet.commands.SpawnCommand;
-import net.minecraft.commands.CommandBuildContext;
-import net.minecraft.commands.CommandSourceStack;
+import java.lang.reflect.Field;
+import java.util.function.Predicate;
 
 @Mixin(SpawnCommand.class)
 public class MixinSpawnCommand

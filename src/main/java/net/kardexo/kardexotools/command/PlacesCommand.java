@@ -1,8 +1,5 @@
 package net.kardexo.kardexotools.command;
 
-import java.util.NoSuchElementException;
-import java.util.concurrent.CompletableFuture;
-
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -10,7 +7,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-
 import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.property.Property;
 import net.kardexo.kardexotools.util.CommandUtils;
@@ -25,6 +21,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
+
+import java.util.NoSuchElementException;
+import java.util.concurrent.CompletableFuture;
 
 public class PlacesCommand
 {

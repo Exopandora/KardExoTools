@@ -1,14 +1,5 @@
 package net.kardexo.kardexotools.util;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.NoSuchElementException;
-import java.util.UUID;
-
-import org.jetbrains.annotations.Nullable;
-import org.spongepowered.include.com.google.common.base.Objects;
-
 import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.config.MapFile;
 import net.kardexo.kardexotools.config.OwnerConfig;
@@ -22,6 +13,14 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import org.jetbrains.annotations.Nullable;
+import org.spongepowered.include.com.google.common.base.Objects;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.NoSuchElementException;
+import java.util.UUID;
 
 public class PropertyUtils
 {

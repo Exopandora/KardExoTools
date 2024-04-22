@@ -1,8 +1,8 @@
 package net.kardexo.kardexotools.config;
 
-import java.io.File;
-
 import com.google.gson.annotations.SerializedName;
+
+import java.io.File;
 
 public class Config
 {

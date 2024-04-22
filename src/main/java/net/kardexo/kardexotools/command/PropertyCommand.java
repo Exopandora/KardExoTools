@@ -1,19 +1,18 @@
 package net.kardexo.kardexotools.command;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.concurrent.CompletableFuture;
-
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-
 import net.kardexo.kardexotools.config.MapFile;
 import net.kardexo.kardexotools.property.Property;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.ComponentUtils;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.concurrent.CompletableFuture;
 
 public abstract class PropertyCommand
 {

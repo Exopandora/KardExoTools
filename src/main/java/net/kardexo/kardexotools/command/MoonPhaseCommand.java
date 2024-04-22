@@ -2,7 +2,6 @@ package net.kardexo.kardexotools.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-
 import net.kardexo.kardexotools.KardExo;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;

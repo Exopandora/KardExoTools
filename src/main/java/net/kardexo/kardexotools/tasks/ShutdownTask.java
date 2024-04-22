@@ -1,16 +1,15 @@
 package net.kardexo.kardexotools.tasks;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-
 import net.kardexo.kardexotools.KardExo;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class ShutdownTask implements ITask
 {

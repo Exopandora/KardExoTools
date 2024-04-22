@@ -1,10 +1,5 @@
 package net.kardexo.kardexotools.config;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.lang.reflect.Type;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -15,7 +10,6 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
-
 import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.util.BlockPredicate;
 import net.minecraft.core.BlockPos;
@@ -23,6 +17,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.LowerCaseEnumTypeAdapterFactory;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.lang.reflect.Type;
 
 public class ConfigFile<T>
 {

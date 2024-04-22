@@ -1,5 +1,7 @@
 package net.kardexo.kardexotools.tasks;
 
+import net.kardexo.kardexotools.KardExo;
+
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -10,8 +12,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import net.kardexo.kardexotools.KardExo;
 
 public class TaskScheduler extends Thread
 {

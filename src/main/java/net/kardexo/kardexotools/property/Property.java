@@ -1,17 +1,8 @@
 package net.kardexo.kardexotools.property;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
-import org.jetbrains.annotations.Nullable;
-import org.spongepowered.include.com.google.common.base.Objects;
-
 import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
 import com.mojang.authlib.GameProfile;
-
 import net.kardexo.kardexotools.config.OwnerConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -26,6 +17,13 @@ import net.minecraft.server.players.GameProfileCache;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import org.jetbrains.annotations.Nullable;
+import org.spongepowered.include.com.google.common.base.Objects;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 public class Property
 {

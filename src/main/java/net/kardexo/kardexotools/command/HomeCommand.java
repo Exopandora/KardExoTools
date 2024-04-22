@@ -2,7 +2,6 @@ package net.kardexo.kardexotools.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-
 import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.config.PlayerConfig;
 import net.kardexo.kardexotools.util.CommandUtils;

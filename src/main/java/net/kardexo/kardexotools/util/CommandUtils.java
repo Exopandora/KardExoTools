@@ -1,11 +1,7 @@
 package net.kardexo.kardexotools.util;
 
-import java.util.EnumSet;
-import java.util.UUID;
-
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-
 import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
@@ -15,6 +11,9 @@ import net.minecraft.server.commands.TeleportCommand;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.RelativeMovement;
+
+import java.util.EnumSet;
+import java.util.UUID;
 
 public class CommandUtils
 {

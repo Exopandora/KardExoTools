@@ -1,8 +1,7 @@
 package net.kardexo.kardexotools.config;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.google.gson.annotations.SerializedName;
+import org.jetbrains.annotations.Nullable;
 
 public class OwnerConfig
 {
