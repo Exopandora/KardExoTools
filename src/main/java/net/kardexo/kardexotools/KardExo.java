@@ -190,6 +190,8 @@ public class KardExo
 		addVein(Blocks.WARPED_WART_BLOCK, 5, true, registry, config);
 		addVein(Blocks.MANGROVE_LEAVES, 5, true, registry, config);
 		addVein(Blocks.CHERRY_LEAVES, 5, true, registry, config);
+		addVein(Blocks.AZALEA_LEAVES, 5, true, registry, config);
+		addVein(Blocks.FLOWERING_AZALEA_LEAVES, 5, true, registry, config);
 		
 		addVein(Blocks.ANDESITE, 15, true, registry, config);
 		addVein(Blocks.DIORITE, 15, true, registry, config);
