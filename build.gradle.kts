@@ -4,8 +4,8 @@ import net.fabricmc.loom.task.AbstractRemapJarTask
 
 plugins {
 	id("java")
-	id("fabric-loom") version("1.4.+")
-	id("com.github.johnrengelman.shadow") version("8.0.0+")
+	alias(libs.plugins.fabricloom)
+	alias(libs.plugins.shadow)
 //	id("me.hypherionmc.cursegradle") version("2.+")
 }
 
@@ -35,19 +35,13 @@ val modAuthor: String by project
 val modVersion: String by project
 val modDescription: String by project
 val modUrl: String by project
-val minecraftVersion: String by project
 val javaVersion: String by project
 val javaToolchainVersion: String by project
 val jarName: String by project
 val compatibleMinecraftVersions: String by project
 val curseProjectId: String by project
 
-val fabricLoaderVersion: String by project
-val bigMathVersion: String by project
-val commonsCompressVersion: String by project
-val carpetVersion: String by project
-
-version = "$minecraftVersion-$modVersion"
+version = "${libs.versions.minecraft.get()}-$modVersion"
 
 base {
 	archivesName.set(jarName)
@@ -65,12 +59,12 @@ configurations["shadowImplementation"].extendsFrom(configurations["implementatio
 configurations["compileClasspath"].extendsFrom(shadowImplementation)
 
 dependencies {
-	minecraft("com.mojang:minecraft:${minecraftVersion}")
+	minecraft(libs.minecraft.fabric)
 	mappings(loom.officialMojangMappings())
-	modImplementation("net.fabricmc:fabric-loader:${fabricLoaderVersion}")
-	modImplementation("carpet:fabric-carpet:${carpetVersion}")
-	shadowImplementation("ch.obermuhlner:big-math:${bigMathVersion}")
-	shadowImplementation("org.apache.commons:commons-compress:${commonsCompressVersion}")
+	modImplementation(libs.fabric.loader)
+	modImplementation(libs.carpet.fabric)
+	shadowImplementation(libs.bigmath)
+	shadowImplementation(libs.apache.commons.compress)
 }
 
 loom {
@@ -87,7 +81,7 @@ tasks.named<ProcessResources>("processResources").configure {
 		"modAuthor" to modAuthor,
 		"modDescription" to modDescription,
 		"modUrl" to modUrl,
-		"minecraftVersion" to minecraftVersion
+		"minecraftVersion" to libs.versions.minecraft.get()
 	)
 	
 	inputs.properties(properties)

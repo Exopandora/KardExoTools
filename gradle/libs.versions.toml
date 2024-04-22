@@ -1,0 +1,17 @@
+[versions]
+minecraft = "1.20.4"
+fabric-loader = "0.15.1"
+carpet = "1.20.3-1.4.128+v231205"
+commons-compress = "1.26.1"
+bigmath = "2.3.2"
+
+[libraries]
+minecraft-fabric = { module = "com.mojang:minecraft", version.ref = "minecraft" }
+fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
+carpet-fabric = { module = "carpet:fabric-carpet", version.ref = "carpet" }
+apache-commons-compress = { module = "org.apache.commons:commons-compress", version.ref = "commons-compress" }
+bigmath = { module = "ch.obermuhlner:big-math", version.ref = "bigmath" }
+
+[plugins]
+fabricloom = { id = "fabric-loom", version = "1.4.+" }
+shadow = { id = "com.github.johnrengelman.shadow", version = "8.0.0+"}
