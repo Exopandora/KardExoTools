@@ -40,6 +40,6 @@ public abstract class MixinCropBlock extends BushBlock implements BonemealableBl
 	@Override
 	public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand hand, BlockHitResult hitResult)
 	{
-		return CropsPatch.use(blockState, level, blockPos, player, hand, hitResult, (CropBlock) (Object) this, this.getBaseSeedId().asItem(), this.getAgeProperty(), this.getMaxAge(), this.getStateForAge(0));
+		return CropsPatch.use(blockState, level, blockPos, player, hand, hitResult, this, this.getBaseSeedId().asItem(), this.getAgeProperty(), this.getMaxAge(), this.getStateForAge(0));
 	}
 }

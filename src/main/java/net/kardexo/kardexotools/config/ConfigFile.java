@@ -65,7 +65,7 @@ public class ConfigFile<T>
 	
 	public void save()
 	{
-		KardExo.LOGGER.info("Writing " + this.file.getName());
+		KardExo.LOGGER.info("Writing {}", this.file.getName());
 		
 		try
 		{
@@ -75,7 +75,7 @@ public class ConfigFile<T>
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			KardExo.LOGGER.error(e);
 		}
 	}
 	
@@ -93,7 +93,7 @@ public class ConfigFile<T>
 			}
 			catch(Exception e)
 			{
-				e.printStackTrace();
+				KardExo.LOGGER.error(e);
 			}
 		}
 		else

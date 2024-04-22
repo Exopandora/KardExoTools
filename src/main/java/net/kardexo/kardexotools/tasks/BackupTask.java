@@ -83,7 +83,7 @@ public class BackupTask implements ITask
 		}
 		catch(IOException e)
 		{
-			e.printStackTrace();
+			KardExo.LOGGER.error(e);
 		}
 	}
 	
@@ -91,7 +91,7 @@ public class BackupTask implements ITask
 	{
 		File backupDirectory = KardExo.CONFIG.getData().getBackupDirectory();
 		
-		if(backupDirectory.exists() && backupDirectory.canWrite() && backupDirectory.listFiles().length >= KardExo.CONFIG.getData().getBackupFiles())
+		if(backupDirectory.exists() && backupDirectory.canWrite() && backupDirectory.isDirectory() && backupDirectory.listFiles().length >= KardExo.CONFIG.getData().getBackupFiles())
 		{
 			File purgeFile = null;
 			

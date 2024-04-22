@@ -160,7 +160,7 @@ public class KardExo
 		}
 		catch(IOException e)
 		{
-			e.printStackTrace();
+			LOGGER.error(e);
 		}
 	}
 	

@@ -3,7 +3,9 @@ package net.kardexo.kardexotools.mixin;
 import java.lang.reflect.Field;
 import java.util.function.Predicate;
 
+import net.kardexo.kardexotools.KardExo;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -27,11 +29,12 @@ public class MixinSpawnCommand
 	private static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext commandBuildContext, CallbackInfo info)
 	{
 		CommandNode<CommandSourceStack> root = dispatcher.getRoot().getChild("spawn");
-		root.getChildren().forEach(child -> MixinSpawnCommand.setRequirement(child, root.getRequirement()));
-		MixinSpawnCommand.setRequirement(root, source -> true);
+		root.getChildren().forEach(child -> MixinSpawnCommand.kardexotools$setRequirement(child, root.getRequirement()));
+		MixinSpawnCommand.kardexotools$setRequirement(root, source -> true);
 	}
 	
-	private static final void setRequirement(CommandNode<CommandSourceStack> node, Predicate<CommandSourceStack> requirement)
+	@Unique
+	private static void kardexotools$setRequirement(CommandNode<CommandSourceStack> node, Predicate<CommandSourceStack> requirement)
 	{
 		try
 		{
@@ -41,7 +44,7 @@ public class MixinSpawnCommand
 		}
 		catch(NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e)
 		{
-			e.printStackTrace();
+			KardExo.LOGGER.error(e);
 		}
 	}
 }

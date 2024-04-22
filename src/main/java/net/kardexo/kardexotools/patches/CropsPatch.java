@@ -1,7 +1,5 @@
 package net.kardexo.kardexotools.patches;
 
-import java.util.List;
-
 import net.kardexo.kardexotools.KardExo;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -16,6 +14,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
+
+import java.util.List;
 
 public class CropsPatch
 {
@@ -37,7 +37,7 @@ public class CropsPatch
 			
 			if(drop.getCount() > 0)
 			{
-				Block.popResource((ServerLevel) level, pos, drop);
+				Block.popResource(level, pos, drop);
 			}
 		}
 		

@@ -59,7 +59,7 @@ public abstract class MixinLeashFenceKnotEntity extends HangingEntity
 				{
 					if(mob.isLeashed() && mob.getLeashHolder() == player)
 					{
-						mob.setLeashedTo((LeashFenceKnotEntity) (Object) this, true);
+						mob.setLeashedTo(this, true);
 						playerIsCarryingMobs = true;
 					}
 				}
@@ -70,7 +70,7 @@ public abstract class MixinLeashFenceKnotEntity extends HangingEntity
 					
 					for(Mob mob : entities)
 					{
-						if(mob.isLeashed() && mob.getLeashHolder() == (LeashFenceKnotEntity) (Object) this)
+						if(mob.isLeashed() && mob.getLeashHolder() == this)
 						{
 							mob.setLeashedTo(player, true);
 						}
@@ -85,7 +85,7 @@ public abstract class MixinLeashFenceKnotEntity extends HangingEntity
 				{
 					for(Mob mob : entities)
 					{
-						if(mob.isLeashed() && mob.getLeashHolder() == (LeashFenceKnotEntity) (Object) this)
+						if(mob.isLeashed() && mob.getLeashHolder() == this)
 						{
 							mob.dropLeash(true, false);
 						}

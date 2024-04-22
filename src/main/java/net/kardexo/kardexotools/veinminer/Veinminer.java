@@ -136,7 +136,7 @@ public class Veinminer
 			
 			for(BlockPos block : pending)
 			{
-				final int positions[] = {-1, 0, 1};
+				final int[] positions = {-1, 0, 1};
 				
 				for(int x : positions)
 				{
@@ -183,7 +183,7 @@ public class Veinminer
 		return queue;
 	}
 	
-	private static final Comparator<BlockPos> comparator(BlockPos origin)
+	private static Comparator<BlockPos> comparator(BlockPos origin)
 	{
 		return (a, b) -> (int) (a.distSqr(origin) - b.distSqr(origin));
 	}

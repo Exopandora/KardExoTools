@@ -24,6 +24,6 @@ public abstract class MixinNetherWartBlock extends BushBlock
 	@Override
 	public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand hand, BlockHitResult hitResult)
 	{
-		return CropsPatch.use(blockState, level, blockPos, player, hand, hitResult, (NetherWartBlock) (Object) this, this.asItem(), NetherWartBlock.AGE, NetherWartBlock.MAX_AGE, this.defaultBlockState().setValue(NetherWartBlock.AGE, 0));
+		return CropsPatch.use(blockState, level, blockPos, player, hand, hitResult, this, this.asItem(), NetherWartBlock.AGE, NetherWartBlock.MAX_AGE, this.defaultBlockState().setValue(NetherWartBlock.AGE, 0));
 	}
 }

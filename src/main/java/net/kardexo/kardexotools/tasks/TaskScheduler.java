@@ -168,7 +168,7 @@ public class TaskScheduler extends Thread
 		{
 			LocalDateTime next = startOfDay.plus(offset, ChronoUnit.MILLIS);
 			
-			if(next.compareTo(last) == 1)
+			if(next.isAfter(last))
 			{
 				return toMillis(next, zoneId);
 			}

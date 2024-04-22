@@ -2,7 +2,6 @@ package net.kardexo.kardexotools.veinminer;
 
 import java.util.Stack;
 
-@SuppressWarnings("serial")
 public class LimitedStack<T> extends Stack<T>
 {
 	private final int limit;

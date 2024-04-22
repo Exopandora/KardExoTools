@@ -19,14 +19,11 @@ public class ShutdownTask implements ITask
 	@Override
 	public void execute(MinecraftServer server)
 	{
-		if(server.getPlayerList() != null)
+		List<ServerPlayer> players = new ArrayList<ServerPlayer>(server.getPlayerList().getPlayers());
+		
+		for(ServerPlayer player : players)
 		{
-			List<ServerPlayer> players = new ArrayList<ServerPlayer>(server.getPlayerList().getPlayers());
-			
-			for(ServerPlayer player : players)
-			{
-				player.connection.disconnect(Component.translatable(KardExo.CONFIG.getData().getShutdownMessage()));
-			}
+			player.connection.disconnect(Component.translatable(KardExo.CONFIG.getData().getShutdownMessage()));
 		}
 		
 		server.halt(false);

@@ -38,10 +38,7 @@ public class Util
 	
 	public static void broadcastMessage(MinecraftServer server, Component message)
 	{
-		if(server.getPlayerList() != null)
-		{
-			server.getPlayerList().broadcastSystemMessage(message, false);
-		}
+		server.getPlayerList().broadcastSystemMessage(message, false);
 	}
 	
 	public static String format(Duration duration)

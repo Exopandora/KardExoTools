@@ -34,12 +34,12 @@ import net.minecraft.world.level.block.state.properties.Property;
 
 public class BlockPredicate
 {
-	private ResourceLocation block;
+	private final ResourceLocation block;
 	@Nullable
-	private Map<String, String> properties;
+	private final Map<String, String> properties;
 	@Nullable
-	private CompoundTag nbt;
-	private boolean isTag;
+	private final CompoundTag nbt;
+	private final boolean isTag;
 	
 	public BlockPredicate(ResourceLocation block, @Nullable Map<String, String> properties, @Nullable CompoundTag nbt, boolean isTag)
 	{
@@ -174,7 +174,7 @@ public class BlockPredicate
 		return builder.toString();
 	}
 	
-	public static class Serializer implements JsonDeserializer<BlockPredicate>, JsonSerializer<BlockPredicate> 
+	public static class Serializer implements JsonDeserializer<BlockPredicate>, JsonSerializer<BlockPredicate>
 	{
 		@Override
 		public BlockPredicate deserialize(JsonElement element, Type type, JsonDeserializationContext context) throws JsonParseException

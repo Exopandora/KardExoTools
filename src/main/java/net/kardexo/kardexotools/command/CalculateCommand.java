@@ -1,5 +1,22 @@
 package net.kardexo.kardexotools.command;
 
+import ch.obermuhlner.math.big.BigDecimalMath;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.LiteralMessage;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+import com.mojang.brigadier.tree.LiteralCommandNode;
+import net.kardexo.kardexotools.KardExo;
+import net.kardexo.kardexotools.command.CalculateCommand.Expression.ParseException;
+import net.minecraft.Util;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.Component;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -15,24 +32,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.BiFunction;
-
-import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.LiteralMessage;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
-import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import com.mojang.brigadier.tree.LiteralCommandNode;
-
-import ch.obermuhlner.math.big.BigDecimalMath;
-import net.kardexo.kardexotools.KardExo;
-import net.kardexo.kardexotools.command.CalculateCommand.Expression.ParseException;
-import net.minecraft.Util;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.Component;
 
 public class CalculateCommand
 {
@@ -105,11 +104,6 @@ public class CalculateCommand
 		public Expression(String string)
 		{
 			this.string = string;
-		}
-		
-		public BigDecimal eval() throws ParseException
-		{
-			return this.eval(null, MATH_CONTEXT);
 		}
 		
 		public BigDecimal eval(BigDecimal ans, MathContext context) throws ParseException
@@ -249,20 +243,17 @@ public class CalculateCommand
 				return x;
 			}
 			
-			private BigDecimal parseArguments(BiFunction<BigDecimal, BigDecimal, BigDecimal> function, boolean multipleArgs) throws ParseException
+			private BigDecimal parseArguments(BiFunction<BigDecimal, BigDecimal, BigDecimal> function) throws ParseException
 			{
 				this.consumeExpected('(');
 				BigDecimal x = this.parseExpression();
 				this.consumeExpected(',');
-				x = function.apply(x, this.parseExpression());
 				
-				if(multipleArgs)
+				do
 				{
-					while(this.consume(','))
-					{
-						x = function.apply(x, this.parseExpression());
-					}
+					x = function.apply(x, this.parseExpression());
 				}
+				while(this.consume(','));
 				
 				this.consumeExpected(')');
 				return x;
@@ -455,10 +446,10 @@ public class CalculateCommand
 							x = BigDecimalMath.atanh(this.parseArgument(), this.context);
 							break;
 						case "min":
-							x = this.parseArguments((a, b) -> a.compareTo(b) < 0 ? a : b, true);
+							x = this.parseArguments((a, b) -> a.compareTo(b) < 0 ? a : b);
 							break;
 						case "max":
-							x = this.parseArguments((a, b) -> a.compareTo(b) < 0 ? b : a, true);
+							x = this.parseArguments((a, b) -> a.compareTo(b) < 0 ? b : a);
 							break;
 						default:
 							throw new ParseException("Unknown function " + function, start);
@@ -499,8 +490,6 @@ public class CalculateCommand
 		
 		public static class ParseException extends Exception
 		{
-			private static final long serialVersionUID = -7352867054559488848L;
-			
 			public ParseException(String message, int position)
 			{
 				super(message + " at position " + position);

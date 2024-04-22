@@ -103,32 +103,22 @@ public class BasesTickable implements Runnable
 	
 	private Component getFormattedMessage(String id, ServerPlayer player, Property base, OwnerConfig owner, BaseAccess access)
 	{
-		String format = null;
-		
-		switch(access)
+		String format = switch(access)
 		{
-			case ENTER:
-				format = owner.getEnterMessage();
-				break;
-			case LEAVE:
-				format = owner.getExitMessage();
-				break;
-		}
+			case ENTER -> owner.getEnterMessage();
+			case LEAVE -> owner.getExitMessage();
+		};
 		
 		if(format != null)
 		{
 			return Component.translatable(format.replace("&name", "%1$s").replace("&base", "%2$s"), new Object[]{player.getDisplayName(), base.getDisplayName(id, player.getServer().getProfileCache())});
 		}
 		
-		switch(access)
+		return switch(access)
 		{
-			case ENTER:
-				return Component.translatable(KardExo.CONFIG.getData().getPropertyDefaultEnterMessage(), new Object[]{player.getDisplayName(), base.getDisplayName(id, player.getServer().getProfileCache())});
-			case LEAVE:
-				return Component.translatable(KardExo.CONFIG.getData().getPropertyDefaultExitMessage(), new Object[]{player.getDisplayName(), base.getDisplayName(id, player.getServer().getProfileCache())});
-		}
-		
-		return null;
+			case ENTER -> Component.translatable(KardExo.CONFIG.getData().getPropertyDefaultEnterMessage(), player.getDisplayName(), base.getDisplayName(id, player.getServer().getProfileCache()));
+			case LEAVE -> Component.translatable(KardExo.CONFIG.getData().getPropertyDefaultExitMessage(), player.getDisplayName(), base.getDisplayName(id, player.getServer().getProfileCache()));
+		};
 	}
 	
 	public static void remove(Property base)

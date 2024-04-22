@@ -44,7 +44,7 @@ public class ZipThread extends Thread
 		catch(Exception e)
 		{
 			this.callback.accept(null);
-			e.printStackTrace();
+			KardExo.LOGGER.error(e);
 		}
 	}
 	
