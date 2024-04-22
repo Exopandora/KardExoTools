@@ -1,30 +1,24 @@
 {
 	"schemaVersion": 1,
-	"id": "kardexotools",
-	"version": "${version}",
-	"name": "KardExoTools",
-	"description": "Minecraft Server Modification",
+	"id": "${modId}",
+	"version": "${modVersion}",
+	"name": "${modName}",
+	"description": "${modDescription}",
 	"authors": [
-		"Exopandora"
+		"${modAuthor}"
 	],
 	"contact": {
-		"homepage": "https://github.com/Exopandora/KardExoTools",
-		"sources": "https://github.com/Exopandora/KardExoTools"
+		"homepage": "${modUrl}",
+		"sources": "${modUrl}"
 	},
-	"license": "",
 	"environment": "server",
-	"entrypoints": {
-		"main": []
-	},
 	"mixins": [
-		"kardexotools.mixins.json"
+		"${modId}.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.15.1",
 		"minecraft": ">=1.20.3",
 		"java": ">=17"
 	},
-	"suggests": {
-	},
-	"accessWidener": "kardexotools.accesswidener"
+	"accessWidener": "${modId}.accesswidener"
 }
