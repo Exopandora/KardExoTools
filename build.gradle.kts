@@ -1,12 +1,13 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import net.fabricmc.loom.task.AbstractRemapJarTask
+import net.fabricmc.loom.task.RemapJarTask
 
 plugins {
 	id("java")
 	alias(libs.plugins.fabricloom)
 	alias(libs.plugins.shadow)
-//	id("me.hypherionmc.cursegradle") version("2.+")
+	alias(libs.plugins.modpublishplugin)
 }
 
 repositories {
@@ -125,23 +126,21 @@ tasks.withType<AbstractArchiveTask>().configureEach {
 	isReproducibleFileOrder = true
 }
 
-//curseforge {
-//	apiKey = project.hasProperty("curse_api_key") ? curse_api_key : ''
-//	project {
-//		id = curse_project_id
-//		changelog = file('./changelog.txt').canRead() ? file('./changelog.txt').text : ''
-//		changelogType = 'text'
-//		releaseType = 'release'
-//		addGameVersion 'Fabric'
-//		compatible_minecraft_versions.split(",").each {
-//			addGameVersion(it)
-//		}
-//		mainArtifact(remapJar) {
-//			displayName = "${mod_name}-${minecraft_version}-${mod_version}"
-//		}
-//	}
-//	options {
-//		javaVersionAutoDetect = false
-//		forgeGradleIntegration = false
-//	}
-//}
+publishMods {
+	displayName = "$jarName-${libs.versions.minecraft.get()}-$modVersion"
+	file = tasks.named<RemapJarTask>("remapJar").get().archiveFile
+	changelog = provider { file("../changelog.txt").readText() }
+	modLoaders.add("fabric")
+	type = STABLE
+	
+	val compatibleVersions = compatibleMinecraftVersions.split(",")
+	
+	curseforge {
+		projectId = curseProjectId
+		accessToken = findProperty("curse_api_key").toString()
+		minecraftVersions.set(compatibleVersions)
+		javaVersions.add(JavaVersion.toVersion(javaVersion))
+		clientRequired = false
+		serverRequired = true
+	}
+}
