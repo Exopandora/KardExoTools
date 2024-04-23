@@ -129,7 +129,7 @@ tasks.withType<AbstractArchiveTask>().configureEach {
 publishMods {
 	displayName = "$jarName-${libs.versions.minecraft.get()}-$modVersion"
 	file = tasks.named<RemapJarTask>("remapJar").get().archiveFile
-	changelog = provider { file("../changelog.txt").readText() }
+	changelog = provider { file("changelog.txt").readText() }
 	modLoaders.add("fabric")
 	type = STABLE
 	
