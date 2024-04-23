@@ -10,6 +10,7 @@ import com.google.gson.JsonSerializer;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
@@ -83,7 +84,7 @@ public class BlockPredicate
 			if(this.nbt != null)
 			{
 				BlockEntity blockEntity = level.getBlockEntity(pos);
-				return blockEntity != null && NbtUtils.compareNbt(this.nbt, blockEntity.saveWithFullMetadata(), true);
+				return blockEntity != null && NbtUtils.compareNbt(this.nbt, blockEntity.saveWithFullMetadata(level.registryAccess()), true);
 			}
 			
 			return true;
@@ -112,7 +113,7 @@ public class BlockPredicate
 		if(this.nbt != null)
 		{
 			BlockEntity blockEntity = level.getBlockEntity(pos);
-			return (blockEntity != null && NbtUtils.compareNbt(this.nbt, blockEntity.saveWithFullMetadata(), true));
+			return (blockEntity != null && NbtUtils.compareNbt(this.nbt, blockEntity.saveWithFullMetadata(level.registryAccess()), true));
 		}
 		
 		return true;

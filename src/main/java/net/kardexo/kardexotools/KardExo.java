@@ -3,6 +3,8 @@ package net.kardexo.kardexotools;
 import com.google.common.collect.Lists;
 import com.google.gson.reflect.TypeToken;
 import com.mojang.brigadier.CommandDispatcher;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
 import net.kardexo.kardexotools.command.BackupCommand;
 import net.kardexo.kardexotools.command.BasesCommand;
 import net.kardexo.kardexotools.command.CalculateCommand;
@@ -32,6 +34,7 @@ import net.kardexo.kardexotools.tasks.ShutdownTask;
 import net.kardexo.kardexotools.tasks.TaskDispatcher;
 import net.kardexo.kardexotools.tasks.TaskScheduler;
 import net.kardexo.kardexotools.util.BlockPredicate;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
@@ -54,7 +57,10 @@ import java.util.UUID;
 
 public class KardExo
 {
-	public static final String VERSION = "1.20.4-2.52";
+	public static final String VERSION = FabricLoader.getInstance().getModContainer("kardexotools")
+		.map(ModContainer::getMetadata)
+		.map(metadata -> metadata.getCustomValue("minecraft").getAsString() + "-" + metadata.getVersion().getFriendlyString())
+		.orElseThrow();
 	public static final Logger LOGGER = LogManager.getLogger("KardExo");
 	
 	private static final File CONFIG_DIRECTORY = new File("config/kardexotools");
@@ -73,13 +79,12 @@ public class KardExo
 	
 	public static void preInit(MinecraftServer server)
 	{
-		LOGGER.info("KardExoTools " + KardExo.VERSION);
+		LOGGER.info("KardExoTools {}", KardExo.VERSION);
 		createConfigDirectory();
 		initConfigs(server);
 		readConfigs();
 		setLevelSaving(server, !CONFIG.getData().isDisableAutoSaving());
 		registerTickables(server);
-		registerCommands(server.getCommands().getDispatcher());
 	}
 	
 	public static void postInit(MinecraftServer server)
@@ -93,22 +98,22 @@ public class KardExo
 		scheduler.start();
 	}
 	
-	public static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher)
+	public static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext commandBuildContext)
 	{
 		MoonPhaseCommand.register(dispatcher);
 		WhereIsCommand.register(dispatcher);
 		BackupCommand.register(dispatcher);
 		WorldTimeCommand.register(dispatcher);
-		BasesCommand.register(dispatcher);
+		BasesCommand.register(dispatcher, commandBuildContext);
 		ResourceCommand.register(dispatcher);
 		CalculateCommand.register(dispatcher);
-		PlacesCommand.register(dispatcher);
+		PlacesCommand.register(dispatcher, commandBuildContext);
 		HomeCommand.register(dispatcher);
 		SetHomeCommand.register(dispatcher);
 		SpawnCommand.register(dispatcher);
 		VeinminerCommand.register(dispatcher);
 		UndoCommand.register(dispatcher);
-		KardExoCommand.register(dispatcher);
+		KardExoCommand.register(dispatcher, commandBuildContext);
 		PackCommand.register(dispatcher);
 		UptimeCommand.register(dispatcher);
 	}

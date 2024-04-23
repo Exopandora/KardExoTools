@@ -3,10 +3,9 @@
 	"minVersion": "0.8",
 	"package": "net.kardexo.kardexotools.mixin",
 	"compatibilityLevel": "JAVA_17",
-	"mixins": [],
-	"client": [],
 	"server": [
 		"AccessorMinecraftServer",
+		"MixinCommands",
 		"MixinCropBlock",
 		"MixinDedicatedServer",
 		"MixinLeashFenceKnotEntity",

@@ -115,7 +115,7 @@ tasks.withType<JavaCompile>().configureEach {
 	options.release.set(JavaLanguageVersion.of(javaVersion).asInt())
 }
 
-tasks.withType<Javadoc> {
+tasks.withType<Javadoc>().configureEach {
 	with(options as StandardJavadocDocletOptions) {
 		addStringOption("Xdoclint:none", "-quiet")
 	}

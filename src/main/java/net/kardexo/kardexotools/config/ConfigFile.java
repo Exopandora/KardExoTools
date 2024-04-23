@@ -13,6 +13,7 @@ import com.google.gson.reflect.TypeToken;
 import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.util.BlockPredicate;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.LowerCaseEnumTypeAdapterFactory;
@@ -30,7 +31,7 @@ public class ConfigFile<T>
 		.registerTypeAdapter(BlockPos.class, new BlockPosTypeAdapter())
 		.registerTypeAdapter(BoundingBox.class, new BoundingBoxTypeAdapter())
 		.registerTypeAdapter(BlockPredicate.class, new BlockPredicate.Serializer())
-        .registerTypeHierarchyAdapter(Component.class, new Component.SerializerAdapter())
+        .registerTypeHierarchyAdapter(Component.class, new Component.SerializerAdapter(RegistryAccess.EMPTY))
         .registerTypeAdapterFactory(new LowerCaseEnumTypeAdapterFactory())
 		.disableHtmlEscaping()
 		.setPrettyPrinting()
@@ -82,7 +83,7 @@ public class ConfigFile<T>
 	{
 		if(this.file.exists())
 		{
-			KardExo.LOGGER.info("Reading " + this.file.getName());
+			KardExo.LOGGER.info("Reading {}", this.file.getName());
 			
 			try
 			{

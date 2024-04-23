@@ -13,6 +13,7 @@ import net.kardexo.kardexotools.property.Property;
 import net.kardexo.kardexotools.tasks.BasesTickable;
 import net.kardexo.kardexotools.util.CommandUtils;
 import net.kardexo.kardexotools.util.PropertyUtils;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
@@ -35,7 +36,7 @@ import java.util.function.Consumer;
 
 public class BasesCommand
 {
-	public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
+	public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext commandBuildContext)
 	{
 		dispatcher.register(Commands.literal("bases")
 			.requires(source -> KardExo.CONFIG.getData().isBasesCommandEnabled())
@@ -46,7 +47,7 @@ public class BasesCommand
 							.then(Commands.argument("to", BlockPosArgument.blockPos())
 								.then(Commands.argument("owner", EntityArgument.player())
 									.executes(context -> add(context.getSource(), StringArgumentType.getString(context, "id"), DimensionArgument.getDimension(context, "dimension"), BoundingBox.fromCorners(BlockPosArgument.getLoadedBlockPos(context, "from"), BlockPosArgument.getLoadedBlockPos(context, "to")), EntityArgument.getPlayer(context, "owner"), null))
-									.then(Commands.argument("displayName", ComponentArgument.textComponent())
+									.then(Commands.argument("displayName", ComponentArgument.textComponent(commandBuildContext))
 										.executes(context -> add(context.getSource(), StringArgumentType.getString(context, "id"), DimensionArgument.getDimension(context, "dimension"), BoundingBox.fromCorners(BlockPosArgument.getLoadedBlockPos(context, "from"), BlockPosArgument.getLoadedBlockPos(context, "to")), EntityArgument.getPlayer(context, "owner"), ComponentArgument.getComponent(context, "displayName"))))))))))
 			.then(Commands.literal("remove")
 				.then(Commands.argument("id", StringArgumentType.word())
@@ -109,7 +110,7 @@ public class BasesCommand
 								.then(Commands.argument("from", BlockPosArgument.blockPos())
 									.then(Commands.argument("to", BlockPosArgument.blockPos())
 										.executes(context -> addChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child"), DimensionArgument.getDimension(context, "dimension"), BoundingBox.fromCorners(BlockPosArgument.getLoadedBlockPos(context, "from"), BlockPosArgument.getLoadedBlockPos(context, "to")), null))
-										.then(Commands.argument("displayName", ComponentArgument.textComponent())
+										.then(Commands.argument("displayName", ComponentArgument.textComponent(commandBuildContext))
 											.executes(context -> addChild(context.getSource(), StringArgumentType.getString(context, "id"), StringArgumentType.getString(context, "child"), DimensionArgument.getDimension(context, "dimension"), BoundingBox.fromCorners(BlockPosArgument.getLoadedBlockPos(context, "from"), BlockPosArgument.getLoadedBlockPos(context, "to")), ComponentArgument.getComponent(context, "displayName")))))))))
 					.then(Commands.literal("remove")
 						.then(Commands.argument("child", StringArgumentType.word())

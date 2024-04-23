@@ -37,20 +37,15 @@ public class SimpleBlockPredicateParser
 		if(this.reader.canRead() && this.reader.peek() == '#')
 		{
 			this.readTag();
-			
-			if(this.reader.canRead() && this.reader.peek() == '[')
-			{
-				this.readVagueProperties();
-			}
 		}
 		else	
 		{
 			this.readBlock();
-			
-			if(this.reader.canRead() && this.reader.peek() == '[')
-			{
-				this.readVagueProperties();
-			}
+		}
+		
+		if(this.reader.canRead() && this.reader.peek() == '[')
+		{
+			this.readVagueProperties();
 		}
 		
 		if(this.reader.canRead() && this.reader.peek() == '{')

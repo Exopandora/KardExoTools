@@ -19,7 +19,7 @@ import java.util.List;
 
 public class CropsPatch
 {
-	public static InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult, Block block, Item seed, IntegerProperty age, int maxAge, BlockState defaultState)
+	public static InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, Block block, Item seed, IntegerProperty age, int maxAge, BlockState defaultState)
 	{
 		if(level.isClientSide || !KardExo.CONFIG.getData().doHarvestCropsWithRightClick() || state.getValue(age) < maxAge)
 		{
