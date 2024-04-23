@@ -11,7 +11,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 import net.kardexo.kardexotools.KardExo;
-import net.kardexo.kardexotools.util.BlockPredicate;
+import net.kardexo.kardexotools.util.BlockPredicateWrapper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
@@ -30,7 +30,7 @@ public class ConfigFile<T>
 		.registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
 		.registerTypeAdapter(BlockPos.class, new BlockPosTypeAdapter())
 		.registerTypeAdapter(BoundingBox.class, new BoundingBoxTypeAdapter())
-		.registerTypeAdapter(BlockPredicate.class, new BlockPredicate.Serializer())
+		.registerTypeAdapter(BlockPredicateWrapper.class, new BlockPredicateWrapper.Serializer())
         .registerTypeHierarchyAdapter(Component.class, new Component.SerializerAdapter(RegistryAccess.EMPTY))
         .registerTypeAdapterFactory(new LowerCaseEnumTypeAdapterFactory())
 		.disableHtmlEscaping()

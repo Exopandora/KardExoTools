@@ -3,12 +3,10 @@ package net.kardexo.kardexotools.veinminer;
 import com.google.common.collect.Sets;
 import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.config.VeinConfig;
-import net.kardexo.kardexotools.util.BlockPredicate;
+import net.kardexo.kardexotools.util.BlockPredicateWrapper;
 import net.kardexo.kardexotools.util.PropertyUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -49,18 +47,17 @@ public class Veinminer
 		ItemStack item = player.getMainHandItem();
 		BlockState state = level.getBlockState(pos);
 		boolean isEffectiveTool = item.getDestroySpeed(state) > 1.0F;
-		Registry<Block> registry = level.registryAccess().registry(Registries.BLOCK).orElseThrow();
 		
 		if(KardExo.PLAYERS.getData().containsKey(uuid) && KardExo.PLAYERS.get(uuid).isVeinminerEnabled() && player.isShiftKeyDown() && !player.onClimbable() && (!item.isDamageableItem() || item.getMaxDamage() - item.getDamageValue() > 1))
 		{
-			for(Entry<BlockPredicate, VeinConfig> entry : KardExo.VEINMINER.getData().entrySet())
+			for(Entry<BlockPredicateWrapper, VeinConfig> entry : KardExo.VEINMINER.getData().entrySet())
 			{
-				BlockPredicate predicate = entry.getKey();
+				BlockPredicateWrapper predicate = entry.getKey();
 				VeinConfig config = entry.getValue();
 				
-				if(predicate.matches(registry, level, pos) && (isEffectiveTool || !config.doesRequireTool()))
+				if(predicate.matches(level, pos) && (isEffectiveTool || !config.doesRequireTool()))
 				{
-					PriorityQueue<BlockPos> queue = Veinminer.calculateVein(registry, player, KardExo.CONFIG.getData().getVeinminerBlockLimit(), predicate, config, pos, level);
+					PriorityQueue<BlockPos> queue = Veinminer.calculateVein(player, KardExo.CONFIG.getData().getVeinminerBlockLimit(), predicate, config, pos, level);
 					Map<BlockState, Set<BlockPos>> stateMap = new HashMap<BlockState, Set<BlockPos>>();
 					Vein undo = new Vein(player.level().dimension(), stateMap);
 					queue.poll();
@@ -112,7 +109,7 @@ public class Veinminer
 		return gameMode.destroyBlock(pos);
 	}
 	
-	private static PriorityQueue<BlockPos> calculateVein(Registry<Block> registry, Player player, int limit, BlockPredicate predicate, VeinConfig config, BlockPos pos, ServerLevel level)
+	private static PriorityQueue<BlockPos> calculateVein(Player player, int limit, BlockPredicateWrapper predicate, VeinConfig config, BlockPos pos, ServerLevel level)
 	{
 		PriorityQueue<BlockPos> queue = new PriorityQueue<BlockPos>(Veinminer.comparator(pos));
 		Collection<BlockPos> pending = Collections.singleton(pos);
@@ -155,7 +152,7 @@ public class Veinminer
 								continue;
 							}
 							
-							if(!predicate.matches(registry, level, nextBlock))
+							if(!predicate.matches(level, nextBlock))
 							{
 								continue;
 							}

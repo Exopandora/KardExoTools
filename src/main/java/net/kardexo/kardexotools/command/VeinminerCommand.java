@@ -5,13 +5,14 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.config.PlayerConfig;
 import net.kardexo.kardexotools.config.VeinConfig;
-import net.kardexo.kardexotools.util.BlockPredicate;
+import net.kardexo.kardexotools.util.BlockPredicateWrapper;
 import net.kardexo.kardexotools.util.CommandUtils;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -50,12 +51,12 @@ public class VeinminerCommand
 	{
 		List<Component> list = new ArrayList<Component>(KardExo.VEINMINER.getData().size());
 		
-		for(Entry<BlockPredicate, VeinConfig> config : KardExo.VEINMINER.getData().entrySet())
+		for(Entry<BlockPredicateWrapper, VeinConfig> config : KardExo.VEINMINER.getData().entrySet())
 		{
 			list.add(Component.translatable("%s = %s", config.getKey().toString(), config.getValue().getRadius()));
 		}
 		
-		list.sort((a, b) -> a.toString().compareTo(b.toString()));
+		list.sort(Comparator.comparing(Object::toString));
 		list.forEach(message -> source.sendSuccess(() -> message, false));
 		
 		return list.size();

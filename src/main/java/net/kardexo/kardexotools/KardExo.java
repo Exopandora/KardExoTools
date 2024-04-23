@@ -33,11 +33,11 @@ import net.kardexo.kardexotools.tasks.SaveTask;
 import net.kardexo.kardexotools.tasks.ShutdownTask;
 import net.kardexo.kardexotools.tasks.TaskDispatcher;
 import net.kardexo.kardexotools.tasks.TaskScheduler;
-import net.kardexo.kardexotools.util.BlockPredicate;
+import net.kardexo.kardexotools.util.BlockPredicateWrapper;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.commands.arguments.blocks.BlockPredicateArgument;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
@@ -50,6 +50,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +70,7 @@ public class KardExo
 	public static final MapFile<String, Property> BASES = new MapFile<String, Property>(new File(CONFIG_DIRECTORY, "bases.json"), new TypeToken<Map<String, Property>>() {});
 	public static final MapFile<String, Property> PLACES = new MapFile<String, Property>(new File(CONFIG_DIRECTORY, "places.json"), new TypeToken<Map<String, Property>>() {});
 	public static final MapFile<UUID, PlayerConfig> PLAYERS = new MapFile<UUID, PlayerConfig>(new File(CONFIG_DIRECTORY, "playerdata.json"), new TypeToken<Map<UUID, PlayerConfig>>() {});
-	public static final MapFile<BlockPredicate, VeinConfig> VEINMINER = new MapFile<BlockPredicate, VeinConfig>(new File(CONFIG_DIRECTORY, "veinminer.json"), new TypeToken<Map<BlockPredicate, VeinConfig>>() {});
+	public static final MapFile<BlockPredicateWrapper, VeinConfig> VEINMINER = new MapFile<BlockPredicateWrapper, VeinConfig>(new File(CONFIG_DIRECTORY, "veinminer.json"), new TypeToken<Map<BlockPredicateWrapper, VeinConfig>>() {});
 	
 	private static final List<ConfigFile<?>> CONFIG_FILES = Lists.newArrayList(CONFIG, BASES, PLACES, PLAYERS, VEINMINER);
 	
@@ -81,7 +82,7 @@ public class KardExo
 	{
 		LOGGER.info("KardExoTools {}", KardExo.VERSION);
 		createConfigDirectory();
-		initConfigs(server);
+		initConfigs();
 		readConfigs();
 		setLevelSaving(server, !CONFIG.getData().isDisableAutoSaving());
 		registerTickables(server);
@@ -139,10 +140,10 @@ public class KardExo
 		saveConfigs();
 	}
 	
-	private static void initConfigs(MinecraftServer server)
+	private static void initConfigs()
 	{
 		CONFIG.setData(new Config());
-		VEINMINER.setData(defaultVeinminerConfig(server));
+		VEINMINER.setData(defaultVeinminerConfig());
 	}
 	
 	public static void saveConfigs()
@@ -167,75 +168,74 @@ public class KardExo
 		}
 	}
 	
-	private static Map<BlockPredicate, VeinConfig> defaultVeinminerConfig(MinecraftServer server)
+	private static Map<BlockPredicateWrapper, VeinConfig> defaultVeinminerConfig()
 	{
-		Map<BlockPredicate, VeinConfig> config = new HashMap<BlockPredicate, VeinConfig>();
-		Registry<Block> registry = server.registryAccess().registry(Registries.BLOCK).orElseThrow();
+		Map<BlockPredicateWrapper, VeinConfig> config = new HashMap<BlockPredicateWrapper, VeinConfig>();
 		
-		addVein(Blocks.OAK_LOG, 12, true, registry, config);
-		addVein(Blocks.SPRUCE_LOG, 26, true, registry, config);
-		addVein(Blocks.JUNGLE_LOG, 26, true, registry, config);
-		addVein(Blocks.BIRCH_LOG, 15, true, registry, config);
-		addVein(Blocks.DARK_OAK_LOG, 10, true, registry, config);
-		addVein(Blocks.ACACIA_LOG, 10, true, registry, config);
-		addVein(Blocks.CRIMSON_STEM, 26, true, registry, config);
-		addVein(Blocks.WARPED_STEM, 26, true, registry, config);
-		addVein(Blocks.MANGROVE_LOG, 10, true, registry, config);
-		addVein(Blocks.CHERRY_LOG, 10, true, registry, config);
+		addVein(Blocks.OAK_LOG, 12, true, config);
+		addVein(Blocks.SPRUCE_LOG, 26, true, config);
+		addVein(Blocks.JUNGLE_LOG, 26, true, config);
+		addVein(Blocks.BIRCH_LOG, 15, true, config);
+		addVein(Blocks.DARK_OAK_LOG, 10, true, config);
+		addVein(Blocks.ACACIA_LOG, 10, true, config);
+		addVein(Blocks.CRIMSON_STEM, 26, true, config);
+		addVein(Blocks.WARPED_STEM, 26, true, config);
+		addVein(Blocks.MANGROVE_LOG, 10, true, config);
+		addVein(Blocks.CHERRY_LOG, 10, true, config);
 		
-		addVein(Blocks.OAK_LEAVES, 5, true, registry, config);
-		addVein(Blocks.SPRUCE_LEAVES, 5, true, registry, config);
-		addVein(Blocks.JUNGLE_LEAVES, 5, true, registry, config);
-		addVein(Blocks.BIRCH_LEAVES, 5, true, registry, config);
-		addVein(Blocks.DARK_OAK_LEAVES, 5, true, registry, config);
-		addVein(Blocks.ACACIA_LEAVES, 5, true, registry, config);
-		addVein(Blocks.NETHER_WART_BLOCK, 5, true, registry, config);
-		addVein(Blocks.WARPED_WART_BLOCK, 5, true, registry, config);
-		addVein(Blocks.MANGROVE_LEAVES, 5, true, registry, config);
-		addVein(Blocks.CHERRY_LEAVES, 5, true, registry, config);
-		addVein(Blocks.AZALEA_LEAVES, 5, true, registry, config);
-		addVein(Blocks.FLOWERING_AZALEA_LEAVES, 5, true, registry, config);
+		addVein(Blocks.OAK_LEAVES, 5, true, config);
+		addVein(Blocks.SPRUCE_LEAVES, 5, true, config);
+		addVein(Blocks.JUNGLE_LEAVES, 5, true, config);
+		addVein(Blocks.BIRCH_LEAVES, 5, true, config);
+		addVein(Blocks.DARK_OAK_LEAVES, 5, true, config);
+		addVein(Blocks.ACACIA_LEAVES, 5, true, config);
+		addVein(Blocks.NETHER_WART_BLOCK, 5, true, config);
+		addVein(Blocks.WARPED_WART_BLOCK, 5, true, config);
+		addVein(Blocks.MANGROVE_LEAVES, 5, true, config);
+		addVein(Blocks.CHERRY_LEAVES, 5, true, config);
+		addVein(Blocks.AZALEA_LEAVES, 5, true, config);
+		addVein(Blocks.FLOWERING_AZALEA_LEAVES, 5, true, config);
 		
-		addVein(Blocks.ANDESITE, 15, true, registry, config);
-		addVein(Blocks.DIORITE, 15, true, registry, config);
-		addVein(Blocks.GRANITE, 15, true, registry, config);
+		addVein(Blocks.ANDESITE, 15, true, config);
+		addVein(Blocks.DIORITE, 15, true, config);
+		addVein(Blocks.GRANITE, 15, true, config);
 		
-		addVein(Blocks.GRAVEL, 6, true, registry, config);
-		addVein(Blocks.GLOWSTONE, 10, false, registry, config);
-		addVein(Blocks.SOUL_SAND, 5, true, registry, config);
-		addVein(Blocks.OBSIDIAN, 5, true, registry, config);
-		addVein(Blocks.CRYING_OBSIDIAN, 5, true, registry, config);
-		addVein(Blocks.SAND, 7, true, registry, config);
-		addVein(Blocks.RED_SAND, 5, true, registry, config);
-		addVein(Blocks.CLAY, 4, true, registry, config);
+		addVein(Blocks.GRAVEL, 6, true, config);
+		addVein(Blocks.GLOWSTONE, 10, false, config);
+		addVein(Blocks.SOUL_SAND, 5, true, config);
+		addVein(Blocks.OBSIDIAN, 5, true, config);
+		addVein(Blocks.CRYING_OBSIDIAN, 5, true, config);
+		addVein(Blocks.SAND, 7, true, config);
+		addVein(Blocks.RED_SAND, 5, true, config);
+		addVein(Blocks.CLAY, 4, true, config);
 		
 		addVein(BlockTags.COAL_ORES, 17, true, config);
 		addVein(BlockTags.COPPER_ORES, 17, true, config);
 		addVein(BlockTags.IRON_ORES, 9, false, config);
 		addVein(BlockTags.GOLD_ORES, 9, true, config);
-		addVein(Blocks.GILDED_BLACKSTONE, 9, true, registry, config);
+		addVein(Blocks.GILDED_BLACKSTONE, 9, true, config);
 		addVein(BlockTags.DIAMOND_ORES, 9, true, config);
 		addVein(BlockTags.LAPIS_ORES, 7, true, config);
 		addVein(BlockTags.REDSTONE_ORES, 8, true, config);
-		addVein(Blocks.NETHER_QUARTZ_ORE, 14, true, registry, config);
-		addVein(Blocks.ANCIENT_DEBRIS, 3, true, registry, config);
+		addVein(Blocks.NETHER_QUARTZ_ORE, 14, true, config);
+		addVein(Blocks.ANCIENT_DEBRIS, 3, true, config);
 		
-		addVein(Blocks.ICE, 10, true, registry, config);
-		addVein(Blocks.PACKED_ICE, 10, true, registry, config);
-		addVein(Blocks.BLUE_ICE, 10, true, registry, config);
-		addVein(Blocks.BONE_BLOCK, 10, true, registry, config);
-		addVein(Blocks.WET_SPONGE, 5, true, registry, config);
+		addVein(Blocks.ICE, 10, true, config);
+		addVein(Blocks.PACKED_ICE, 10, true, config);
+		addVein(Blocks.BLUE_ICE, 10, true, config);
+		addVein(Blocks.BONE_BLOCK, 10, true, config);
+		addVein(Blocks.WET_SPONGE, 5, true, config);
 		
 		return config;
 	}
 	
-	private static void addVein(Block block, int radius, boolean requiresTool, Registry<Block> registry, Map<BlockPredicate, VeinConfig> map)
+	private static void addVein(Block block, int radius, boolean requiresTool, Map<BlockPredicateWrapper, VeinConfig> map)
 	{
-		map.put(new BlockPredicate(registry.getKey(block), null, null, false), new VeinConfig(radius, requiresTool));
+		map.put(new BlockPredicateWrapper(new BlockPredicateArgument.BlockPredicate(block.defaultBlockState(), Collections.emptySet(), null)), new VeinConfig(radius, requiresTool));
 	}
 	
-	private static void addVein(TagKey<Block> tag, int radius, boolean requiresTool, Map<BlockPredicate, VeinConfig> map)
+	private static void addVein(TagKey<Block> tag, int radius, boolean requiresTool, Map<BlockPredicateWrapper, VeinConfig> map)
 	{
-		map.put(new BlockPredicate(tag.location(), null, null, true), new VeinConfig(radius, requiresTool));
+		map.put(new BlockPredicateWrapper(new BlockPredicateArgument.TagPredicate(BuiltInRegistries.BLOCK.getTag(tag).orElseThrow(), Collections.emptyMap(), null)), new VeinConfig(radius, requiresTool));
 	}
 }
