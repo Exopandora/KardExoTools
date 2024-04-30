@@ -14,5 +14,5 @@ bigmath = { module = "ch.obermuhlner:big-math", version.ref = "bigmath" }
 
 [plugins]
 fabricloom = { id = "fabric-loom", version = "1.6-SNAPSHOT" }
-shadow = { id = "com.github.johnrengelman.shadow", version = "8.0.0+"}
+shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1"}
 modpublishplugin = { id = "me.modmuss50.mod-publish-plugin", version = "0.5.1" }

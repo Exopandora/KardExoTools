@@ -1,4 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import net.fabricmc.loom.task.AbstractRemapJarTask
 import net.fabricmc.loom.task.RemapJarTask
@@ -97,12 +96,8 @@ val shadowJarTask = tasks.named<ShadowJar>("shadowJar") {
 	from(sourceSets.main.get().output)
 	duplicatesStrategy = DuplicatesStrategy.INCLUDE
 	archiveClassifier = "dev"
-	dependsOn(tasks.named("relocateShadowJar"))
-}
-
-tasks.register<ConfigureShadowRelocation>("relocateShadowJar").configure {
-	target = shadowJarTask.get()
-	prefix = "net.kardexo.kardexotools.include"
+	isEnableRelocation = true
+	relocationPrefix = "net.kardexo.kardexotools.include"
 }
 
 tasks.named<AbstractRemapJarTask>("remapJar").configure {
