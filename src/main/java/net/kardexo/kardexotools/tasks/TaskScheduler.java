@@ -45,7 +45,7 @@ public class TaskScheduler extends Thread
 			{
 				while(resolveCollisions(events));
 				
-				Event event = events.remove(0);
+				Event event = events.removeFirst();
 				ITask task = event.task();
 				long sleep = Math.max(0, event.timestamp() - System.currentTimeMillis());
 				
