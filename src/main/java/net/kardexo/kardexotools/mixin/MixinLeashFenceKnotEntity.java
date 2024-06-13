@@ -3,11 +3,15 @@ package net.kardexo.kardexotools.mixin;
 import net.kardexo.kardexotools.KardExo;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Leashable;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.decoration.BlockAttachedEntity;
 import net.minecraft.world.entity.decoration.HangingEntity;
 import net.minecraft.world.entity.decoration.LeashFenceKnotEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.LeadItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,9 +22,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.List;
 
 @Mixin(LeashFenceKnotEntity.class)
-public abstract class MixinLeashFenceKnotEntity extends HangingEntity
+public abstract class MixinLeashFenceKnotEntity extends BlockAttachedEntity
 {
-	protected MixinLeashFenceKnotEntity(EntityType<? extends HangingEntity> entityType, Level level)
+	protected MixinLeashFenceKnotEntity(EntityType<? extends BlockAttachedEntity> entityType, Level level)
 	{
 		super(entityType, level);
 	}
@@ -31,7 +35,6 @@ public abstract class MixinLeashFenceKnotEntity extends HangingEntity
 		at = @At("HEAD"),
 		cancellable = true
 	)
-	@SuppressWarnings("resource")
 	public void interact(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> info)
 	{
 		if(!KardExo.CONFIG.getData().doPickupLeashKnots())
@@ -45,20 +48,22 @@ public abstract class MixinLeashFenceKnotEntity extends HangingEntity
 		}
 		else
 		{
-			double radius = 7.0D;
-			AABB aabb = new AABB(this.getX() - radius, this.getY() - radius, this.getZ() - radius, this.getX() + radius, this.getY() + radius, this.getZ() + radius);
-			List<Mob> entities = this.level().getEntitiesOfClass(Mob.class, aabb);
+			List<Leashable> entities = LeadItem.leashableInArea(this.level(), this.getPos(), leashable ->
+			{
+				Entity entity = leashable.getLeashHolder();
+				return entity == player || entity == this;
+			});
 			boolean playerPickup = !player.isShiftKeyDown();
 			
 			if(playerPickup)
 			{
 				boolean playerIsCarryingMobs = false;
 				
-				for(Mob mob : entities)
+				for(Leashable leashable : entities)
 				{
-					if(mob.isLeashed() && mob.getLeashHolder() == player)
+					if(leashable.isLeashed() && leashable.getLeashHolder() == player)
 					{
-						mob.setLeashedTo(this, true);
+						leashable.setLeashedTo(this, true);
 						playerIsCarryingMobs = true;
 					}
 				}
@@ -67,11 +72,11 @@ public abstract class MixinLeashFenceKnotEntity extends HangingEntity
 				{
 					this.discard();
 					
-					for(Mob mob : entities)
+					for(Leashable leashable : entities)
 					{
-						if(mob.isLeashed() && mob.getLeashHolder() == this)
+						if(leashable.isLeashed() && leashable.getLeashHolder() == this)
 						{
-							mob.setLeashedTo(player, true);
+							leashable.setLeashedTo(player, true);
 						}
 					}
 				}
@@ -82,11 +87,11 @@ public abstract class MixinLeashFenceKnotEntity extends HangingEntity
 				
 				if(player.getAbilities().instabuild)
 				{
-					for(Mob mob : entities)
+					for(Leashable leashable : entities)
 					{
-						if(mob.isLeashed() && mob.getLeashHolder() == this)
+						if(leashable.isLeashed() && leashable.getLeashHolder() == this)
 						{
-							mob.dropLeash(true, false);
+							leashable.dropLeash(true, false);
 						}
 					}
 				}

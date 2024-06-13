@@ -1,3 +1,4 @@
+@file:Suppress("UnstableApiUsage")
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import net.fabricmc.loom.task.AbstractRemapJarTask
 import net.fabricmc.loom.task.RemapJarTask
@@ -16,12 +17,13 @@ repositories {
 			maven("https://maven.fabricmc.net/")
 		}
 		filter {
-			includeGroupByRegex("net\\.fabricmc.*")
+			includeGroupAndSubgroups("net.fabricmc")
 			includeGroup("fabric-loom")
 		}
 	}
 	exclusiveContent {
-		forRepository {maven("https://masa.dy.fi/maven")
+		forRepository {
+			maven("https://masa.dy.fi/maven")
 		}
 		filter {
 			includeGroup("carpet")
@@ -53,6 +55,13 @@ java {
 	toolchain.languageVersion = JavaLanguageVersion.of(javaToolchainVersion)
 }
 
+idea {
+	module {
+		isDownloadSources = true
+		isDownloadJavadoc = true
+	}
+}
+
 val shadowImplementation: Configuration by configurations.creating
 
 configurations["shadowImplementation"].extendsFrom(configurations["implementation"])
@@ -69,11 +78,10 @@ dependencies {
 
 loom {
 	accessWidenerPath = file("src/main/resources/kardexotools.accesswidener")
-	@Suppress("UnstableApiUsage")
 	mixin.defaultRefmapName = "$modId.refmap.json"
 }
 
-tasks.named<ProcessResources>("processResources").configure {
+tasks.named<ProcessResources>("processResources") {
 	val properties = mapOf(
 		"modVersion" to modVersion,
 		"modId" to modId,
@@ -100,23 +108,23 @@ val shadowJarTask = tasks.named<ShadowJar>("shadowJar") {
 	relocationPrefix = "net.kardexo.kardexotools.include"
 }
 
-tasks.named<AbstractRemapJarTask>("remapJar").configure {
+tasks.named<AbstractRemapJarTask>("remapJar") {
 	dependsOn(shadowJarTask)
 	inputFile.set(shadowJarTask.get().archiveFile)
 }
 
-tasks.withType<JavaCompile>().configureEach {
+tasks.withType<JavaCompile> {
 	options.encoding = "UTF-8"
 	options.release.set(JavaLanguageVersion.of(javaVersion).asInt())
 }
 
-tasks.withType<Javadoc>().configureEach {
+tasks.withType<Javadoc> {
 	with(options as StandardJavadocDocletOptions) {
 		addStringOption("Xdoclint:none", "-quiet")
 	}
 }
 
-tasks.withType<AbstractArchiveTask>().configureEach {
+tasks.withType<AbstractArchiveTask> {
 	isPreserveFileTimestamps = false
 	isReproducibleFileOrder = true
 }
