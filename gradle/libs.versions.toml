@@ -1,8 +1,8 @@
 [versions]
-minecraft = "1.21"
+minecraft = "1.21.1"
 fabric-loader = "0.15.11"
-carpet = "1.21-pre3-1.4.146+v240605"
-commons-compress = "1.26.2"
+carpet = "1.21-1.4.147+v240613"
+commons-compress = "1.27.0"
 bigmath = "2.3.2"
 
 [libraries]
@@ -13,6 +13,6 @@ apache-commons-compress = { module = "org.apache.commons:commons-compress", vers
 bigmath = { module = "ch.obermuhlner:big-math", version.ref = "bigmath" }
 
 [plugins]
-fabricloom = { id = "fabric-loom", version = "1.6-SNAPSHOT" }
+fabricloom = { id = "fabric-loom", version = "1.7-SNAPSHOT" }
 shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1"}
-modpublishplugin = { id = "me.modmuss50.mod-publish-plugin", version = "0.5.1" }
+modpublishplugin = { id = "me.modmuss50.mod-publish-plugin", version = "0.6.3" }
