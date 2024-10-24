@@ -30,6 +30,7 @@ public abstract class MixinServerPlayer extends Player
 {
 	@Unique
 	private final SittingState sittingState = new SittingState();
+	@Unique
 	private static final boolean IS_SITTING_ENABLED = false;
 	
 	public MixinServerPlayer(Level level, BlockPos blockPos, float yRot, GameProfile gameProfile)
@@ -174,6 +175,6 @@ public abstract class MixinServerPlayer extends Player
 		int x = Mth.floor(this.getX());
 		int y = Mth.floor(this.getY());
 		int z = Mth.floor(this.getZ());
-		this.sendSystemMessage(Component.literal("You died at " + x + " " + y + " " + z));
+		this.displayClientMessage(Component.literal("You died at " + x + " " + y + " " + z), false);
 	}
 }

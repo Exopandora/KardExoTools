@@ -33,7 +33,7 @@ public class HomeCommand
 		ServerPlayer sender = source.getPlayerOrException();
 		PlayerConfig config = KardExo.PLAYERS.get(CommandUtils.getUUID(source));
 		
-		if(config == null || sender.level() == null || config != null && config.getHome() == null || config != null && config.getHome() != null && config.getHome().getPosition() == null)
+		if(config == null || config.getHome() == null || config.getHome() != null && config.getHome().getPosition() == null)
 		{
 			throw CommandUtils.simpleException("No home set");
 		}
@@ -46,7 +46,7 @@ public class HomeCommand
 	
 	private static BlockPos spawnPosition(ServerLevel serverLevel, BlockPos pos, Entity entity) throws CommandSyntaxException
 	{
-		for(BlockPos mutableBlockPos = pos.below(); pos.getY() <= serverLevel.getMaxBuildHeight(); mutableBlockPos = mutableBlockPos.above())
+		for(BlockPos mutableBlockPos = pos.below(); pos.getY() <= serverLevel.getMaxY(); mutableBlockPos = mutableBlockPos.above())
 		{
 			BlockState blockState = serverLevel.getBlockState(mutableBlockPos);
 			

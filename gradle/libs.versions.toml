@@ -1,8 +1,8 @@
 [versions]
-minecraft = "1.21.1"
-fabric-loader = "0.15.11"
-carpet = "1.21-1.4.147+v240613"
-commons-compress = "1.27.0"
+minecraft = "1.21.3"
+fabric-loader = "0.16.7"
+carpet = "1.21.2-1.4.158+v241022"
+commons-compress = "1.27.1"
 bigmath = "2.3.2"
 
 [libraries]

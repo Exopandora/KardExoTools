@@ -182,6 +182,7 @@ public class KardExo
 		addVein(Blocks.WARPED_STEM, 26, true, config);
 		addVein(Blocks.MANGROVE_LOG, 10, true, config);
 		addVein(Blocks.CHERRY_LOG, 10, true, config);
+		addVein(Blocks.PALE_OAK_LOG, 10, true, config);
 		
 		addVein(Blocks.OAK_LEAVES, 5, true, config);
 		addVein(Blocks.SPRUCE_LEAVES, 5, true, config);
@@ -194,6 +195,7 @@ public class KardExo
 		addVein(Blocks.MANGROVE_LEAVES, 5, true, config);
 		addVein(Blocks.CHERRY_LEAVES, 5, true, config);
 		addVein(Blocks.AZALEA_LEAVES, 5, true, config);
+		addVein(Blocks.PALE_OAK_LEAVES, 5, true, config);
 		addVein(Blocks.FLOWERING_AZALEA_LEAVES, 5, true, config);
 		
 		addVein(Blocks.ANDESITE, 15, true, config);
@@ -236,6 +238,6 @@ public class KardExo
 	
 	private static void addVein(TagKey<Block> tag, int radius, boolean requiresTool, Map<BlockPredicateWrapper, VeinConfig> map)
 	{
-		map.put(new BlockPredicateWrapper(new BlockPredicateArgument.TagPredicate(BuiltInRegistries.BLOCK.getTag(tag).orElseThrow(), Collections.emptyMap(), null)), new VeinConfig(radius, requiresTool));
+		map.put(new BlockPredicateWrapper(new BlockPredicateArgument.TagPredicate(BuiltInRegistries.BLOCK.get(tag).orElseThrow(), Collections.emptyMap(), null)), new VeinConfig(radius, requiresTool));
 	}
 }

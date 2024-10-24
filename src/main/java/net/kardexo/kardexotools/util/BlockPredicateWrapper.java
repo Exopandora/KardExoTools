@@ -101,7 +101,7 @@ public class BlockPredicateWrapper
 		{
 			try
 			{
-				return new BlockPredicateWrapper(BlockPredicateArgument.parse(BuiltInRegistries.BLOCK.asLookup(), new StringReader(element.getAsString())));
+				return new BlockPredicateWrapper(BlockPredicateArgument.parse(BuiltInRegistries.BLOCK, new StringReader(element.getAsString())));
 			}
 			catch(CommandSyntaxException e)
 			{

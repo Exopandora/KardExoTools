@@ -2,4 +2,4 @@ accessWidener	v1	named
 accessible  class   net/minecraft/commands/arguments/blocks/BlockPredicateArgument$BlockPredicate
 accessible  class   net/minecraft/commands/arguments/blocks/BlockPredicateArgument$TagPredicate
 accessible  method  net/minecraft/commands/arguments/blocks/BlockPredicateArgument$TagPredicate <init>  (Lnet/minecraft/core/HolderSet;Ljava/util/Map;Lnet/minecraft/nbt/CompoundTag;)V
-accessible	method	net/minecraft/server/commands/TeleportCommand	performTeleport	(Lnet/minecraft/commands/CommandSourceStack;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/server/level/ServerLevel;DDDLjava/util/Set;FFLnet/minecraft/server/commands/TeleportCommand$LookAt;)V
+accessible	method	net/minecraft/server/commands/TeleportCommand	performTeleport	(Lnet/minecraft/commands/CommandSourceStack;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/server/level/ServerLevel;DDDLjava/util/Set;FFLnet/minecraft/server/commands/LookAt;)V
