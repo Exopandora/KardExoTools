@@ -5,6 +5,7 @@ import net.fabricmc.loom.task.RemapJarTask
 
 plugins {
 	id("java")
+	id("idea")
 	alias(libs.plugins.fabricloom)
 	alias(libs.plugins.shadow)
 	alias(libs.plugins.modpublishplugin)

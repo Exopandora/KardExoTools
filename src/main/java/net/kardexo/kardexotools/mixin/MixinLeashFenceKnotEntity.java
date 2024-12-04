@@ -91,7 +91,7 @@ public abstract class MixinLeashFenceKnotEntity extends BlockAttachedEntity
 					{
 						if(leashable.isLeashed() && leashable.getLeashHolder() == this)
 						{
-							leashable.dropLeash(true, false);
+							leashable.removeLeash();
 						}
 					}
 				}
