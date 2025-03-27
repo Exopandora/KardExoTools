@@ -6,13 +6,11 @@ import net.kardexo.kardexotools.config.VeinConfig;
 import net.kardexo.kardexotools.util.BlockPredicateWrapper;
 import net.kardexo.kardexotools.util.PropertyUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.NonNullList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -23,12 +21,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.Shapes;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.PriorityQueue;
@@ -229,20 +225,7 @@ public class Veinminer
 			return true;
 		}
 		
-		Inventory inventory = player.getInventory();
-		List<NonNullList<ItemStack>> inventories = Arrays.asList(inventory.items, inventory.armor, inventory.offhand);
-		int count = 0;
-		
-		for(List<ItemStack> list : inventories)
-		{
-			for(ItemStack stack : list)
-			{
-				if(stack.getItem().equals(item))
-				{
-					count += stack.getCount();
-				}
-			}
-		}
+		int count = player.getInventory().countItem(item);
 		
 		if(count < amount)
 		{

@@ -13,6 +13,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -20,6 +21,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -105,7 +107,7 @@ public abstract class MixinServerPlayer extends Player
 				
 				Display.BlockDisplay blockDisplay = new Display.BlockDisplay(EntityType.BLOCK_DISPLAY, level);
 				blockDisplay.setPortalCooldown(Integer.MAX_VALUE);
-				blockDisplay.moveTo(position);
+				blockDisplay.move(MoverType.SELF, position);
 				level.addFreshEntityWithPassengers(blockDisplay);
 				this.setShiftKeyDown(false);
 				this.startRiding(blockDisplay);
@@ -128,12 +130,8 @@ public abstract class MixinServerPlayer extends Player
 		return super.wantsToStopRiding() && (!IS_SITTING_ENABLED || (this.sittingState.getVehicle() == null || this.sittingState.getLastShiftDownTime() > this.sittingState.getSitDownTime()));
 	}
 	
-	@Inject
-	(
-		method = "stopRiding",
-		at = @At("HEAD")
-	)
-	private void stopRiding(CallbackInfo info)
+	@Override
+	public void stopRiding()
 	{
 		if(IS_SITTING_ENABLED && this.getVehicle() != null && this.getVehicle().equals(this.sittingState.getVehicle()))
 		{
@@ -141,6 +139,8 @@ public abstract class MixinServerPlayer extends Player
 			this.sittingState.setVehicle(null);
 			vehicle.discard();
 		}
+		
+		super.stopRiding();
 	}
 	
 	@Inject

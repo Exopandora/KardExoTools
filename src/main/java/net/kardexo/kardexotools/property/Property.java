@@ -260,7 +260,7 @@ public class Property
 	
 	public MutableComponent getDisplayName(String id, GameProfileCache profileCache)
 	{
-		return this.getDisplayName(id).withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, this.getDisplayTooltip(id, profileCache))).withInsertion(id));
+		return this.getDisplayName(id).withStyle(style -> style.withHoverEvent(new HoverEvent.ShowText(this.getDisplayTooltip(id, profileCache))).withInsertion(id));
 	}
 	
 	private static Component listOwners(Map<UUID, OwnerConfig> owners, GameProfileCache profileCache)

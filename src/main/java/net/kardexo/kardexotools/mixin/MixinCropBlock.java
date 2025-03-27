@@ -2,14 +2,13 @@ package net.kardexo.kardexotools.mixin;
 
 import net.kardexo.kardexotools.patches.CropsPatch;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BonemealableBlock;
-import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.VegetationBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
@@ -18,7 +17,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(CropBlock.class)
-public abstract class MixinCropBlock extends BushBlock implements BonemealableBlock
+public abstract class MixinCropBlock extends VegetationBlock implements BonemealableBlock
 {
 	protected MixinCropBlock(Properties properties)
 	{

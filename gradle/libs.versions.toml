@@ -1,7 +1,7 @@
 [versions]
-minecraft = "1.21.4"
-fabric-loader = "0.16.9"
-carpet = "1.21.4-1.4.161+v241203"
+minecraft = "1.21.5"
+fabric-loader = "0.16.10"
+carpet = "1.21.5-1.4.169+v250325"
 commons-compress = "1.27.1"
 bigmath = "2.3.2"
 
@@ -13,6 +13,6 @@ apache-commons-compress = { module = "org.apache.commons:commons-compress", vers
 bigmath = { module = "ch.obermuhlner:big-math", version.ref = "bigmath" }
 
 [plugins]
-fabricloom = { id = "fabric-loom", version = "1.9-SNAPSHOT" }
+fabricloom = { id = "fabric-loom", version = "1.10-SNAPSHOT" }
 shadow = { id = "com.gradleup.shadow", version = "8.3.5" }
-modpublishplugin = { id = "me.modmuss50.mod-publish-plugin", version = "0.8.0" }
+modpublishplugin = { id = "me.modmuss50.mod-publish-plugin", version = "0.8.1" }

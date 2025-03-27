@@ -67,6 +67,7 @@ val shadowImplementation: Configuration by configurations.creating
 
 configurations["shadowImplementation"].extendsFrom(configurations["implementation"])
 configurations["compileClasspath"].extendsFrom(shadowImplementation)
+configurations["runtimeClasspath"].extendsFrom(shadowImplementation)
 
 dependencies {
 	minecraft(libs.minecraft.fabric)

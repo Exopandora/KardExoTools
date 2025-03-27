@@ -7,7 +7,6 @@ import net.kardexo.kardexotools.mixin.AccessorMinecraftServer;
 import net.kardexo.kardexotools.util.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.network.chat.HoverEvent.Action;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.MinecraftServer;
@@ -116,7 +115,7 @@ public class BackupTask implements ITask
 			long duration = System.currentTimeMillis() - start;
 			MutableComponent size = Component.literal(FileUtils.byteCountToDisplaySize(bytes));
 			Component hover = Component.translatable("%s\n%s bytes\n%s", file.getName(), String.format("%,d", bytes), DurationFormatUtils.formatDuration(duration, "HH:mm:ss"));
-			size.setStyle(Style.EMPTY.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, hover)));
+			size.setStyle(Style.EMPTY.withHoverEvent(new HoverEvent.ShowText(hover)));
 			Util.broadcastMessage(server, Component.translatable("Backup complete (%s)", size));
 		}
 		else

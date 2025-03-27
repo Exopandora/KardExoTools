@@ -5,15 +5,15 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.NetherWartBlock;
+import net.minecraft.world.level.block.VegetationBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(value = NetherWartBlock.class, priority = 1001)
-public abstract class MixinNetherWartBlock extends BushBlock
+public abstract class MixinNetherWartBlock extends VegetationBlock
 {
 	protected MixinNetherWartBlock(Properties properties)
 	{

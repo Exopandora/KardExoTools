@@ -7,6 +7,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
@@ -16,6 +17,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.util.LowerCaseEnumTypeAdapterFactory;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
@@ -27,7 +29,7 @@ import java.lang.reflect.Type;
 public class ConfigFile<T>
 {
 	private static final Gson GSON = new GsonBuilder()
-		.registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
+		.registerTypeAdapter(ResourceLocation.class, new ResourceLocationTypeAdapter())
 		.registerTypeAdapter(BlockPos.class, new BlockPosTypeAdapter())
 		.registerTypeAdapter(BoundingBox.class, new BoundingBoxTypeAdapter())
 		.registerTypeAdapter(BlockPredicateWrapper.class, new BlockPredicateWrapper.Serializer())
@@ -151,6 +153,19 @@ public class ConfigFile<T>
 			json.addProperty("maxY", src.maxY());
 			json.addProperty("maxZ", src.maxZ());
 			return json;
+		}
+	}
+	
+	public static class ResourceLocationTypeAdapter implements JsonDeserializer<ResourceLocation>, JsonSerializer<ResourceLocation>
+	{
+		public ResourceLocation deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException
+		{
+			return ResourceLocation.parse(GsonHelper.convertToString(json, "location"));
+		}
+		
+		public JsonElement serialize(ResourceLocation src, Type typeOfSrc, JsonSerializationContext context)
+		{
+			return new JsonPrimitive(src.toString());
 		}
 	}
 }
