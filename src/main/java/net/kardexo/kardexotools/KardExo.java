@@ -15,6 +15,7 @@ import net.kardexo.kardexotools.command.PackCommand;
 import net.kardexo.kardexotools.command.PlacesCommand;
 import net.kardexo.kardexotools.command.ResourceCommand;
 import net.kardexo.kardexotools.command.SetHomeCommand;
+import net.kardexo.kardexotools.command.SitCommand;
 import net.kardexo.kardexotools.command.SpawnCommand;
 import net.kardexo.kardexotools.command.UndoCommand;
 import net.kardexo.kardexotools.command.UptimeCommand;
@@ -117,6 +118,7 @@ public class KardExo
 		KardExoCommand.register(dispatcher, commandBuildContext);
 		PackCommand.register(dispatcher);
 		UptimeCommand.register(dispatcher);
+		SitCommand.register(dispatcher);
 	}
 	
 	public static void registerTickables(MinecraftServer server)

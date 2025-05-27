@@ -8,6 +8,8 @@ public class PlayerConfig
 	private boolean veinminer;
 	@SerializedName("home")
 	private PlayerHome home;
+	@SerializedName("sit")
+	private boolean sit;
 	
 	public boolean isVeinminerEnabled()
 	{
@@ -27,5 +29,15 @@ public class PlayerConfig
 	public void setHome(PlayerHome home)
 	{
 		this.home = home;
+	}
+	
+	public boolean isSittingEnabled()
+	{
+		return sit;
+	}
+	
+	public void setSittingEnabled(boolean enabled)
+	{
+		this.sit = enabled;
 	}
 }

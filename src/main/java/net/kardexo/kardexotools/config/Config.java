@@ -101,6 +101,8 @@ public class Config
 	private boolean placesCommandEnabled = true;
 	@SerializedName("resource_command_enabled")
 	private boolean resourceCommandEnabled = true;
+	@SerializedName("sit_command_enabled")
+	private boolean sitCommandEnabled = true;
 	@SerializedName("sethome_command_enabled")
 	private boolean sethomeCommandEnabled = true;
 	@SerializedName("spawn_command_enabled")
@@ -440,6 +442,16 @@ public class Config
 	public void setResourceCommandEnabled(boolean resourceCommandEnabled)
 	{
 		this.resourceCommandEnabled = resourceCommandEnabled;
+	}
+	
+	public boolean isSitCommandEnabled()
+	{
+		return this.sitCommandEnabled;
+	}
+	
+	public void setSitCommandEnabled(boolean sitCommandEnabled)
+	{
+		this.sitCommandEnabled = sitCommandEnabled;
 	}
 	
 	public boolean isSethomeCommandEnabled()

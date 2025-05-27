@@ -21,6 +21,7 @@
 | places    | Configure places (options depend on ownership and permission level) | Everyone    |
 | resource  | Calculate resources needed for specified area                       | Everyone    |
 | sethome   | Set home location                                                   | Everyone    |
+| sit       | Sit down or stand up                                                | Everyone    |
 | spawn     | Teleport to spawn location                                          | Everyone    |
 | pack      | Calculate boxes/stacks/items needed for a given item count          | Everyone    |
 | undo      | Undo last veinmine                                                  | Everyone    |
