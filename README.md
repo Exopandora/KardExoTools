@@ -52,7 +52,7 @@ Durability will not be refunded.
 
 # Building #
 ## Prerequisites ##
-1. Java 17
+1. Java 21
 
 ## Build ##
 1. Run `gradlew build`
