@@ -35,9 +35,9 @@ public abstract class MixinServerPlayer extends Player implements ISittingCapabl
 	@Unique
 	private final SittingState sittingState = new SittingState();
 	
-	public MixinServerPlayer(Level level, BlockPos blockPos, float yRot, GameProfile gameProfile)
+	public MixinServerPlayer(Level level, GameProfile gameProfile)
 	{
-		super(level, blockPos, yRot, gameProfile);
+		super(level, gameProfile);
 	}
 	
 	@Inject

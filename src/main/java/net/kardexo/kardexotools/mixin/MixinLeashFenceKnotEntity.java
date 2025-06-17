@@ -9,7 +9,6 @@ import net.minecraft.world.entity.Leashable;
 import net.minecraft.world.entity.decoration.BlockAttachedEntity;
 import net.minecraft.world.entity.decoration.LeashFenceKnotEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.LeadItem;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -45,7 +44,7 @@ public abstract class MixinLeashFenceKnotEntity extends BlockAttachedEntity
 		}
 		else
 		{
-			List<Leashable> entities = LeadItem.leashableInArea(this.level(), this.getPos(), leashable ->
+			List<Leashable> entities = Leashable.leashableInArea(this, leashable ->
 			{
 				Entity entity = leashable.getLeashHolder();
 				return entity == player || entity == this;

@@ -11,14 +11,14 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
+import com.mojang.serialization.JsonOps;
 import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.util.BlockPredicateWrapper;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.util.LowerCaseEnumTypeAdapterFactory;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
 import java.io.File;
@@ -33,8 +33,7 @@ public class ConfigFile<T>
 		.registerTypeAdapter(BlockPos.class, new BlockPosTypeAdapter())
 		.registerTypeAdapter(BoundingBox.class, new BoundingBoxTypeAdapter())
 		.registerTypeAdapter(BlockPredicateWrapper.class, new BlockPredicateWrapper.Serializer())
-        .registerTypeHierarchyAdapter(Component.class, new Component.SerializerAdapter(RegistryAccess.EMPTY))
-        .registerTypeAdapterFactory(new LowerCaseEnumTypeAdapterFactory())
+        .registerTypeHierarchyAdapter(Component.class, new ComponentSerializerAdapter())
 		.disableHtmlEscaping()
 		.setPrettyPrinting()
 		.create();
@@ -166,6 +165,19 @@ public class ConfigFile<T>
 		public JsonElement serialize(ResourceLocation src, Type typeOfSrc, JsonSerializationContext context)
 		{
 			return new JsonPrimitive(src.toString());
+		}
+	}
+	
+	public static class ComponentSerializerAdapter implements JsonDeserializer<Component>, JsonSerializer<Component>
+	{
+		public Component deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException
+		{
+			return ComponentSerialization.CODEC.parse(JsonOps.INSTANCE, jsonElement).getOrThrow(JsonParseException::new);
+		}
+		
+		public JsonElement serialize(Component component, Type type, JsonSerializationContext jsonSerializationContext)
+		{
+			return ComponentSerialization.CODEC.encodeStart(JsonOps.INSTANCE, component).getOrThrow();
 		}
 	}
 }

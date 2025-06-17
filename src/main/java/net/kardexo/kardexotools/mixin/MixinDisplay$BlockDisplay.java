@@ -1,8 +1,9 @@
 package net.kardexo.kardexotools.mixin;
 
 import net.kardexo.kardexotools.mixinducks.IChair;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Display;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -23,9 +24,9 @@ public class MixinDisplay$BlockDisplay implements IChair
 		method = "readAdditionalSaveData",
 		at = @At("TAIL")
 	)
-	private void readAdditionalSaveData(CompoundTag compoundTag, CallbackInfo ci)
+	private void readAdditionalSaveData(ValueInput valueInput, CallbackInfo ci)
 	{
-		this.isChair = compoundTag.getBooleanOr(TAG_IS_CHAIR, false);
+		this.isChair = valueInput.getBooleanOr(TAG_IS_CHAIR, false);
 	}
 	
 	@Inject
@@ -33,9 +34,9 @@ public class MixinDisplay$BlockDisplay implements IChair
 		method = "addAdditionalSaveData",
 		at = @At("TAIL")
 	)
-	private void addAdditionalSaveData(CompoundTag compoundTag, CallbackInfo ci)
+	private void addAdditionalSaveData(ValueOutput valueOutput, CallbackInfo ci)
 	{
-		compoundTag.putBoolean(TAG_IS_CHAIR, this.isChair);
+		valueOutput.putBoolean(TAG_IS_CHAIR, this.isChair);
 	}
 	
 	@Override
