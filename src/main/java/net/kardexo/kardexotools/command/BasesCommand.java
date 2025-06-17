@@ -26,6 +26,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.include.com.google.common.base.Objects;
 
 import java.util.Map.Entry;
@@ -157,35 +158,65 @@ public class BasesCommand
 		return 1;
 	}
 	
-	private static int setEnterMessage(CommandSourceStack source, String id, Player player, String message) throws CommandSyntaxException
+	private static int setEnterMessage(CommandSourceStack source, String id, Player player, @Nullable String message) throws CommandSyntaxException
 	{
 		ensuredForOwner(source, id, player, owner -> 
 		{
 			owner.setEnterMessage(message);
-			source.sendSuccess(() -> Component.literal("Message upon entrance has been set to \"" + message + "\""), false);
+			source.sendSuccess(() ->
+			{
+				if(message != null)
+				{
+					return Component.literal("Message upon entrance has been set to \"" + message + "\"");
+				}
+				else
+				{
+					return Component.literal("Message upon entrance has been reset");
+				}
+			}, false);
 		});
 		
 		return 1;
 	}
 	
-	private static int setExitMessage(CommandSourceStack source, String id, Player player, String message) throws CommandSyntaxException
+	private static int setExitMessage(CommandSourceStack source, String id, Player player, @Nullable String message) throws CommandSyntaxException
 	{
 		ensuredForOwner(source, id, player, owner -> 
 		{
 			owner.setExitMessage(message);
-			source.sendSuccess(() -> Component.literal("Message upon exit has been set to \"" + message + "\""), false);
+			source.sendSuccess(() ->
+			{
+				if(message != null)
+				{
+					return Component.literal("Message upon exit has been set to \"" + message + "\"");
+				}
+				else
+				{
+					return Component.literal("Message upon exit has been reset");
+				}
+			}, false);
 		});
 		
 		return 1;
 	}
 	
-	private static int setBothMessages(CommandSourceStack source, String id, Player player, String message) throws CommandSyntaxException
+	private static int setBothMessages(CommandSourceStack source, String id, Player player, @Nullable String message) throws CommandSyntaxException
 	{
 		ensuredForOwner(source, id, player, owner -> 
 		{
 			owner.setEnterMessage(message);
 			owner.setExitMessage(message);
-			source.sendSuccess(() -> Component.literal("Both messages have been set to \"" + message + "\""), false);
+			source.sendSuccess(() ->
+			{
+				if(message != null)
+				{
+					return Component.literal("Both messages have been set to \"" + message + "\"");
+				}
+				else
+				{
+					return Component.literal("Both messages have been reset");
+				}
+			}, false);
 		});
 		
 		return 1;
