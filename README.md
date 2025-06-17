@@ -7,7 +7,6 @@
 ## Comfort features ##
 * Print death location upon death
 * Crops can be harvested with right-click when fully grown
-* Leashes can be picked up from leash knots (hold shift to drop like vanilla)
 
 ## Commands ##
 | Command   | Feature                                                             | Permissions |

@@ -121,9 +121,6 @@ public class Config
 	@SerializedName("harvest_crops_with_right_click")
 	private boolean harvestCropsWithRightClick = true;
 	
-	@SerializedName("pickup_leash_knots_with_right_click")
-	private boolean pickupLeashKnots = true;
-	
 	public boolean isBackupEnabled()
 	{
 		return this.backupEnabled;
@@ -532,15 +529,5 @@ public class Config
 	public void setHarvestCropsWithRightClick(boolean harvestCropsWithRightClick)
 	{
 		this.harvestCropsWithRightClick = harvestCropsWithRightClick;
-	}
-	
-	public boolean doPickupLeashKnots()
-	{
-		return this.pickupLeashKnots;
-	}
-	
-	public void setPickupLeashKnots(boolean pickupLeashKnots)
-	{
-		this.pickupLeashKnots = pickupLeashKnots;
 	}
 }

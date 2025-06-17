@@ -12,7 +12,6 @@
 		"MixinDedicatedServer",
 		"MixinDisplay",
 		"MixinDisplay$BlockDisplay",
-		"MixinLeashFenceKnotEntity",
 		"MixinMinecraftServer",
 		"MixinNetherWartBlock",
 		"MixinPlayerList",
