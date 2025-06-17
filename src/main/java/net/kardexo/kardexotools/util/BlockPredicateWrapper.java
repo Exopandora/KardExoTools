@@ -64,7 +64,7 @@ public class BlockPredicateWrapper
 				builder.append(accessor.getNbt().toString());
 			}
 		}
-		else if(this.result instanceof  BlockPredicateArgument.TagPredicate)
+		else if(this.result instanceof BlockPredicateArgument.TagPredicate)
 		{
 			var accessor = (AccessorTagPredicate) this.result;
 			builder.append('#');
