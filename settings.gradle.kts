@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 pluginManagement {
     repositories {
         exclusiveContent {
@@ -5,7 +7,7 @@ pluginManagement {
                 maven("https://maven.fabricmc.net/")
             }
             filter {
-                includeGroup("net.fabricmc")
+                includeGroupAndSubgroups("net.fabricmc")
                 includeGroup("fabric-loom")
             }
         }
