@@ -6,9 +6,10 @@ import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.util.CommandUtils;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.phys.Vec3;
 
 public class SpawnCommand
 {
@@ -21,13 +22,10 @@ public class SpawnCommand
 	
 	private static int execute(CommandSourceStack source) throws CommandSyntaxException
 	{
-		ServerLevel overworld = source.getServer().getLevel(Level.OVERWORLD);
-		
-		if(overworld != null)
-		{
-			return CommandUtils.teleport(source, source.getPlayerOrException(), overworld, overworld.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, overworld.getSharedSpawnPos()));
-		}
-		
-		return 0;
+		ServerLevel respawnDimension = source.getServer().findRespawnDimension();
+		BlockPos blockPos = respawnDimension.getRespawnData().pos();
+		Vec3 pos = blockPos.getCenter();
+		int y = respawnDimension.getChunkAt(blockPos).getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, blockPos.getX(), blockPos.getZ()) + 1;
+		return CommandUtils.teleport(source, source.getPlayerOrException(), respawnDimension, BlockPos.containing(pos.x, y, pos.z));
 	}
 }

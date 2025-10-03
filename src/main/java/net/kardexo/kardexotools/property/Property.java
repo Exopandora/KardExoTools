@@ -2,7 +2,6 @@ package net.kardexo.kardexotools.property;
 
 import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
-import com.mojang.authlib.GameProfile;
 import net.kardexo.kardexotools.config.OwnerConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -13,7 +12,8 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.players.GameProfileCache;
+import net.minecraft.server.players.NameAndId;
+import net.minecraft.server.players.UserNameToIdResolver;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
@@ -236,13 +236,13 @@ public class Property
 		return this.owners.keySet().stream().anyMatch(owner -> Objects.equal(owner, uuid));
 	}
 	
-	private MutableComponent getDisplayTooltip(String id, GameProfileCache profileCache)
+	private MutableComponent getDisplayTooltip(String id, UserNameToIdResolver userNameToIdResolver)
 	{
 		MutableComponent metadata = Component.literal("\n" + id).withStyle(ChatFormatting.GRAY);
 		
 		if(this.owners != null && !this.owners.isEmpty())
 		{
-			metadata.append("\nOwners: ").append(listOwners(this.owners, profileCache));
+			metadata.append("\nOwners: ").append(listOwners(this.owners, userNameToIdResolver));
 		}
 		
 		metadata.append("\nDimension: " + this.dimension);
@@ -258,16 +258,16 @@ public class Property
 		return this.getDisplayName(id).append(metadata);
 	}
 	
-	public MutableComponent getDisplayName(String id, GameProfileCache profileCache)
+	public MutableComponent getDisplayName(String id, UserNameToIdResolver userNameToIdResolver)
 	{
-		return this.getDisplayName(id).withStyle(style -> style.withHoverEvent(new HoverEvent.ShowText(this.getDisplayTooltip(id, profileCache))).withInsertion(id));
+		return this.getDisplayName(id).withStyle(style -> style.withHoverEvent(new HoverEvent.ShowText(this.getDisplayTooltip(id, userNameToIdResolver))).withInsertion(id));
 	}
 	
-	private static Component listOwners(Map<UUID, OwnerConfig> owners, GameProfileCache profileCache)
+	private static Component listOwners(Map<UUID, OwnerConfig> owners, UserNameToIdResolver userNameToIdResolver)
 	{
 		return ComponentUtils.formatList(owners.entrySet(), ComponentUtils.DEFAULT_NO_STYLE_SEPARATOR, entry ->
 		{
-			MutableComponent result = Component.literal(profileCache.get(entry.getKey()).map(GameProfile::getName).orElse(entry.getKey().toString()));
+			MutableComponent result = Component.literal(userNameToIdResolver.get(entry.getKey()).map(NameAndId::name).orElse(entry.getKey().toString()));
 			
 			if(entry.getValue().isCreator())
 			{
@@ -285,6 +285,6 @@ public class Property
 	
 	private static MutableComponent formatCoordinate(BlockPos pos)
 	{
-		return ComponentUtils.wrapInSquareBrackets(Component.translatable("chat.coordinates", new Object[]{pos.getX(), pos.getY(), pos.getZ()}));
+		return ComponentUtils.wrapInSquareBrackets(Component.translatable("chat.coordinates", pos.getX(), pos.getY(), pos.getZ()));
 	}
 }

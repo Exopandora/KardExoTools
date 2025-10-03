@@ -57,7 +57,7 @@ public class BasesTickable implements Runnable
 			for(ServerPlayer player : this.server.getPlayerList().getPlayers())
 			{
 				Set<String> visitors = BASE_VISITORS.computeIfAbsent(base, key -> new HashSet<String>());
-				String name = player.getGameProfile().getName();
+				String name = player.getGameProfile().name();
 				boolean inside = base.isInside(player);
 				boolean contains = visitors.contains(name);
 				
@@ -77,7 +77,7 @@ public class BasesTickable implements Runnable
 	
 	private void notifyOwners(String id, Property base, Map<UUID, OwnerConfig> notify, ServerPlayer player, BaseAccess access)
 	{
-		if(!base.isOwner(player.getGameProfile().getId()))
+		if(!base.isOwner(player.getGameProfile().id()))
 		{
 			switch(access)
 			{
@@ -111,13 +111,13 @@ public class BasesTickable implements Runnable
 		
 		if(format != null)
 		{
-			return Component.translatable(format.replace("&name", "%1$s").replace("&base", "%2$s"), new Object[]{player.getDisplayName(), base.getDisplayName(id, player.getServer().getProfileCache())});
+			return Component.translatable(format.replace("&name", "%1$s").replace("&base", "%2$s"), player.getDisplayName(), base.getDisplayName(id, this.server.services().nameToIdCache()));
 		}
 		
 		return switch(access)
 		{
-			case ENTER -> Component.translatable(KardExo.CONFIG.getData().getPropertyDefaultEnterMessage(), player.getDisplayName(), base.getDisplayName(id, player.getServer().getProfileCache()));
-			case LEAVE -> Component.translatable(KardExo.CONFIG.getData().getPropertyDefaultExitMessage(), player.getDisplayName(), base.getDisplayName(id, player.getServer().getProfileCache()));
+			case ENTER -> Component.translatable(KardExo.CONFIG.getData().getPropertyDefaultEnterMessage(), player.getDisplayName(), base.getDisplayName(id, this.server.services().nameToIdCache()));
+			case LEAVE -> Component.translatable(KardExo.CONFIG.getData().getPropertyDefaultExitMessage(), player.getDisplayName(), base.getDisplayName(id, this.server.services().nameToIdCache()));
 		};
 	}
 	

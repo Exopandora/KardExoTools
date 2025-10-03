@@ -42,7 +42,7 @@ public class MixinDedicatedServer
 	)
 	private void postInit(CallbackInfoReturnable<Boolean> info)
 	{
-		KardExo.postInit((DedicatedServer) (Object) this);
+		KardExo.postInit((DedicatedServer) ((Object) this));
 	}
 	
 	@Inject
@@ -55,7 +55,7 @@ public class MixinDedicatedServer
 	{
 		if(!PropertyUtils.canHarvestBlock(player, blockPos))
 		{
-			player.getServer().getPlayerList().sendAllPlayerInfo((ServerPlayer) player);
+			((DedicatedServer) (Object) this).getPlayerList().sendAllPlayerInfo((ServerPlayer) player);
 			info.setReturnValue(true);
 		}
 	}

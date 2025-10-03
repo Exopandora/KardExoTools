@@ -11,7 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.server.players.GameProfileCache;
+import net.minecraft.server.players.UserNameToIdResolver;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.HashSet;
@@ -32,7 +32,7 @@ public class WhereIsCommand
 	{
 		BlockPos pos = target.blockPosition();
 		String dimension = target.level().dimension().location().toString();
-		GameProfileCache profileCache = source.getServer().getProfileCache();
+		UserNameToIdResolver userNameToIdResolver = source.getServer().services().nameToIdCache();
 		Set<PropertyEntry> properties = new HashSet<PropertyEntry>();
 		
 		for(Entry<String, Property> entry : KardExo.BASES.getData().entrySet())
@@ -51,8 +51,8 @@ public class WhereIsCommand
 			}
 		}
 		
-		MutableComponent formattedProperties = (MutableComponent) ComponentUtils.formatList(properties, entry -> entry.getDisplayName(profileCache));
-		MutableComponent query = Component.translatable("%s: x: %s y: %s z: %s d: %s", new Object[] {target.getDisplayName(), pos.getX(), pos.getY(), pos.getZ(), dimension});
+		MutableComponent formattedProperties = (MutableComponent) ComponentUtils.formatList(properties, entry -> entry.getDisplayName(userNameToIdResolver));
+		MutableComponent query = Component.translatable("%s: x: %s y: %s z: %s d: %s", target.getDisplayName(), pos.getX(), pos.getY(), pos.getZ(), dimension);
 		
 		if(!properties.isEmpty())
 		{
@@ -71,9 +71,9 @@ public class WhereIsCommand
 			this(entry.getKey(), entry.getValue());
 		}
 		
-		public Component getDisplayName(GameProfileCache profileCache)
+		public Component getDisplayName(UserNameToIdResolver userNameToIdResolver)
 		{
-			return this.property.getDisplayName(this.id, profileCache);
+			return this.property.getDisplayName(this.id, userNameToIdResolver);
 		}
 	}
 }
