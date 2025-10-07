@@ -1,5 +1,5 @@
 [versions]
-minecraft = "1.21.9"
+minecraft = "1.21.10"
 fabric-loader = "0.17.2"
 carpet = "1.21.9-1.4.185+v250930"
 commons-compress = "1.28.0"
