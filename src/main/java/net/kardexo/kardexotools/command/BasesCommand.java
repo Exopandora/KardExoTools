@@ -100,7 +100,7 @@ public class BasesCommand
 			.then(Commands.literal("list")
 				.executes(context -> list(context.getSource())))
 			.then(Commands.literal("reload")
-				.requires(source -> source.hasPermission(4))
+				.requires(source -> Commands.LEVEL_OWNERS.check(source.permissions()))
 					.executes(context -> reload(context.getSource())))
 			.then(Commands.literal("children")
 				.then(Commands.argument("id", StringArgumentType.word())

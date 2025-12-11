@@ -6,6 +6,7 @@ import net.kardexo.kardexotools.config.OwnerConfig;
 import net.kardexo.kardexotools.property.Property;
 import net.kardexo.kardexotools.tasks.BasesTickable;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -39,7 +40,7 @@ public class PropertyUtils
 			owners.put(owner, new OwnerConfig(true, true, null, null));
 		}
 		
-		Property property = new Property(displayName, owners, dimension.dimension().location(), boundingBox);
+		Property property = new Property(displayName, owners, dimension.dimension().identifier(), boundingBox);
 		data.put(id, property);
 		data.save();
 	}
@@ -60,7 +61,7 @@ public class PropertyUtils
 	
 	public static void addChild(Property parent, String id, ServerLevel dimension, BoundingBox boundingBox, Component title, MapFile<String, Property> data) throws IllegalStateException
 	{
-		Property property = new Property(title, null, dimension.dimension().location(), boundingBox);
+		Property property = new Property(title, null, dimension.dimension().identifier(), boundingBox);
 		
 		if(property.getChild(id) != null)
 		{
@@ -130,7 +131,7 @@ public class PropertyUtils
 	
 	public static boolean hasPermission(CommandSourceStack source, String id, Player target, Map<String, Property> data)
 	{
-		return source.hasPermission(4) || isCreator(CommandUtils.getUUID(source), id, data) || target != null && isOwner(CommandUtils.getUUID(source), id, data) && target.equals(source.getEntity());
+		return Commands.LEVEL_OWNERS.check(source.permissions()) || isCreator(CommandUtils.getUUID(source), id, data) || target != null && isOwner(CommandUtils.getUUID(source), id, data) && target.equals(source.getEntity());
 	}
 	
 	public static Property getProperty(String id, Map<String, Property> data) throws NoSuchElementException
@@ -151,7 +152,7 @@ public class PropertyUtils
 		
 		for(Property property : data.values())
 		{
-			if(property.isProtected() && !property.isOwner(uuid) && property.isInside(pos, player.level().dimension().location()))
+			if(property.isProtected() && !property.isOwner(uuid) && property.isInside(pos, player.level().dimension().identifier()))
 			{
 				return true;
 			}

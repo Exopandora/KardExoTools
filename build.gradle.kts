@@ -80,7 +80,6 @@ dependencies {
 
 loom {
 	accessWidenerPath = file("src/main/resources/kardexotools.accesswidener")
-	mixin.defaultRefmapName = "$modId.refmap.json"
 }
 
 tasks.named<ProcessResources>("processResources") {
@@ -106,7 +105,7 @@ val shadowJarTask = tasks.named<ShadowJar>("shadowJar") {
 	from(sourceSets.main.get().output)
 	duplicatesStrategy = DuplicatesStrategy.INCLUDE
 	archiveClassifier = "dev"
-	isEnableRelocation = true
+	enableAutoRelocation = true
 	relocationPrefix = "net.kardexo.kardexotools.include"
 }
 

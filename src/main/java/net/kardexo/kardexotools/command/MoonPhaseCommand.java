@@ -6,6 +6,7 @@ import net.kardexo.kardexotools.KardExo;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.level.Level;
 
 public class MoonPhaseCommand
@@ -31,7 +32,7 @@ public class MoonPhaseCommand
 	
 	private static int moonPhase(CommandSourceStack source) throws CommandSyntaxException
 	{
-		int phase = source.getServer().getLevel(Level.OVERWORLD).getMoonPhase();
+		int phase = source.getServer().getLevel(Level.OVERWORLD).environmentAttributes().getValue(EnvironmentAttributes.MOON_PHASE, source.getPosition()).ordinal();
 		source.sendSuccess(() -> Component.literal(PHASES[phase]), false);
 		return phase;
 	}

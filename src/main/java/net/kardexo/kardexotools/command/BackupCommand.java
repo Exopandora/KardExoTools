@@ -11,7 +11,7 @@ public class BackupCommand
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
 	{
 		dispatcher.register(Commands.literal("backup")
-			.requires(source -> KardExo.CONFIG.getData().isBackupCommandEnabled() && source.hasPermission(2))
+			.requires(source -> KardExo.CONFIG.getData().isBackupCommandEnabled() && Commands.LEVEL_GAMEMASTERS.check(source.permissions()))
 				.executes(context -> backup(context.getSource())));
 	}
 	

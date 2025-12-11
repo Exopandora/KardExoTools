@@ -1,14 +1,14 @@
 package net.kardexo.kardexotools.config;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class PlayerHome
 {
 	private final BlockPos position;
-	private final ResourceLocation dimension;
+	private final Identifier dimension;
 	
-	public PlayerHome(BlockPos position, ResourceLocation dimension)
+	public PlayerHome(BlockPos position, Identifier dimension)
 	{
 		this.position = position;
 		this.dimension = dimension;
@@ -19,7 +19,7 @@ public class PlayerHome
 		return this.position;
 	}
 	
-	public ResourceLocation getDimension()
+	public Identifier getDimension()
 	{
 		return this.dimension;
 	}

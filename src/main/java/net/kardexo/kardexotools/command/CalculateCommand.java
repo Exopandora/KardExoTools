@@ -12,10 +12,10 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.kardexo.kardexotools.KardExo;
 import net.kardexo.kardexotools.command.CalculateCommand.Expression.ParseException;
-import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Util;
 
 import java.math.BigDecimal;
 import java.math.MathContext;

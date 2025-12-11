@@ -31,7 +31,7 @@ public class WhereIsCommand
 	private static int whereIs(CommandSourceStack source, Player target) throws CommandSyntaxException
 	{
 		BlockPos pos = target.blockPosition();
-		String dimension = target.level().dimension().location().toString();
+		String dimension = target.level().dimension().identifier().toString();
 		UserNameToIdResolver userNameToIdResolver = source.getServer().services().nameToIdCache();
 		Set<PropertyEntry> properties = new HashSet<PropertyEntry>();
 		

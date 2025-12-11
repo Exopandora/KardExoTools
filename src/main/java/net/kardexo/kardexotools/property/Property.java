@@ -10,8 +10,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.players.NameAndId;
 import net.minecraft.server.players.UserNameToIdResolver;
 import net.minecraft.world.entity.player.Player;
@@ -34,7 +34,7 @@ public class Property
 	@SerializedName("owners")
 	private Map<UUID, OwnerConfig> owners;
 	@SerializedName("dimension")
-	private ResourceLocation dimension;
+	private Identifier dimension;
 	@SerializedName("bounds")
 	private BoundingBox boundingBox;
 	@SerializedName("protected")
@@ -43,7 +43,7 @@ public class Property
 	@SerializedName("children")
 	private Map<String, Property> children;
 	
-	public Property(@Nullable Component displayName, @Nullable Map<UUID, OwnerConfig> owners, ResourceLocation dimension, BoundingBox boundingBox)
+	public Property(@Nullable Component displayName, @Nullable Map<UUID, OwnerConfig> owners, Identifier dimension, BoundingBox boundingBox)
 	{
 		this.displayName = displayName;
 		this.owners = owners;
@@ -66,14 +66,14 @@ public class Property
 		return ResourceKey.create(Registries.DIMENSION, this.dimension);
 	}
 	
-	public void setDimension(ResourceLocation dimension)
+	public void setDimension(Identifier dimension)
 	{
 		this.dimension = dimension;
 	}
 	
 	public void setDimension(ResourceKey<Level> dimension)
 	{
-		this.dimension = dimension.location();
+		this.dimension = dimension.identifier();
 	}
 	
 	public MutableComponent getDisplayName(String id)
@@ -155,30 +155,30 @@ public class Property
 	
 	public boolean isInside(Player player)
 	{
-		return this.isInside(player.blockPosition(), player.level().dimension().location());
+		return this.isInside(player.blockPosition(), player.level().dimension().identifier());
 	}
 	
-	public boolean isInside(BlockPos pos, ResourceLocation dimension)
+	public boolean isInside(BlockPos pos, Identifier dimension)
 	{
 		return this.isInsideMain(pos, dimension) || this.isInsideChild(pos, dimension);
 	}
 	
 	public boolean isInsideMain(Player player)
 	{
-		return this.isInsideMain(player.blockPosition(), player.level().dimension().location());
+		return this.isInsideMain(player.blockPosition(), player.level().dimension().identifier());
 	}
 	
-	public boolean isInsideMain(BlockPos pos, ResourceLocation dimension)
+	public boolean isInsideMain(BlockPos pos, Identifier dimension)
 	{
 		return this.boundingBox.isInside(pos) && dimension.equals(this.dimension);
 	}
 	
 	public boolean isInsideChild(Player player)
 	{
-		return this.isInsideChild(player.blockPosition(), player.level().dimension().location());
+		return this.isInsideChild(player.blockPosition(), player.level().dimension().identifier());
 	}
 	
-	public boolean isInsideChild(BlockPos pos, ResourceLocation dimension)
+	public boolean isInsideChild(BlockPos pos, Identifier dimension)
 	{
 		if(this.children == null)
 		{

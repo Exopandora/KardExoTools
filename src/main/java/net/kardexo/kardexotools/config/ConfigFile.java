@@ -17,7 +17,7 @@ import net.kardexo.kardexotools.util.BlockPredicateWrapper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
@@ -29,7 +29,7 @@ import java.lang.reflect.Type;
 public class ConfigFile<T>
 {
 	private static final Gson GSON = new GsonBuilder()
-		.registerTypeAdapter(ResourceLocation.class, new ResourceLocationTypeAdapter())
+		.registerTypeAdapter(Identifier.class, new IdentifierTypeAdapter())
 		.registerTypeAdapter(BlockPos.class, new BlockPosTypeAdapter())
 		.registerTypeAdapter(BoundingBox.class, new BoundingBoxTypeAdapter())
 		.registerTypeAdapter(BlockPredicateWrapper.class, new BlockPredicateWrapper.Serializer())
@@ -155,14 +155,14 @@ public class ConfigFile<T>
 		}
 	}
 	
-	public static class ResourceLocationTypeAdapter implements JsonDeserializer<ResourceLocation>, JsonSerializer<ResourceLocation>
+	public static class IdentifierTypeAdapter implements JsonDeserializer<Identifier>, JsonSerializer<Identifier>
 	{
-		public ResourceLocation deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException
+		public Identifier deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException
 		{
-			return ResourceLocation.parse(GsonHelper.convertToString(json, "location"));
+			return Identifier.parse(GsonHelper.convertToString(json, "location"));
 		}
 		
-		public JsonElement serialize(ResourceLocation src, Type typeOfSrc, JsonSerializationContext context)
+		public JsonElement serialize(Identifier src, Type typeOfSrc, JsonSerializationContext context)
 		{
 			return new JsonPrimitive(src.toString());
 		}
