@@ -24,7 +24,7 @@ public class MixinSpawnCommand
 		at = @At("TAIL"),
 		remap = false
 	)
-	private static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext commandBuildContext, CallbackInfo info)
+	private static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext commandBuildContext, CallbackInfo ci)
 	{
 		CommandNode<CommandSourceStack> root = dispatcher.getRoot().getChild("spawn");
 		root.getChildren().forEach(child -> MixinSpawnCommand.kardexotools$setRequirement(child, root.getRequirement()));

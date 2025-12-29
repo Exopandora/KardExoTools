@@ -16,7 +16,7 @@ public class MixinPlayerList
 		method = "remove(Lnet/minecraft/server/level/ServerPlayer;)V",
 		at = @At("HEAD")
 	)
-	private void remove(ServerPlayer player, CallbackInfo info)
+	private void remove(ServerPlayer player, CallbackInfo ci)
 	{
 		BackupTask.onPlayerLoggedOut();
 	}

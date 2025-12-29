@@ -45,11 +45,11 @@ public abstract class MixinServerPlayer extends Player implements ISittingCapabl
 		at = @At("HEAD"),
 		cancellable = true
 	)
-	private void attack(Entity entity, CallbackInfo info)
+	private void attack(Entity entity, CallbackInfo ci)
 	{
 		if(!PropertyUtils.canInteractWithEntity(this, entity))
 		{
-			info.cancel();
+			ci.cancel();
 		}
 	}
 	
@@ -58,7 +58,7 @@ public abstract class MixinServerPlayer extends Player implements ISittingCapabl
 		method = "tick",
 		at = @At("TAIL")
 	)
-	private void tick(CallbackInfo info)
+	private void tick(CallbackInfo ci)
 	{
 		if(this.onGround() && KardExo.PLAYERS.getData().containsKey(this.uuid) && KardExo.PLAYERS.get(this.uuid).isSittingEnabled())
 		{
@@ -92,7 +92,7 @@ public abstract class MixinServerPlayer extends Player implements ISittingCapabl
 		method = "die(Lnet/minecraft/world/damagesource/DamageSource;)V",
 		at = @At("HEAD")
 	)
-	private void die(DamageSource damageSource, CallbackInfo info)
+	private void die(DamageSource damageSource, CallbackInfo ci)
 	{
 		int x = Mth.floor(this.getX());
 		int y = Mth.floor(this.getY());
