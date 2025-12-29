@@ -61,7 +61,7 @@ public abstract class MixinServerPlayer extends Player implements ISittingCapabl
 	)
 	private void tick(CallbackInfo info)
 	{
-		if(this.onGround() && KardExo.PLAYERS.get(this.uuid).isSittingEnabled())
+		if(this.onGround() && KardExo.PLAYERS.getData().containsKey(this.uuid) && KardExo.PLAYERS.get(this.uuid).isSittingEnabled())
 		{
 			Entity chair = this.getChair();
 			
