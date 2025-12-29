@@ -35,7 +35,7 @@ public class MixinServerPlayerGameMode
 		at = @At("HEAD"),
 		cancellable = true
 	)
-	public void destroyBlock(BlockPos blockPos, CallbackInfoReturnable<Boolean> info)
+	public void destroyBlock(BlockPos blockPos, CallbackInfoReturnable<Boolean> ci)
 	{
 		if(PropertyUtils.canHarvestBlock(this.player, blockPos))
 		{
@@ -43,18 +43,16 @@ public class MixinServerPlayerGameMode
 			{
 				this.isVeinMining = true;
 				this.dropAtPlayer = false;
-				info.setReturnValue(Veinminer.mine((ServerPlayerGameMode) (Object) this, blockPos, this.player, this.level, dropAtPlayer ->
+				ci.setReturnValue(Veinminer.mine((ServerPlayerGameMode) (Object) this, blockPos, this.player, this.level, dropAtPlayer ->
 				{
 					this.dropAtPlayer = dropAtPlayer;
 				}));
 				this.isVeinMining = false;
-				info.cancel();
 			}
 		}
 		else
 		{
-			info.setReturnValue(false);
-			info.cancel();
+			ci.setReturnValue(false);
 		}
 	}
 	
