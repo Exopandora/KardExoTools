@@ -6,7 +6,6 @@ import net.kardexo.kardexotools.mixinducks.IChair;
 import net.kardexo.kardexotools.mixinducks.ISittingCapableEntity;
 import net.kardexo.kardexotools.util.PropertyUtils;
 import net.kardexo.kardexotools.util.SittingState;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
