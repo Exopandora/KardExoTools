@@ -1,7 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import net.fabricmc.loom.task.AbstractRemapJarTask
-import net.fabricmc.loom.task.RemapJarTask
 
 plugins {
 	id("java")
@@ -65,15 +63,13 @@ idea {
 
 val shadowImplementation: Configuration by configurations.creating
 
-configurations["shadowImplementation"].extendsFrom(configurations["implementation"])
 configurations["compileClasspath"].extendsFrom(shadowImplementation)
 configurations["runtimeClasspath"].extendsFrom(shadowImplementation)
 
 dependencies {
 	minecraft(libs.minecraft.fabric)
-	mappings(loom.officialMojangMappings())
-	modImplementation(libs.fabric.loader)
-	modImplementation(libs.carpet.fabric)
+	implementation(libs.fabric.loader)
+	implementation(libs.carpet.fabric)
 	shadowImplementation(libs.bigmath)
 	shadowImplementation(libs.apache.commons.compress)
 }
@@ -104,14 +100,13 @@ val shadowJarTask = tasks.named<ShadowJar>("shadowJar") {
 	configurations = listOf(shadowImplementation)
 	from(sourceSets.main.get().output)
 	duplicatesStrategy = DuplicatesStrategy.INCLUDE
-	archiveClassifier = "dev"
+	archiveClassifier = ""
 	enableAutoRelocation = true
 	relocationPrefix = "net.kardexo.kardexotools.include"
 }
 
-tasks.named<AbstractRemapJarTask>("remapJar") {
-	dependsOn(shadowJarTask)
-	inputFile.set(shadowJarTask.get().archiveFile)
+tasks.named<Jar>("jar") {
+	archiveClassifier = "dev"
 }
 
 tasks.withType<JavaCompile> {
@@ -132,7 +127,7 @@ tasks.withType<AbstractArchiveTask> {
 
 publishMods {
 	displayName = "$jarName-${libs.versions.minecraft.get()}-$modVersion"
-	file = tasks.named<RemapJarTask>("remapJar").get().archiveFile
+	file = tasks.named<ShadowJar>("shadowJar").get().archiveFile
 	changelog = provider { file("changelog.txt").readText() }
 	modLoaders.add("fabric")
 	type = STABLE

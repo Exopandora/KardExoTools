@@ -14,6 +14,7 @@
 		"MixinDisplay$BlockDisplay",
 		"MixinMinecraftServer",
 		"MixinNetherWartBlock",
+		"MixinPlayer",
 		"MixinPlayerList",
 		"MixinServerGamePacketListenerImpl",
 		"MixinServerPlayer",

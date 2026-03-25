@@ -19,7 +19,7 @@ public class WorldTimeCommand
 	
 	private static int worldtime(CommandSourceStack source) throws CommandSyntaxException
 	{
-		source.sendSuccess(() -> Component.literal("World time: " + toWorldTime(source.getLevel().getDayTime())), false);
+		source.sendSuccess(() -> Component.literal("World time: " + toWorldTime(source.getLevel().getOverworldClockTime())), false);
 		return 1;
 	}
 	

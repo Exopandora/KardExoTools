@@ -1,4 +1,4 @@
-accessWidener	v1	named
+accessWidener	v1	official
 accessible  class   net/minecraft/commands/arguments/blocks/BlockPredicateArgument$BlockPredicate
 accessible  class   net/minecraft/commands/arguments/blocks/BlockPredicateArgument$TagPredicate
 accessible  method  net/minecraft/commands/arguments/blocks/BlockPredicateArgument$TagPredicate <init>  (Lnet/minecraft/core/HolderSet;Ljava/util/Map;Lnet/minecraft/nbt/CompoundTag;)V

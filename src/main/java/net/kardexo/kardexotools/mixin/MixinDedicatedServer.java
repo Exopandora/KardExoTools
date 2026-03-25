@@ -51,9 +51,9 @@ public class MixinDedicatedServer
 		at = @At("HEAD"),
 		cancellable = true
 	)
-	private void isUnderSpawnProtection(ServerLevel serverLevel, BlockPos blockPos, Player player, CallbackInfoReturnable<Boolean> info)
+	private void isUnderSpawnProtection(ServerLevel level, BlockPos pos, Player player, CallbackInfoReturnable<Boolean> info)
 	{
-		if(!PropertyUtils.canHarvestBlock(player, blockPos))
+		if(!PropertyUtils.canHarvestBlock(player, pos))
 		{
 			((DedicatedServer) (Object) this).getPlayerList().sendAllPlayerInfo((ServerPlayer) player);
 			info.setReturnValue(true);

@@ -6,6 +6,7 @@ import net.kardexo.kardexotools.mixinducks.IChair;
 import net.kardexo.kardexotools.mixinducks.ISittingCapableEntity;
 import net.kardexo.kardexotools.util.PropertyUtils;
 import net.kardexo.kardexotools.util.SittingState;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -27,6 +28,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerPlayer.class)
 public abstract class MixinServerPlayer extends Player implements ISittingCapableEntity
@@ -37,20 +39,6 @@ public abstract class MixinServerPlayer extends Player implements ISittingCapabl
 	public MixinServerPlayer(Level level, GameProfile gameProfile)
 	{
 		super(level, gameProfile);
-	}
-	
-	@Inject
-	(
-		method = "attack(Lnet/minecraft/world/entity/Entity;)V",
-		at = @At("HEAD"),
-		cancellable = true
-	)
-	private void attack(Entity entity, CallbackInfo ci)
-	{
-		if(!PropertyUtils.canInteractWithEntity(this, entity))
-		{
-			ci.cancel();
-		}
 	}
 	
 	@Inject
@@ -97,7 +85,21 @@ public abstract class MixinServerPlayer extends Player implements ISittingCapabl
 		int x = Mth.floor(this.getX());
 		int y = Mth.floor(this.getY());
 		int z = Mth.floor(this.getZ());
-		this.displayClientMessage(Component.literal("You died at " + x + " " + y + " " + z), false);
+		this.sendSystemMessage(Component.literal("You died at " + x + " " + y + " " + z));
+	}
+	
+	@Inject
+	(
+		method = "sendSpawnProtectionMessage",
+		at = @At("HEAD"),
+		cancellable = true
+	)
+	private void sendSpawnProtectionMessage(BlockPos pos, CallbackInfo ci)
+	{
+		if(!PropertyUtils.canHarvestBlock(this, pos))
+		{
+			ci.cancel();
+		}
 	}
 	
 	@Unique
