@@ -24,7 +24,7 @@ public class SpawnCommand
 	{
 		ServerLevel respawnDimension = source.getServer().findRespawnDimension();
 		BlockPos blockPos = respawnDimension.getRespawnData().pos();
-		Vec3 pos = blockPos.getCenter();
+		Vec3 pos = Vec3.atCenterOf(blockPos);
 		int y = respawnDimension.getChunkAt(blockPos).getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, blockPos.getX(), blockPos.getZ()) + 1;
 		return CommandUtils.teleport(source, source.getPlayerOrException(), respawnDimension, BlockPos.containing(pos.x, y, pos.z));
 	}

@@ -15,7 +15,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -28,7 +28,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerPlayer.class)
 public abstract class MixinServerPlayer extends Player implements ISittingCapableEntity
@@ -126,18 +125,18 @@ public abstract class MixinServerPlayer extends Player implements ISittingCapabl
 			
 			if(state.is(BlockTags.STAIRS))
 			{
-				position = this.blockPosition().getCenter();
+				position = Vec3.atCenterOf(this.blockPosition());
 			}
 			else if(state.is(Blocks.AIR) && level.getBlockState(this.blockPosition().below()).is(BlockTags.STAIRS))
 			{
-				position = this.blockPosition().below().getCenter();
+				position = Vec3.atCenterOf(this.blockPosition().below());
 			}
 			else
 			{
 				position = this.position();
 			}
 			
-			Display.BlockDisplay blockDisplay = new Display.BlockDisplay(EntityType.BLOCK_DISPLAY, level);
+			Display.BlockDisplay blockDisplay = new Display.BlockDisplay(EntityTypes.BLOCK_DISPLAY, level);
 			blockDisplay.setPortalCooldown(Integer.MAX_VALUE);
 			blockDisplay.move(MoverType.SELF, position);
 			((IChair) blockDisplay).kardexotools$setChair(true);

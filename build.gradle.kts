@@ -139,7 +139,7 @@ publishMods {
 		accessToken = findProperty("curse_api_key").toString()
 		minecraftVersions.set(compatibleVersions)
 		javaVersions.add(JavaVersion.toVersion(javaVersion))
-		clientRequired = false
-		serverRequired = true
+		client = false
+		server = true
 	}
 }

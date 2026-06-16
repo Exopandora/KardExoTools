@@ -41,6 +41,7 @@ import net.minecraft.commands.arguments.blocks.BlockPredicateArgument;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockItemTags;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
@@ -213,14 +214,14 @@ public class KardExo
 		addVein(Blocks.RED_SAND, 5, true, config);
 		addVein(Blocks.CLAY, 4, true, config);
 		
-		addVein(BlockTags.COAL_ORES, 17, true, config);
+		addVein(BlockItemTags.COAL_ORES.block(), 17, true, config);
 		addVein(BlockTags.COPPER_ORES, 17, true, config);
 		addVein(BlockTags.IRON_ORES, 9, false, config);
 		addVein(BlockTags.GOLD_ORES, 9, true, config);
 		addVein(Blocks.GILDED_BLACKSTONE, 9, true, config);
-		addVein(BlockTags.DIAMOND_ORES, 9, true, config);
-		addVein(BlockTags.LAPIS_ORES, 7, true, config);
-		addVein(BlockTags.REDSTONE_ORES, 8, true, config);
+		addVein(BlockItemTags.DIAMOND_ORES.block(), 9, true, config);
+		addVein(BlockItemTags.LAPIS_ORES.block(), 7, true, config);
+		addVein(BlockItemTags.REDSTONE_ORES.block(), 8, true, config);
 		addVein(Blocks.NETHER_QUARTZ_ORE, 14, true, config);
 		addVein(Blocks.ANCIENT_DEBRIS, 3, true, config);
 		
