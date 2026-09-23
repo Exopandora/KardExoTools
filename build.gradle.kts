@@ -30,17 +30,17 @@ repositories {
 	}
 }
 
-val modId: String by project
-val modName: String by project
-val modAuthor: String by project
-val modVersion: String by project
-val modDescription: String by project
-val modUrl: String by project
-val javaVersion: String by project
-val javaToolchainVersion: String by project
-val jarName: String by project
-val compatibleMinecraftVersions: String by project
-val curseProjectId: String by project
+val modId: String = project.property("modId")!!.toString()
+val modName: String = project.property("modName")!!.toString()
+val modAuthor: String = project.property("modAuthor")!!.toString()
+val modVersion: String = project.property("modVersion")!!.toString()
+val modDescription: String = project.property("modDescription")!!.toString()
+val modUrl: String = project.property("modUrl")!!.toString()
+val javaVersion: String = project.property("javaVersion")!!.toString()
+val javaToolchainVersion: String = project.property("javaToolchainVersion")!!.toString()
+val jarName: String = project.property("jarName")!!.toString()
+val compatibleMinecraftVersions: String = project.property("compatibleMinecraftVersions")!!.toString()
+val curseProjectId: String = project.property("curseProjectId")!!.toString()
 
 version = "${libs.versions.minecraft.get()}-$modVersion"
 
@@ -61,7 +61,7 @@ idea {
 	}
 }
 
-val shadowImplementation: Configuration by configurations.creating
+val shadowImplementation: Configuration = configurations.create("shadowImplementation")
 
 configurations["compileClasspath"].extendsFrom(shadowImplementation)
 configurations["runtimeClasspath"].extendsFrom(shadowImplementation)
