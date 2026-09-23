@@ -24,6 +24,6 @@ public class MixinServerGamePacketListenerImpl
 	)
 	public boolean handleUseItemOn_mayInteract(ServerLevel level, Entity entity, BlockPos pos, ServerboundUseItemOnPacket packet)
 	{
-		return level.mayInteract(entity, pos) && level.mayInteract(entity, pos.relative(packet.getHitResult().getDirection()));
+		return level.mayInteract(entity, pos) && level.mayInteract(entity, pos.relative(packet.hitResult().getDirection()));
 	}
 }

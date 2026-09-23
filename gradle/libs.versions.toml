@@ -1,18 +1,18 @@
 [versions]
-minecraft = "26.2"
-fabric-loader = "0.19.3"
-carpet = "26.2-beta-5+v260609"
+minecraft = "26.3"
+fabric-loader = "0.19.5"
+carpet = "26.3"
 commons-compress = "1.28.0"
 bigmath = "2.3.2"
 
 [libraries]
 minecraft-fabric = { module = "com.mojang:minecraft", version.ref = "minecraft" }
 fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
-carpet-fabric = { module = "carpet:fabric-carpet", version.ref = "carpet" }
+carpet-fabric = { module = "maven.modrinth:carpet", version.ref = "carpet" }
 apache-commons-compress = { module = "org.apache.commons:commons-compress", version.ref = "commons-compress" }
 bigmath = { module = "ch.obermuhlner:big-math", version.ref = "bigmath" }
 
 [plugins]
 fabricloom = { id = "net.fabricmc.fabric-loom", version = "1.17-SNAPSHOT" }
-shadow = { id = "com.gradleup.shadow", version = "9.4.2" }
-modpublishplugin = { id = "me.modmuss50.mod-publish-plugin", version = "2.0.0" }
+shadow = { id = "com.gradleup.shadow", version = "9.6.1" }
+modpublishplugin = { id = "me.modmuss50.mod-publish-plugin", version = "2.2.0" }

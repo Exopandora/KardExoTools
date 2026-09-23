@@ -22,10 +22,10 @@ repositories {
 	}
 	exclusiveContent {
 		forRepository {
-			maven("https://masa.dy.fi/maven")
+			maven("https://api.modrinth.com/maven")
 		}
 		filter {
-			includeGroup("carpet")
+			includeGroup("maven.modrinth")
 		}
 	}
 }

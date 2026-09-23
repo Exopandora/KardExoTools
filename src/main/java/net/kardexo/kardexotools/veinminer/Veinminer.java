@@ -207,7 +207,7 @@ public class Veinminer
 			
 			if(!player.gameMode.isCreative())
 			{
-				player.getInventory().clearOrCountMatchingItems(stack -> stack.getItem().equals(block.asItem()), count, player.inventoryMenu.getCraftSlots());
+				player.getInventory().clearOrCountMatchingItems(stack -> stack.getItem().equals(block.asItem()), false, count, player.inventoryMenu.getCraftSlots());
 			}
 			
 			Veinminer.HISTORY.pop(player.getUUID());
