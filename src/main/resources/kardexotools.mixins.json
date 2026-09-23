@@ -10,8 +10,6 @@
 		"MixinCommands",
 		"MixinCropBlock",
 		"MixinDedicatedServer",
-		"MixinDisplay",
-		"MixinDisplay$BlockDisplay",
 		"MixinMinecraftServer",
 		"MixinNetherWartBlock",
 		"MixinPlayer",
