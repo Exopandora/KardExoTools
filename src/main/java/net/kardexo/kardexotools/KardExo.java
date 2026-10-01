@@ -199,6 +199,9 @@ public class KardExo
 		addVein(Blocks.AZALEA_LEAVES, 5, true, config);
 		addVein(Blocks.PALE_OAK_LEAVES, 5, true, config);
 		addVein(Blocks.FLOWERING_AZALEA_LEAVES, 5, true, config);
+		addVein(Blocks.YELLOW_POPLAR_LEAVES, 5, true, config);
+		addVein(Blocks.ORANGE_POPLAR_LEAVES, 5, true, config);
+		addVein(Blocks.RED_POPLAR_LEAVES, 5, true, config);
 		
 		addVein(Blocks.ANDESITE, 15, true, config);
 		addVein(Blocks.DIORITE, 15, true, config);
