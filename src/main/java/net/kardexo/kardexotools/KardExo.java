@@ -184,6 +184,7 @@ public class KardExo
 		addVein(Blocks.MANGROVE_LOG, 10, true, config);
 		addVein(Blocks.CHERRY_LOG, 10, true, config);
 		addVein(Blocks.PALE_OAK_LOG, 10, true, config);
+		addVein(Blocks.POPLAR_LOG, 12, true, config);
 		
 		addVein(Blocks.OAK_LEAVES, 5, true, config);
 		addVein(Blocks.SPRUCE_LEAVES, 5, true, config);
